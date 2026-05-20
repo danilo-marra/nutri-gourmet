@@ -1,0 +1,6 @@
+{
+  "name": "InternalServerError",
+  "message": "Um erro interno n├úo esperado aconteceu.",
+  "action": "Entre em contato com o suporte.",
+  "status_code": 500
+}
