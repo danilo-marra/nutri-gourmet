@@ -1,6 +1,6 @@
-# nextjs-postgres-auth-template
+# Nutri Gourmet
 
-A production-ready Next.js starter with PostgreSQL, cookie-based sessions, role-based access control (RBAC), and email activation — ready to deploy on Vercel.
+Sistema da cantina Nutri Gourmet com API em Next.js, PostgreSQL, autenticação por sessão e controle de permissões por feature.
 
 ## Features
 
@@ -24,15 +24,15 @@ A production-ready Next.js starter with PostgreSQL, cookie-based sessions, role-
 
 ### Setup
 
-1. **Clone or use this template**
+1. **Clone o projeto**
 
 ```bash
-git clone https://github.com/your-username/nextjs-postgres-auth-template.git
-cd nextjs-postgres-auth-template
+git clone https://github.com/danilo-marra/nutri-gourmet.git
+cd nutri-gourmet
 npm install
 ```
 
-2. **Configure environment variables**
+1. **Configure environment variables**
 
 ```bash
 cp .env.example .env.development
@@ -40,14 +40,14 @@ cp .env.example .env.development
 
 Fill in the values in `.env.development`. At minimum you need the Postgres credentials and `APP_NAME` / `APP_EMAIL`.
 
-3. **Start services and run migrations**
+1. **Start services and run migrations**
 
 ```bash
 npm run services:up
 npm run migrations:up
 ```
 
-4. **Start the development server**
+1. **Start the development server**
 
 ```bash
 npm run dev
@@ -95,7 +95,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ## Project Structure
 
-```
+```text
 ├── infra/
 │   ├── compose.yaml        # Docker services (PostgreSQL + Mailcatcher)
 │   ├── controller.js       # Middleware (auth injection, RBAC, error handling)

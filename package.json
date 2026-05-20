@@ -1,7 +1,7 @@
 {
-  "name": "nextjs-postgres-auth-template",
+  "name": "@nutri-gourmet/app",
   "version": "1.0.0",
-  "description": "A Next.js + PostgreSQL starter template with authentication, sessions, RBAC, and email activation.",
+  "description": "Sistema da cantina Nutri Gourmet com API Next.js e PostgreSQL",
   "main": "index.js",
   "scripts": {
     "dev": "npm run services:up && npm run services:wait:database && npm run migrations:up && next dev",

@@ -1,5 +1,5 @@
 function Home() {
-  return <h1>nextjs-postgres-auth-template</h1>;
+  return <h1>Sistema Nutri Gourmet</h1>;
 }
 
 export default Home;
