@@ -114,11 +114,7 @@ async function activateUserByUserId(userId) {
       action: "Entre em contato com o suporte.",
     });
   }
-  const activatedUser = await user.setFeatures(userId, [
-    "create:session",
-    "read:session",
-    "update:user",
-  ]);
+  const activatedUser = await user.activate(userId, "operador");
   return activatedUser;
 }
 

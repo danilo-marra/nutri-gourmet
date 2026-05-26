@@ -145,11 +145,8 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       );
 
       const activatedUser = await user.findOneById(createdUser.id);
-      expect(activatedUser.features).toEqual([
-        "create:session",
-        "read:session",
-        "update:user",
-      ]);
+      expect(activatedUser.role).toBe("operador");
+      expect(activatedUser.features).toEqual([]);
     });
 
     test("With valid token but already activated user", async () => {
