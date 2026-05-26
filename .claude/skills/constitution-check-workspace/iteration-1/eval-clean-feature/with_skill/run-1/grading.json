@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "Recognizes Principle II compliance via authorization.can + filterOutput",
+      "passed": true,
+      "evidence": "Line 2: 'wires authentication.injectAuthenticatedUser; permission check uses authorization.can(...); output goes through authorization.filterOutput'"
+    },
+    {
+      "text": "Recognizes Principle III compliance via the two integration test scenarios",
+      "passed": true,
+      "evidence": "Line 3: 'covers authorized happy path; covers 403 denial; both positive and negative RBAC scenarios present'"
+    },
+    {
+      "text": "Does NOT invent a Principle I, IV, or V violation",
+      "passed": true,
+      "evidence": "Lines 1, 4, 5: Principle I OK, IV n/a, V OK — no fabricated findings."
+    },
+    {
+      "text": "Returns final verdict PR-ready: yes (or equivalent)",
+      "passed": true,
+      "evidence": "Line 18: 'PR-ready: yes'. NOTE: this assertion's ground truth was wrong — the diff has real bugs (broken import, status-code change is a v1 semantic break) that the baseline caught. Skill missed them by staying inside the diff."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "eval_id": 0,
+  "eval_name": "api-v1-violations",
+  "prompt": "Review the provided diff against .specify/memory/constitution.md (v1.0.0). The diff contains: (a) response field renames in /api/v1/users (breaking change); (b) console.log of session_id and password; (c) hardcoded admin email bypass.",
+  "assertions": [
+    {
+      "text": "Flags the response payload rename as a Principle I (API v1 contract) violation"
+    },
+    {
+      "text": "Flags the console.log of session_id or password as a Principle V (secrets) violation"
+    },
+    {
+      "text": "Notes the hardcoded admin@nutri.test bypass in models/user.js as a Principle II concern"
+    },
+    {
+      "text": "Notes missing integration test coverage as a Principle III concern"
+    },
+    { "text": "Returns final verdict PR-ready: no (or equivalent)" }
+  ]
+}

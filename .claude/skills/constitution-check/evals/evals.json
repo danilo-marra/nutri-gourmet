@@ -1,0 +1,84 @@
+{
+  "skill_name": "constitution-check",
+  "evals": [
+    {
+      "id": 0,
+      "name": "api-v1-violations",
+      "prompt": "I'm preparing to open a PR on the current branch. Please review the diff below against `.specify/memory/constitution.md` (v1.0.0) and tell me if it's PR-ready. The diff is the actual `git diff main...HEAD` output for this branch — treat it as the source of truth instead of running git yourself.\n\n```diff\n<DIFF_CONTENT>\n```",
+      "expected_output": "Identifies (a) breaking change to /api/v1/users response shape (rename id→user_id, username→user_name, created_at→createdAt, drop updated_at) violating Principle I; (b) log lines exposing session token and password violating Principle V; (c) the email-uniqueness bypass for a hardcoded admin email as a Principle II concern. Flags missing integration test coverage as Principle III concern. Marks PR-ready: no.",
+      "input_diff_file": "api-v1-violations.diff",
+      "assertions": [
+        {
+          "text": "Flags the response payload rename as a Principle I (API v1 contract) violation",
+          "evidence_hint": "Should mention id→user_id, username→user_name, created_at→createdAt, or dropped updated_at"
+        },
+        {
+          "text": "Flags the console.log of session_id or password as a Principle V (secrets) violation",
+          "evidence_hint": "Should call out the leaked session/cookie/password log"
+        },
+        {
+          "text": "Notes the hardcoded admin@nutri.test bypass in models/user.js as a Principle II concern",
+          "evidence_hint": "Should mention bypassed email validation for admin"
+        },
+        {
+          "text": "Notes missing integration test coverage as a Principle III concern",
+          "evidence_hint": "Should mention tests/integration/** is missing changes for this critical path"
+        },
+        {
+          "text": "Returns final verdict PR-ready: no (or equivalent)",
+          "evidence_hint": "Ends with explicit 'PR-ready: no'"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "bad-migration",
+      "prompt": "I'm preparing to open a PR on the current branch. Please review the diff below against `.specify/memory/constitution.md` (v1.0.0) and tell me if it's PR-ready. The diff is the actual `git diff main...HEAD` output for this branch — treat it as the source of truth instead of running git yourself.\n\n```diff\n<DIFF_CONTENT>\n```",
+      "expected_output": "Identifies the new migration file lacks `exports.down` violating Principle IV. Notes the not-null+default+update+alter-default-to-null pattern is a blocking/unsafe pattern (Principle IV zero-downtime concern). Flags absence of integration tests for new findOneByPhone as Principle III concern. Marks PR-ready: no.",
+      "input_diff_file": "bad-migration.diff",
+      "assertions": [
+        {
+          "text": "Flags missing exports.down as a Principle IV (migrations) violation",
+          "evidence_hint": "Should explicitly call out the missing rollback function"
+        },
+        {
+          "text": "Flags the blocking pattern (notNull + default + UPDATE + alterColumn) as a Principle IV zero-downtime concern",
+          "evidence_hint": "Should mention table rewrite / blocking lock / zero-downtime"
+        },
+        {
+          "text": "Notes missing integration test for findOneByPhone as a Principle III concern",
+          "evidence_hint": "Should mention lack of test coverage for the new model method"
+        },
+        {
+          "text": "Returns final verdict PR-ready: no (or equivalent)",
+          "evidence_hint": "Ends with explicit 'PR-ready: no'"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "clean-feature",
+      "prompt": "I'm preparing to open a PR on the current branch. Please review the diff below against `.specify/memory/constitution.md` (v1.0.0) and tell me if it's PR-ready. The diff is the actual `git diff main...HEAD` output for this branch — treat it as the source of truth instead of running git yourself.\n\n```diff\n<DIFF_CONTENT>\n```",
+      "expected_output": "Recognizes the diff is compliant: GET handler uses authentication.injectAuthenticatedUser + authorization.can + authorization.filterOutput (Principle II); integration tests cover both authorized and unauthorized scenarios (Principle III); error response keeps the {name, message, action, status_code} contract (Principle I). No migrations involved. No secret leaks. Marks PR-ready: yes.",
+      "input_diff_file": "clean-feature.diff",
+      "assertions": [
+        {
+          "text": "Recognizes Principle II compliance via authorization.can + filterOutput",
+          "evidence_hint": "Should call out the RBAC pattern as correctly applied"
+        },
+        {
+          "text": "Recognizes Principle III compliance via the two integration test scenarios",
+          "evidence_hint": "Should mention the happy-path and denial-path tests"
+        },
+        {
+          "text": "Does NOT invent a Principle I, IV, or V violation",
+          "evidence_hint": "Should not flag fabricated breaking changes, migrations, or secret leaks for this diff"
+        },
+        {
+          "text": "Returns final verdict PR-ready: yes (or equivalent)",
+          "evidence_hint": "Ends with explicit 'PR-ready: yes'"
+        }
+      ]
+    }
+  ]
+}

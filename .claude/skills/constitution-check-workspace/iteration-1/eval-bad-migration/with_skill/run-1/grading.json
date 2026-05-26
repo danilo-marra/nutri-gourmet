@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "Flags missing exports.down as a Principle IV (migrations) violation",
+      "passed": true,
+      "evidence": "Line 6: 'missing exports.down (no rollback, no documented justification)'"
+    },
+    {
+      "text": "Flags the blocking pattern (notNull + default + UPDATE + alterColumn) as a Principle IV zero-downtime concern",
+      "passed": true,
+      "evidence": "Lines 7-8: 'backfills via blocking UPDATE — non zero-downtime, rewrites table; createIndex without concurrently, takes an ACCESS EXCLUSIVE lock — blocking'"
+    },
+    {
+      "text": "Notes missing integration test for findOneByPhone as a Principle III concern",
+      "passed": true,
+      "evidence": "Line 3: 'migration + new models/user.js:findOneByPhone ... ship without any test in tests/integration/**'"
+    },
+    {
+      "text": "Returns final verdict PR-ready: no (or equivalent)",
+      "passed": true,
+      "evidence": "Line 24: 'PR-ready: no — migration sem exports.down...'"
+    }
+  ]
+}

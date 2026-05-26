@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "eval_name": "clean-feature",
+  "prompt": "Review the provided diff against .specify/memory/constitution.md (v1.0.0). The diff adds GET /api/v1/users/[username] with full RBAC (authorization.can + filterOutput) and two integration tests (happy path + 403 denial). No migrations, no secret leaks, error shape preserved.",
+  "assertions": [
+    {
+      "text": "Recognizes Principle II compliance via authorization.can + filterOutput"
+    },
+    {
+      "text": "Recognizes Principle III compliance via the two integration test scenarios"
+    },
+    { "text": "Does NOT invent a Principle I, IV, or V violation" },
+    { "text": "Returns final verdict PR-ready: yes (or equivalent)" }
+  ]
+}

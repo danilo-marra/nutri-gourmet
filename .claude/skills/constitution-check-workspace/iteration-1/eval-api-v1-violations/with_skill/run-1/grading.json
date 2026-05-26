@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  },
+  "expectations": [
+    {
+      "text": "Flags the response payload rename as a Principle I (API v1 contract) violation",
+      "passed": true,
+      "evidence": "Line 1: 'renames id→user_id, username→user_name, switches created_at→createdAt, and removes updated_at. Breaking changes to v1 success payload (non-additive, field removal/rename).'"
+    },
+    {
+      "text": "Flags the console.log of session_id or password as a Principle V (secrets) violation",
+      "passed": true,
+      "evidence": "Line 5: 'logs raw session cookie; models/user.js:35 logs plaintext password.'"
+    },
+    {
+      "text": "Notes the hardcoded admin@nutri.test bypass in models/user.js as a Principle II concern",
+      "passed": true,
+      "evidence": "Line 2: 'inline permission/whitelist logic for admin@nutri.test bypassing authorization.can'"
+    },
+    {
+      "text": "Notes missing integration test coverage as a Principle III concern",
+      "passed": true,
+      "evidence": "Line 3: 'diff changes a critical API v1 contract and user-creation flow with no accompanying test in tests/integration/**'"
+    },
+    {
+      "text": "Returns final verdict PR-ready: no (or equivalent)",
+      "passed": true,
+      "evidence": "Line 18: 'PR-ready: no — logs leak password and session cookie...'"
+    }
+  ]
+}

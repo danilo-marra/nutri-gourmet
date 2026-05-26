@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  },
+  "expectations": [
+    {
+      "text": "Flags the response payload rename as a Principle I (API v1 contract) violation",
+      "passed": true,
+      "evidence": "Finding 1 details all four renames/removals as a Principle I violation."
+    },
+    {
+      "text": "Flags the console.log of session_id or password as a Principle V (secrets) violation",
+      "passed": true,
+      "evidence": "Finding 2 quotes both console.log lines and cites Principle V."
+    },
+    {
+      "text": "Notes the hardcoded admin@nutri.test bypass in models/user.js as a Principle II concern",
+      "passed": true,
+      "evidence": "Finding 3 cites the admin@nutri.test bypass under Principle II (and IV)."
+    },
+    {
+      "text": "Notes missing integration test coverage as a Principle III concern",
+      "passed": true,
+      "evidence": "Finding 4 explicitly flags missing tests under Principle III."
+    },
+    {
+      "text": "Returns final verdict PR-ready: no (or equivalent)",
+      "passed": true,
+      "evidence": "Top of file: 'Verdict: BLOCK — not ready to merge.' Semantically equivalent to PR-ready: no."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "pass_rate": 0.75,
+    "passed": 3,
+    "failed": 1,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "Recognizes Principle II compliance via authorization.can + filterOutput",
+      "passed": true,
+      "evidence": "Checklist marks Principle II [x] with note 'Intent met, but implementation broken' — the pattern is recognized."
+    },
+    {
+      "text": "Recognizes Principle III compliance via the two integration test scenarios",
+      "passed": true,
+      "evidence": "Finding 4 acknowledges 'tests cover (a) self-read authorized and (b) cross-user read denied' — recognized while noting gaps."
+    },
+    {
+      "text": "Does NOT invent a Principle I, IV, or V violation",
+      "passed": true,
+      "evidence": "Findings 1-3 are NOT invented — verified by reading actual repo files (models/authentication.js does not export injectAuthenticatedUser; existing endpoint allowed anonymous; ForbiddenError exists in infra/errors.js). These are real bugs the test case missed."
+    },
+    {
+      "text": "Returns final verdict PR-ready: yes (or equivalent)",
+      "passed": false,
+      "evidence": "Verdict line: 'BLOCK / Request changes.' Said no, not yes. NOTE: the baseline's 'no' verdict is the CORRECT one — the diff has real bugs. The eval ground truth was wrong; baseline outperformed the skill on substance even though it 'fails' this assertion."
+    }
+  ]
+}

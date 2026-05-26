@@ -1,0 +1,30 @@
+{
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "expectations": [
+    {
+      "text": "Flags missing exports.down as a Principle IV (migrations) violation",
+      "passed": true,
+      "evidence": "Finding 1 explicitly: 'There is no exports.down, no exports.down = false with a documented justification'"
+    },
+    {
+      "text": "Flags the blocking pattern (notNull + default + UPDATE + alterColumn) as a Principle IV zero-downtime concern",
+      "passed": true,
+      "evidence": "Finding 2 enumerates ACCESS EXCLUSIVE lock, full-table UPDATE, non-CONCURRENTLY CREATE INDEX as blocking pattern violating zero-downtime principle."
+    },
+    {
+      "text": "Notes missing integration test for findOneByPhone as a Principle III concern",
+      "passed": true,
+      "evidence": "Finding 5 explicitly: 'no integration test added for either the schema change or the new lookup'"
+    },
+    {
+      "text": "Returns final verdict PR-ready: no (or equivalent)",
+      "passed": true,
+      "evidence": "Line 124: 'Final verdict: PR-ready: no.'"
+    }
+  ]
+}

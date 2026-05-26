@@ -1,0 +1,304 @@
+{
+  "metadata": {
+    "skill_name": "constitution-check",
+    "skill_path": "C:/www/nutri-gourmet/.claude/skills/constitution-check",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-05-26T13:36:31Z",
+    "evals_run": [0, 1, 2],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 39.8,
+        "tokens": 24077,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Flags the response payload rename as a Principle I (API v1 contract) violation",
+          "passed": true,
+          "evidence": "Line 1: 'renames id\u00e2\u2020\u2019user_id, username\u00e2\u2020\u2019user_name, switches created_at\u00e2\u2020\u2019createdAt, and removes updated_at. Breaking changes to v1 success payload (non-additive, field removal/rename).'"
+        },
+        {
+          "text": "Flags the console.log of session_id or password as a Principle V (secrets) violation",
+          "passed": true,
+          "evidence": "Line 5: 'logs raw session cookie; models/user.js:35 logs plaintext password.'"
+        },
+        {
+          "text": "Notes the hardcoded admin@nutri.test bypass in models/user.js as a Principle II concern",
+          "passed": true,
+          "evidence": "Line 2: 'inline permission/whitelist logic for admin@nutri.test bypassing authorization.can'"
+        },
+        {
+          "text": "Notes missing integration test coverage as a Principle III concern",
+          "passed": true,
+          "evidence": "Line 3: 'diff changes a critical API v1 contract and user-creation flow with no accompanying test in tests/integration/**'"
+        },
+        {
+          "text": "Returns final verdict PR-ready: no (or equivalent)",
+          "passed": true,
+          "evidence": "Line 18: 'PR-ready: no \u00e2\u20ac\u201d logs leak password and session cookie...'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 51.1,
+        "tokens": 24775,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Flags missing exports.down as a Principle IV (migrations) violation",
+          "passed": true,
+          "evidence": "Line 6: 'missing exports.down (no rollback, no documented justification)'"
+        },
+        {
+          "text": "Flags the blocking pattern (notNull + default + UPDATE + alterColumn) as a Principle IV zero-downtime concern",
+          "passed": true,
+          "evidence": "Lines 7-8: 'backfills via blocking UPDATE \u00e2\u20ac\u201d non zero-downtime, rewrites table; createIndex without concurrently, takes an ACCESS EXCLUSIVE lock \u00e2\u20ac\u201d blocking'"
+        },
+        {
+          "text": "Notes missing integration test for findOneByPhone as a Principle III concern",
+          "passed": true,
+          "evidence": "Line 3: 'migration + new models/user.js:findOneByPhone ... ship without any test in tests/integration/**'"
+        },
+        {
+          "text": "Returns final verdict PR-ready: no (or equivalent)",
+          "passed": true,
+          "evidence": "Line 24: 'PR-ready: no \u00e2\u20ac\u201d migration sem exports.down...'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 33.6,
+        "tokens": 24530,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recognizes Principle II compliance via authorization.can + filterOutput",
+          "passed": true,
+          "evidence": "Line 2: 'wires authentication.injectAuthenticatedUser; permission check uses authorization.can(...); output goes through authorization.filterOutput'"
+        },
+        {
+          "text": "Recognizes Principle III compliance via the two integration test scenarios",
+          "passed": true,
+          "evidence": "Line 3: 'covers authorized happy path; covers 403 denial; both positive and negative RBAC scenarios present'"
+        },
+        {
+          "text": "Does NOT invent a Principle I, IV, or V violation",
+          "passed": true,
+          "evidence": "Lines 1, 4, 5: Principle I OK, IV n/a, V OK \u00e2\u20ac\u201d no fabricated findings."
+        },
+        {
+          "text": "Returns final verdict PR-ready: yes (or equivalent)",
+          "passed": true,
+          "evidence": "Line 18: 'PR-ready: yes'. NOTE: this assertion's ground truth was wrong \u00e2\u20ac\u201d the diff has real bugs (broken import, status-code change is a v1 semantic break) that the baseline caught. Skill missed them by staying inside the diff."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 67.3,
+        "tokens": 24977,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Flags the response payload rename as a Principle I (API v1 contract) violation",
+          "passed": true,
+          "evidence": "Finding 1 details all four renames/removals as a Principle I violation."
+        },
+        {
+          "text": "Flags the console.log of session_id or password as a Principle V (secrets) violation",
+          "passed": true,
+          "evidence": "Finding 2 quotes both console.log lines and cites Principle V."
+        },
+        {
+          "text": "Notes the hardcoded admin@nutri.test bypass in models/user.js as a Principle II concern",
+          "passed": true,
+          "evidence": "Finding 3 cites the admin@nutri.test bypass under Principle II (and IV)."
+        },
+        {
+          "text": "Notes missing integration test coverage as a Principle III concern",
+          "passed": true,
+          "evidence": "Finding 4 explicitly flags missing tests under Principle III."
+        },
+        {
+          "text": "Returns final verdict PR-ready: no (or equivalent)",
+          "passed": true,
+          "evidence": "Top of file: 'Verdict: BLOCK \u00e2\u20ac\u201d not ready to merge.' Semantically equivalent to PR-ready: no."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 91.8,
+        "tokens": 27350,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Flags missing exports.down as a Principle IV (migrations) violation",
+          "passed": true,
+          "evidence": "Finding 1 explicitly: 'There is no exports.down, no exports.down = false with a documented justification'"
+        },
+        {
+          "text": "Flags the blocking pattern (notNull + default + UPDATE + alterColumn) as a Principle IV zero-downtime concern",
+          "passed": true,
+          "evidence": "Finding 2 enumerates ACCESS EXCLUSIVE lock, full-table UPDATE, non-CONCURRENTLY CREATE INDEX as blocking pattern violating zero-downtime principle."
+        },
+        {
+          "text": "Notes missing integration test for findOneByPhone as a Principle III concern",
+          "passed": true,
+          "evidence": "Finding 5 explicitly: 'no integration test added for either the schema change or the new lookup'"
+        },
+        {
+          "text": "Returns final verdict PR-ready: no (or equivalent)",
+          "passed": true,
+          "evidence": "Line 124: 'Final verdict: PR-ready: no.'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 100.7,
+        "tokens": 34072,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recognizes Principle II compliance via authorization.can + filterOutput",
+          "passed": true,
+          "evidence": "Checklist marks Principle II [x] with note 'Intent met, but implementation broken' \u00e2\u20ac\u201d the pattern is recognized."
+        },
+        {
+          "text": "Recognizes Principle III compliance via the two integration test scenarios",
+          "passed": true,
+          "evidence": "Finding 4 acknowledges 'tests cover (a) self-read authorized and (b) cross-user read denied' \u00e2\u20ac\u201d recognized while noting gaps."
+        },
+        {
+          "text": "Does NOT invent a Principle I, IV, or V violation",
+          "passed": true,
+          "evidence": "Findings 1-3 are NOT invented \u00e2\u20ac\u201d verified by reading actual repo files (models/authentication.js does not export injectAuthenticatedUser; existing endpoint allowed anonymous; ForbiddenError exists in infra/errors.js). These are real bugs the test case missed."
+        },
+        {
+          "text": "Returns final verdict PR-ready: yes (or equivalent)",
+          "passed": false,
+          "evidence": "Verdict line: 'BLOCK / Request changes.' Said no, not yes. NOTE: the baseline's 'no' verdict is the CORRECT one \u00e2\u20ac\u201d the diff has real bugs. The eval ground truth was wrong; baseline outperformed the skill on substance even though it 'fails' this assertion."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 41.5,
+        "stddev": 8.873,
+        "min": 33.6,
+        "max": 51.1
+      },
+      "tokens": {
+        "mean": 24460.6667,
+        "stddev": 354.1276,
+        "min": 24077,
+        "max": 24775
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.9167,
+        "stddev": 0.1443,
+        "min": 0.75,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 86.6,
+        "stddev": 17.2965,
+        "min": 67.3,
+        "max": 100.7
+      },
+      "tokens": {
+        "mean": 28799.6667,
+        "stddev": 4717.6166,
+        "min": 24977,
+        "max": 34072
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.08",
+      "time_seconds": "-45.1",
+      "tokens": "-4339"
+    }
+  },
+  "notes": [
+    "with_skill is ~2x faster (41.5s vs 86.6s) and uses ~15% fewer tokens (24.5k vs 28.8k). The skill keeps Claude inside the diff, so it converges faster.",
+    "Without-skill scored 91.7% pass rate vs with-skill's 100%, but the single 'failure' is misleading: on eval-2 (clean-feature) the baseline read actual repo files (models/authentication.js, infra/controller.js, infra/errors.js) and caught real bugs in the test diff — a non-existent import (authentication.injectAuthenticatedUser) and a v1 status-code semantic break — that the skill missed. The 'PR-ready: yes' ground truth for clean-feature was wrong; the baseline's 'no' is substantively correct.",
+    "Insight for skill iteration: the skill currently scopes Claude to the diff text only. For diffs that reference repo symbols (imports, middleware, model methods), encourage verifying their existence/shape in the actual repo. Otherwise the skill is fast but blind to broken references and semantic v1 changes.",
+    "Eval-2's ground truth needs correction in iteration-2 — either fix the diff so it's actually clean, or restate the expected verdict as 'PR-ready: no' with the real findings."
+  ]
+}

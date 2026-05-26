@@ -1,0 +1,49 @@
+diff --git a/infra/migrations/1764000000000_add-user-phone.js b/infra/migrations/1764000000000_add-user-phone.js
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/infra/migrations/1764000000000_add-user-phone.js
+@@ -0,0 +1,18 @@
++exports.up = (pgm) => {
++  pgm.addColumn("users", {
++    phone: {
++      type: "varchar(20)",
++      notNull: true,
++      default: "",
++    },
++  });
++
++  pgm.sql(`UPDATE users SET phone = '+550000000000'`);
++
++  pgm.alterColumn("users", "phone", {
++    notNull: true,
++    default: null,
++  });
++
++  pgm.createIndex("users", "phone");
++};
+diff --git a/models/user.js b/models/user.js
+index 9876543..2222222 100644
+--- a/models/user.js
++++ b/models/user.js
+@@ -10,6 +10,7 @@ const user = {
+   findOneByUsername,
+   findOneByEmail,
+   findOneById,
++  findOneByPhone,
+   update,
+   addFeatures,
+ };
+@@ -60,4 +61,12 @@ async function findOneById(id) {
+   return results.rows[0];
+ }
+
++async function findOneByPhone(phone) {
++  const results = await database.query({
++    text: `SELECT * FROM users WHERE phone = $1 LIMIT 1;`,
++    values: [phone],
++  });
++  return results.rows[0];
++}
++
+ module.exports = user;
