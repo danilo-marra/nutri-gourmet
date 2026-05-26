@@ -46,3 +46,31 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 - Branch names: kebab-case with a type prefix (`chore/...`, `feat/...`, `fix/...`).
 - New API endpoints: handler in `pages/api/v1/<resource>/<verb>.js` pattern is implicit — file name is the route; HTTP verb is the handler method on `next-connect`. Always wire `controller.errorHandlers`.
 - Tests: one `*.test.js` per HTTP verb, mirroring the API path. `beforeAll` does `waitForAllServices → clearDatabase → runPendingMigrations`.
+
+## PRD open questions (resolve before implementing each module)
+
+These are gaps identified before starting domain modules. Run a Q&A session with the user per module before scaffolding schema or endpoints.
+
+### Domain model definitions (all modules blocked on these)
+
+- **Student**: required fields? (name, class/grade, enrollment id, guardian link?)
+- **Product**: category? active/inactive flag? price history needed?
+- **Sale**: one product per sale or multiple line items per transaction? payment method per line (credit vs. cash)?
+- **Credit/Package**: does a package credit a monetary amount (R$) or a fixed number of consumptions?
+
+### Business rules (clarify per module)
+
+- **Negative credit**: can a student buy with insufficient balance? Who can authorize overrides?
+- **Price changes**: do product price changes affect historical sale records?
+- **Reversal (estorno)**: can the operador reverse any of their own sales, or only same-day ones?
+- **Cash close (fechamento de caixa)**: is it a required daily action? What happens if not closed on a given day?
+
+### Missing flows
+
+- **Password recovery**: not in PRD; decide if it's in scope for the current phase before any auth work.
+- **Operador/Supervisor account creation**: how does admin create new accounts? Direct API call only, or email invitation flow?
+
+### Reports (define before implementing)
+
+- **Operational report**: filtering criteria, output format, date range granularity.
+- **Financial report**: same — currently too vague to spec.

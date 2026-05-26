@@ -99,6 +99,7 @@ async function create(userInputValues) {
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
   await hashPasswordInObject(userInputValues);
+  injectDefaultRoleInObject(userInputValues);
   injectDefaultFeaturesInObject(userInputValues);
 
   const newUser = await runInsertQuery(userInputValues);
@@ -108,9 +109,9 @@ async function create(userInputValues) {
     const results = await database.query({
       text: `
       INSERT INTO
-        users (username, email, password, features)
+        users (username, email, password, role, features)
       VALUES
-        ($1, $2, $3, $4)
+        ($1, $2, $3, $4, $5)
       RETURNING
         *
       ;`,
@@ -118,11 +119,16 @@ async function create(userInputValues) {
         userInputValues.username,
         userInputValues.email,
         userInputValues.password,
+        userInputValues.role,
         userInputValues.features,
       ],
     });
 
     return results.rows[0];
+  }
+
+  function injectDefaultRoleInObject(userInputValues) {
+    userInputValues.role = userInputValues.role ?? "pending";
   }
 
   function injectDefaultFeaturesInObject(userInputValues) {
@@ -162,6 +168,7 @@ async function update(username, userInputValues) {
         username = $2,
         email = $3,
         password = $4,
+        role = $5,
         updated_at = timezone('utc', now())
       WHERE
         id = $1
@@ -173,6 +180,7 @@ async function update(username, userInputValues) {
         userWithNewValues.username,
         userWithNewValues.email,
         userWithNewValues.password,
+        userWithNewValues.role,
       ],
     });
 
@@ -251,6 +259,26 @@ async function setFeatures(userId, features) {
   }
 }
 
+async function activate(userId, role) {
+  const results = await database.query({
+    text: `
+    UPDATE
+      users
+    SET
+      role = $2,
+      features = '{}',
+      updated_at = timezone('utc', now())
+    WHERE
+      id = $1
+    RETURNING
+      *
+    ;`,
+    values: [userId, role],
+  });
+
+  return results.rows[0];
+}
+
 async function addFeatures(userId, features) {
   const updatedUser = await runUpdateQuery(userId, features);
   return updatedUser;
@@ -281,6 +309,7 @@ const user = {
   findOneByEmail,
   findOneById,
   update,
+  activate,
   setFeatures,
   addFeatures,
 };
