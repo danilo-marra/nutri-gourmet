@@ -26,10 +26,10 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 ## Non-obvious commands
 
 - `npm run dev` orchestrates `services:up` → `services:wait:database` → `migrations:up` → `next dev`. Don't start `next dev` directly during normal work.
-- `npm test` brings Docker up, runs Jest with `NODE_ENV=test` against a live Next server (`concurrently`), then `posttest` stops services. Use `npm run test:watch` only when services are already up.
+- `npm test` waits for DB, runs `migrations:up` on dev DB, clears `.next` cache, then starts Jest + Next dev server via `concurrently`. `posttest` stops services. Use `npm run test:watch` only when services are already up.
 - `npm run migrations:create -- <name>` scaffolds a migration. `migrations:up:dry` previews; `migrations:status` lists pending.
 - Migrations target `.env.development` explicitly (the `--envPath` flag). New env vars must be added to `.env.example` and `.env.development`.
-- `npm run check-secrets` runs Secretlint against the tree; husky `pre-commit` runs `lint:prettier:fix` + `check-secrets`, `commit-msg` runs commitlint (Conventional Commits).
+- `npm run check-secrets` runs Secretlint against the tree; husky `pre-commit` runs `lint:prettier:fix` + `lint:eslint:check` + `check-secrets`, `commit-msg` runs commitlint (Conventional Commits).
 - Stop services with `npm run services:stop` (preserves volumes) or `services:down` (destroys).
 
 ## Repo layout (load-bearing)
@@ -56,15 +56,15 @@ Before editing any file in this repo, check the current branch with `git branch 
 
 Decisions live in `raw/decisions/` (one file per module). Read the relevant file before scaffolding schema or endpoints for that module. Summary:
 
-| Module         | Key decisions                                                                                                                                                                                                    | File                              |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| Student        | `name` + `class` (text); `is_full_time` bool; `balance DECIMAL(10,2)`; no enrollment/guardian                                                                                                                    | `raw/decisions/aluno.md`          |
-| Product        | `name`, `price`, `category` (enum: lanche/bebida/vitamina/refeicao/sobremesa), `active`; snapshot price on sale                                                                                                  | `raw/decisions/produto.md`        |
-| Sale           | Multiple items via `sale_items`; `payment_method`: credit/cash/card per transaction; reversal by supervisor/admin only                                                                                           | `raw/decisions/venda.md`          |
-| Credit/Package | Monetary R$; single pool; negative balance with operator confirmation but operator locked out when `balance < 0`; package: no expiry by default (`expires_at` optional), supervisor/admin only, multiple allowed | `raw/decisions/credito-pacote.md` |
-| Operations     | Cash close: not blocking (`pending` status), generates basic summary, supervisor/admin can close on behalf of operator; account creation: admin → email invite via existing activation flow                      | `raw/decisions/operacoes.md`      |
-| Reports        | 5 reports: sales by period, credits added, balance by student, cash closes, active packages; supervisor/admin only; table view; no export this phase                                                             | `raw/decisions/relatorios.md`     |
-| Supervisor     | All operator permissions + reversal, packages, negative credit, reports, global records (students/products), manage operator accounts; account via email invite; cannot manage supervisor/admin accounts         | `raw/decisions/supervisor.md`     |
+| Module         | Key decisions                                                                                                                                                                                             | File                              |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Student        | `name` + `class` (text); `is_full_time` bool; `balance DECIMAL(10,2)`; no enrollment/guardian                                                                                                             | `raw/decisions/aluno.md`          |
+| Product        | `name`, `price`, `category` (enum: lanche/bebida/vitamina/refeicao/sobremesa), `active`; snapshot price on sale                                                                                           | `raw/decisions/produto.md`        |
+| Sale           | Multiple items via `sale_items`; `payment_method`: credit/cash/card per transaction; reversal by supervisor/admin only                                                                                    | `raw/decisions/venda.md`          |
+| Credit/Package | Monetary R$; single pool; balance never goes negative in normal flow (sales block when `balance < total`); package: no expiry by default (`expires_at` optional), supervisor/admin only, multiple allowed | `raw/decisions/credito-pacote.md` |
+| Operations     | Cash close: not blocking (`pending` status), generates basic summary, supervisor/admin can close on behalf of operator; account creation: admin → email invite via existing activation flow               | `raw/decisions/operacoes.md`      |
+| Reports        | 5 reports: sales by period, credits added, balance by student, cash closes, active packages; supervisor/admin only; table view; no export this phase                                                      | `raw/decisions/relatorios.md`     |
+| Supervisor     | All operator permissions + reversal, packages, negative credit, reports, global records (students/products), manage operator accounts; account via email invite; cannot manage supervisor/admin accounts  | `raw/decisions/supervisor.md`     |
 
 ## Wiki (knowledge base)
 
