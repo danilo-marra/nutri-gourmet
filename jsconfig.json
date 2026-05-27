@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "."
+    "paths": {
+      "models/*": ["./models/*"],
+      "infra/*": ["./infra/*"],
+      "tests/*": ["./tests/*"]
+    }
   }
 }
