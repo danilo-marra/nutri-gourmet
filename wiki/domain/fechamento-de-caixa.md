@@ -30,6 +30,12 @@ O fechamento gera um resumo básico visível por [[supervisor]] e [[administrado
 
 [[supervisor|Supervisor]] ou [[administrador|admin]] pode fechar o caixa em nome do [[operador]]. O registro do fechamento guarda o `operator_id` (dono do turno) e o `closed_by_id` (quem executou o fechamento). (source: raw/decisions/operacoes.md)
 
+## Implementação
+
+- `POST /api/v1/cash_closes` — cria um fechamento; requer `create:cash_close` (operador+). Agrega totais de vendas não revertidas do dia via `DATE(created_at AT TIME ZONE 'UTC') = $date`. Supervisor/admin pode especificar `operator_id` no body para fechar em nome de outro operador.
+- `GET /api/v1/cash_closes` — lista todos os fechamentos; requer `read:cash_close` (supervisor+). Retorna: `id`, `operator_id`, `closed_by_id`, `date`, `total_sales`, `total_credit`, `total_cash`, `total_card`, `created_at`, `updated_at`.
+- Constraint `UNIQUE (operator_id, date)` impede fechamento duplicado; violação retorna `ValidationError` (400).
+
 ## Related pages
 
 - [[operador]]

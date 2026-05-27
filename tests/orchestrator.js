@@ -10,6 +10,7 @@ import student from "models/student.js";
 import product from "models/product.js";
 import credit from "models/credit.js";
 import sale from "models/sale.js";
+import cashClose from "models/cash_close.js";
 
 const emailHttpUrl = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_HTTP_PORT}`;
 
@@ -150,6 +151,13 @@ async function createSale(studentId, operatorId, overrides) {
   });
 }
 
+async function createCashClose(operatorId, closedById, overrides) {
+  return await cashClose.create(closedById ?? operatorId, {
+    operator_id: operatorId,
+    date: overrides?.date ?? new Date().toISOString().slice(0, 10),
+  });
+}
+
 const orchestrator = {
   waitForAllServices,
   clearDatabase,
@@ -165,6 +173,7 @@ const orchestrator = {
   createProduct,
   createCreditTransaction,
   createSale,
+  createCashClose,
 };
 
 export default orchestrator;

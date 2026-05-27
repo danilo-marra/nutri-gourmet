@@ -8,7 +8,7 @@
 
 ---
 
-Produtos são cadastrados pelo [[administrador]] e utilizados nas operações de [[venda]] pelo [[operador]]. (source: raw/prd.md)
+Produtos são cadastrados e gerenciados por [[supervisor]] ou [[administrador]], e utilizados nas operações de [[venda]] pelo [[operador]]. (source: raw/prd.md, raw/decisions/supervisor.md)
 
 ## Campos
 

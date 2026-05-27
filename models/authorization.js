@@ -38,6 +38,8 @@ const SUPERVISOR_FEATURES = [
   "read:package",
   "update:package",
   "delete:package",
+  // Fechamento de caixa
+  "read:cash_close",
   // Relatórios operacionais
   "read:report:operational",
   // Visibilidade de outros usuários
@@ -115,6 +117,9 @@ const availableFeatures = [
   "read:package",
   "update:package",
   "delete:package",
+
+  // Fechamento de caixa
+  "read:cash_close",
 
   // Relatórios
   "read:report:operational",
@@ -286,6 +291,22 @@ function filterOutput(user, feature, resource) {
       type: resource.type,
       balance_after: resource.balance_after,
       expires_at: resource.expires_at,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+    };
+  }
+
+  if (feature === "read:cash_close") {
+    return {
+      id: resource.id,
+      operator_id: resource.operator_id,
+      operator_username: resource.operator_username,
+      closed_by_id: resource.closed_by_id,
+      date: resource.date,
+      total_sales: resource.total_sales,
+      total_credit: resource.total_credit,
+      total_cash: resource.total_cash,
+      total_card: resource.total_card,
       created_at: resource.created_at,
       updated_at: resource.updated_at,
     };
