@@ -23,7 +23,8 @@ Isso se traduz diretamente no RBAC já implementado via `users.role` e `authoriz
 | Realizar vendas                      | ✅           | ✅             | ✅                |
 | Registrar consumo de crédito         | ✅           | ✅             | ✅                |
 | Fechar caixa do próprio turno        | ✅           | ✅             | ✅                |
-| Estornar vendas                      | ❌           | ✅             | ✅                |
+| Cancelar própria venda (5 min)       | ✅           | ✅             | ✅                |
+| Estornar qualquer venda (sem prazo)  | ❌           | ✅             | ✅                |
 | Registrar pacotes                    | ❌           | ✅             | ✅                |
 | Creditar saldo negativo              | ❌           | ✅             | ✅                |
 | Fechar caixa em nome de operador     | ❌           | ✅             | ✅                |

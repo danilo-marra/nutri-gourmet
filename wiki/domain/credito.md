@@ -18,11 +18,13 @@ Saldo monetário em R$ — campo `balance DECIMAL(10,2)` no cadastro do aluno. C
 
 ### Saldo negativo
 
-Venda com saldo insuficiente é permitida com confirmação explícita do [[operador]]. Uma vez negativo, apenas **supervisor** ou **admin** podem adicionar crédito — operador não pode editar `balance < 0`. (source: raw/decisions/credito-pacote.md)
+**Adição de crédito**: operador pode creditar mesmo resultando em `balance < 0`. Uma vez negativo, operador fica bloqueado de novos créditos — apenas supervisor ou admin podem creditar. (source: raw/decisions/credito-pacote.md)
+
+**Venda a crédito**: saldo insuficiente **bloqueia a venda** — não há confirmação implícita. Ver [[venda]]. (source: raw/decisions/venda.md)
 
 ### Adição de crédito
 
-O mecanismo operacional (caixa físico, transferência) será detalhado no módulo de créditos. O schema deve incluir tabela `credit_transactions` com campo `type` (`manual`, `package`) para auditoria.
+Implementado via `POST /api/v1/students/:id/credits`. A tabela `credit_transactions` registra cada evento com `type` (`manual` ou `package`), `amount`, `balance_after` e `operator_id` para auditoria. (source: raw/decisions/credito-pacote.md)
 
 ## Related pages
 

@@ -78,6 +78,28 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-27 — Implementação do módulo de Vendas + lint da wiki
+
+**Arquivo de decisão atualizado (1):**
+
+- `raw/decisions/venda.md` — adicionadas decisões: saldo insuficiente bloqueia a venda; estorno via soft delete (`reversed_at`/`reversed_by`); operador cancela própria venda em até 5 minutos
+
+**CLAUDE.md atualizado:**
+
+- `models/` — adicionado `sale`
+- `tests/orchestrator.js` — adicionado `createSale(studentId, operatorId, overrides?)`
+
+**Páginas wiki corrigidas (lint):**
+
+- `wiki/domain/venda.md` — schema atualizado (reversed_at, reversed_by, updated_at); seção Estorno substituída por tabela Cancelamento/Estorno com regras de janela; nova seção Saldo Insuficiente
+- `wiki/domain/aluno.md` — seção Saldo Negativo desambiguada: regra de crédito vs. regra de venda
+- `wiki/domain/credito.md` — seção Saldo Negativo desambiguada; seção Adição de Crédito atualizada para presente (módulo implementado)
+- `wiki/domain/operador.md` — resolvidas duas `[needs verification]`: criação de conta (convite por e-mail) e cancelamento de vendas (5 min)
+- `wiki/rules/seguranca.md` — tabela de permissões: linha "Estornar vendas" separada em "Cancelar própria venda (5 min)" (✅ operador) e "Estornar qualquer venda" (❌ operador)
+- `wiki/index.md` — descrição de Venda atualizada
+
+---
+
 ## 2026-05-27 — Q&A de domínio: Supervisor
 
 **Arquivo de decisão criado (1):**

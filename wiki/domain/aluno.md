@@ -27,7 +27,9 @@ Flag `is_full_time` no cadastro do aluno. Determina elegibilidade a [[pacote|pac
 
 ### Saldo negativo
 
-Venda com saldo insuficiente é permitida com confirmação explícita do operador. Uma vez que `balance < 0`, o **operador não pode editar o saldo** — apenas supervisor ou admin podem creditar valores. (source: raw/decisions/aluno.md)
+**Adição de crédito**: operador pode creditar mesmo que o resultado seja `balance < 0`. Uma vez negativo, operador fica bloqueado de novos créditos — apenas supervisor ou admin podem creditar. (source: raw/decisions/aluno.md)
+
+**Venda a crédito**: se `balance < total` da venda, a operação é **bloqueada** com erro. O aluno precisa ter saldo suficiente antes de comprar via crédito. (source: raw/decisions/venda.md)
 
 ## Related pages
 

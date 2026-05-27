@@ -30,7 +30,7 @@
 
 - [Aluno](domain/aluno.md) — campos: name, class, is_full_time, balance; regras de saldo negativo definidas
 - [Produto](domain/produto.md) — campos: name, price, category (enum 5 valores), active; snapshot de preço na venda
-- [Venda](domain/venda.md) — múltiplos itens (sales + sale_items); pagamento: credit/cash/card; estorno: supervisor/admin
+- [Venda](domain/venda.md) — múltiplos itens (sales + sale_items); pagamento: credit/cash/card; crédito insuficiente bloqueia; cancelamento (5 min) pelo operador; estorno sem prazo por supervisor/admin
 - [Crédito](domain/credito.md) — saldo monetário R$; saldo negativo com confirmação do operador; pool único
 - [Pacote](domain/pacote.md) — credita R$ no saldo; validade opcional (expires_at); apenas supervisor/admin registra; múltiplos permitidos
 - [Fechamento de Caixa](domain/fechamento-de-caixa.md) — não bloqueante; gera resumo básico; supervisor/admin pode fechar em nome do operador
