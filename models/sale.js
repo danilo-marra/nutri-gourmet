@@ -95,10 +95,17 @@ async function create(operatorId, values) {
       await client.query("BEGIN");
 
       if (paymentMethod === "credit") {
-        await client.query({
-          text: `UPDATE students SET balance = balance - $1 WHERE id = $2`,
+        const debit = await client.query({
+          text: `UPDATE students SET balance = balance - $1 WHERE id = $2 AND balance >= $1`,
           values: [total, studentId],
         });
+        if (debit.rowCount === 0) {
+          throw new ValidationError({
+            message: "Saldo insuficiente para realizar a venda.",
+            action:
+              "Verifique o saldo do aluno ou escolha outra forma de pagamento.",
+          });
+        }
       }
 
       const saleResult = await client.query({
