@@ -77,6 +77,56 @@ describe("PATCH /api/v1/products/[id]", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
     });
 
+    test("Sending price: null should return 400 ValidationError", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const createdProduct = await orchestrator.createProduct();
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/products/${createdProduct.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ price: null }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ValidationError");
+      expect(responseBody.status_code).toBe(400);
+    });
+
+    test("Sending name: '' should return 400 ValidationError", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const createdProduct = await orchestrator.createProduct();
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/products/${createdProduct.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ name: "" }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ValidationError");
+      expect(responseBody.status_code).toBe(400);
+    });
+
     test("Non-existent id should return 404 NotFoundError", async () => {
       const supervisor = await orchestrator.createUser({ role: "supervisor" });
       const supervisorSession = await orchestrator.createSession(supervisor.id);

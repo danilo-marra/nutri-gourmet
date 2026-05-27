@@ -116,6 +116,23 @@ async function findOneById(id) {
 async function update(id, values) {
   const currentProduct = await findOneById(id);
 
+  if ("name" in values && !values.name) {
+    throw new ValidationError({
+      message: "O campo 'name' não pode ser vazio.",
+      action: "Informe um nome válido para o produto.",
+    });
+  }
+
+  if (
+    "price" in values &&
+    (values.price === null || values.price === undefined)
+  ) {
+    throw new ValidationError({
+      message: "O campo 'price' não pode ser nulo.",
+      action: "Informe um preço válido para o produto.",
+    });
+  }
+
   if ("category" in values && !VALID_CATEGORIES.includes(values.category)) {
     throw new ValidationError({
       message: `A categoria '${values.category}' é inválida.`,
