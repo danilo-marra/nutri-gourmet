@@ -3,5 +3,4 @@ node_modules
 CLAUDE.local.md
 .claude/settings.local.json
 .obsidian/
-raw/decisions/
-wiki/*
+
