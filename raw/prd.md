@@ -1,7 +1,3 @@
-Este documento de Requisitos de Produto (PRD) detalha a proposta de desenvolvimento de um sistema único e centralizado para a gestão de cantinas escolares, visando substituir a fragmentação atual de planilhas e sistemas isolados.
-
----
-
 # Sistema Integrado de Gestão de Cantina
 
 ## 1. Visão Geral e Objetivo

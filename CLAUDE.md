@@ -48,30 +48,90 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 - New API endpoints: handler in `pages/api/v1/<resource>/<verb>.js` pattern is implicit — file name is the route; HTTP verb is the handler method on `next-connect`. Always wire `controller.errorHandlers`.
 - Tests: one `*.test.js` per HTTP verb, mirroring the API path. `beforeAll` does `waitForAllServices → clearDatabase → runPendingMigrations`.
 
-## PRD open questions (resolve before implementing each module)
+## Domain decisions
 
-These are gaps identified before starting domain modules. Run a Q&A session with the user per module before scaffolding schema or endpoints.
+Decisions live in `raw/decisions/` (one file per module). Read the relevant file before scaffolding schema or endpoints for that module. Summary:
 
-### Domain model definitions (all modules blocked on these)
+| Module         | Key decisions                                                                                                                                                                                                    | File                              |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Student        | `name` + `class` (text); `is_full_time` bool; `balance DECIMAL(10,2)`; no enrollment/guardian                                                                                                                    | `raw/decisions/aluno.md`          |
+| Product        | `name`, `price`, `category` (enum: lanche/bebida/vitamina/refeicao/sobremesa), `active`; snapshot price on sale                                                                                                  | `raw/decisions/produto.md`        |
+| Sale           | Multiple items via `sale_items`; `payment_method`: credit/cash/card per transaction; reversal by supervisor/admin only                                                                                           | `raw/decisions/venda.md`          |
+| Credit/Package | Monetary R$; single pool; negative balance with operator confirmation but operator locked out when `balance < 0`; package: no expiry by default (`expires_at` optional), supervisor/admin only, multiple allowed | `raw/decisions/credito-pacote.md` |
+| Operations     | Cash close: not blocking (`pending` status), generates basic summary, supervisor/admin can close on behalf of operator; account creation: admin → email invite via existing activation flow                      | `raw/decisions/operacoes.md`      |
+| Reports        | 5 reports: sales by period, credits added, balance by student, cash closes, active packages; supervisor/admin only; table view; no export this phase                                                             | `raw/decisions/relatorios.md`     |
 
-- **Student**: required fields? (name, class/grade, enrollment id, guardian link?)
-- **Product**: category? active/inactive flag? price history needed?
-- **Sale**: one product per sale or multiple line items per transaction? payment method per line (credit vs. cash)?
-- **Credit/Package**: does a package credit a monetary amount (R$) or a fixed number of consumptions?
+## Wiki (knowledge base)
 
-### Business rules (clarify per module)
+`raw/` holds immutable source documents — never modify files there. `wiki/` holds markdown pages maintained by Claude. `wiki/index.md` is the table of contents; `wiki/log.md` is an append-only record of all operations.
 
-- **Negative credit**: can a student buy with insufficient balance? Who can authorize overrides?
-- **Price changes**: do product price changes affect historical sale records?
-- **Reversal (estorno)**: can the operador reverse any of their own sales, or only same-day ones?
-- **Cash close (fechamento de caixa)**: is it a required daily action? What happens if not closed on a given day?
+### Ingest workflow
 
-### Missing flows
+When a new source is added to `raw/` and you are asked to ingest it:
 
-- **Password recovery**: not in PRD; decide if it's in scope for the current phase before any auth work.
-- **Operador/Supervisor account creation**: how does admin create new accounts? Direct API call only, or email invitation flow?
+1. Read the full source document.
+2. Discuss key takeaways with the user before writing anything.
+3. Create a summary page in `wiki/` named after the source.
+4. Create or update concept pages for each major idea or entity.
+5. Add wiki-links (`[[page-name]]`) to connect related pages.
+6. Update `wiki/index.md` with new pages and one-line descriptions.
+7. Append an entry to `wiki/log.md` with the date, source name, and what changed.
 
-### Reports (define before implementing)
+A single source may touch 10–15 wiki pages. That is normal. Use subfolders `wiki/domain/` for entities and `wiki/rules/` for business rules.
 
-- **Operational report**: filtering criteria, output format, date range granularity.
-- **Financial report**: same — currently too vague to spec.
+### Page format
+
+```markdown
+# Page Title
+
+**Summary**: One to two sentences describing this page.
+
+**Sources**: List of raw source files this page draws from.
+
+**Last updated**: Date of most recent update.
+
+---
+
+Main content goes here. Use clear headings and short paragraphs.
+Link to related concepts using [[wiki-links]] throughout the text.
+
+## Related pages
+
+- [[related-concept-1]]
+- [[related-concept-2]]
+```
+
+### Citation rules
+
+- Every factual claim should reference its source file as `(source: filename.md)`.
+- If two sources disagree, note the contradiction explicitly.
+- If a claim has no source, mark it as `[needs verification]`.
+
+### Question answering
+
+When the user asks a question:
+
+1. Read `wiki/index.md` first to find relevant pages.
+2. Read those pages and synthesize an answer.
+3. Cite specific wiki pages in the response.
+4. If the answer is not in the wiki, say so clearly.
+5. If the answer is valuable, offer to save it as a new wiki page.
+
+### Lint
+
+When asked to lint or audit the wiki:
+
+- Check for contradictions between pages.
+- Find orphan pages (no inbound links from other pages).
+- Identify concepts mentioned without their own page.
+- Flag claims that may be outdated based on newer sources.
+- Check that all pages follow the page format above.
+- Report findings as a numbered list with suggested fixes.
+
+### Rules
+
+- Never modify files in `raw/` directly — exception: `raw/decisions/` is writable (decision records from Q&A sessions).
+- Always update `wiki/index.md` and `wiki/log.md` after changes.
+- Keep page names lowercase with hyphens (e.g. `fechamento-de-caixa.md`).
+- Write in clear, plain language.
+- When uncertain about categorization, ask the user.
