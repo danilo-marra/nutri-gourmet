@@ -114,6 +114,26 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-27 — Implementação do módulo de Fechamento de Caixa + lint da wiki
+
+**CLAUDE.md atualizado:**
+
+- `models/` — adicionado `cash_close`
+- `tests/orchestrator.js` — adicionado `createCashClose(operatorId, closedById, overrides?)`
+
+**Páginas wiki corrigidas (lint):**
+
+- `wiki/domain/fechamento-de-caixa.md` — seção Implementação adicionada: endpoints POST/GET, parâmetros, constraint de duplicata
+- `wiki/domain/produto.md` — linha de abertura corrigida: produtos são cadastrados por supervisor **ou** admin (não só admin)
+- `wiki/rules/relatorios.md` — aviso de inconsistência adicionado: `read:report:financial` é só admin no RBAC, mas decisão diz todos os 5 são supervisor+; sinalizado para resolver antes de implementar relatórios
+
+**Não alterado (justificado):**
+
+- `wiki/domain/administrador.md` — `[needs verification]` sobre criação e multiplicidade da conta admin permanecem; sem fonte nova que resolva
+- `wiki/rules/ui-ux.md` — não é órfã; `prd-summary.md` linka via `[[ui-ux]]`
+
+---
+
 ## 2026-05-27 — Remoção de guard dead code em crédito
 
 **Código alterado (1):**
