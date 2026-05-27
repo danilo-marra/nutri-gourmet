@@ -114,6 +114,18 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-27 — Correção RBAC: read:report:financial para supervisor
+
+**`models/authorization.js` atualizado:**
+
+- `read:report:financial` movido de `ADMIN_FEATURES` exclusivo para `SUPERVISOR_FEATURES` — alinha com a decisão de que todos os 5 relatórios são acessíveis por supervisor e admin
+
+**`wiki/rules/relatorios.md` atualizado:**
+
+- Aviso de inconsistência removido; nota de implementação adicionada
+
+---
+
 ## 2026-05-27 — Implementação do módulo de Fechamento de Caixa + lint da wiki
 
 **CLAUDE.md atualizado:**
