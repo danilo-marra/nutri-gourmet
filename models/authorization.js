@@ -300,6 +300,7 @@ function filterOutput(user, feature, resource) {
     return {
       id: resource.id,
       operator_id: resource.operator_id,
+      operator_username: resource.operator_username,
       closed_by_id: resource.closed_by_id,
       date: resource.date,
       total_sales: resource.total_sales,

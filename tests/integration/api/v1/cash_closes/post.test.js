@@ -48,6 +48,25 @@ describe("POST /api/v1/cash_closes", () => {
   });
 
   describe("Operador user", () => {
+    test("Invalid date returns 400", async () => {
+      const operador = await orchestrator.createUser({ role: "operador" });
+      const operadorSession = await orchestrator.createSession(operador.id);
+
+      const response = await fetch("http://localhost:3000/api/v1/cash_closes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${operadorSession.token}`,
+        },
+        body: JSON.stringify({ date: "2026-99-99" }),
+      });
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ValidationError");
+    });
+
     test("Closes own shift with no sales (totals are zero)", async () => {
       const operador = await orchestrator.createUser({ role: "operador" });
       const operadorSession = await orchestrator.createSession(operador.id);
@@ -68,6 +87,7 @@ describe("POST /api/v1/cash_closes", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         operator_id: operador.id,
+        operator_username: operador.username,
         closed_by_id: operador.id,
         date: "2026-01-01",
         total_sales: "0.00",

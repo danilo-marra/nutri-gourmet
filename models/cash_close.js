@@ -2,6 +2,17 @@ import database from "infra/database.js";
 import { ValidationError } from "infra/errors.js";
 
 async function create(closedById, { operator_id, date }) {
+  if (
+    !date ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+    isNaN(new Date(date + "T00:00:00Z").getTime())
+  ) {
+    throw new ValidationError({
+      message: "O campo 'date' deve ser uma data válida no formato YYYY-MM-DD.",
+      action: "Informe uma data válida e tente novamente.",
+    });
+  }
+
   try {
     const results = await database.query({
       text: `
@@ -17,17 +28,32 @@ async function create(closedById, { operator_id, date }) {
           operator_id = $1
           AND DATE(created_at AT TIME ZONE 'UTC') = $3::date
           AND reversed_at IS NULL
+      ),
+      inserted AS (
+        INSERT INTO
+          cash_closes (operator_id, closed_by_id, date, total_sales, total_credit, total_cash, total_card)
+        SELECT
+          $1, $2, $3, total_sales, total_credit, total_cash, total_card
+        FROM
+          totals
+        RETURNING *
       )
-      INSERT INTO
-        cash_closes (operator_id, closed_by_id, date, total_sales, total_credit, total_cash, total_card)
       SELECT
-        $1, $2, $3, total_sales, total_credit, total_cash, total_card
+        ins.id,
+        ins.operator_id,
+        ins.closed_by_id,
+        ins.date::text AS date,
+        ins.total_sales,
+        ins.total_credit,
+        ins.total_cash,
+        ins.total_card,
+        ins.created_at,
+        ins.updated_at,
+        u.username AS operator_username
       FROM
-        totals
-      RETURNING
-        id, operator_id, closed_by_id, date::text AS date,
-        total_sales, total_credit, total_cash, total_card,
-        created_at, updated_at
+        inserted ins
+      JOIN
+        users u ON u.id = ins.operator_id
       ;`,
       values: [operator_id, closedById, date],
     });
@@ -49,14 +75,24 @@ async function findAll() {
   const results = await database.query({
     text: `
     SELECT
-      id, operator_id, closed_by_id, date::text AS date,
-      total_sales, total_credit, total_cash, total_card,
-      created_at, updated_at
+      cc.id,
+      cc.operator_id,
+      cc.closed_by_id,
+      cc.date::text AS date,
+      cc.total_sales,
+      cc.total_credit,
+      cc.total_cash,
+      cc.total_card,
+      cc.created_at,
+      cc.updated_at,
+      u.username AS operator_username
     FROM
-      cash_closes
+      cash_closes cc
+    JOIN
+      users u ON u.id = cc.operator_id
     ORDER BY
-      date DESC,
-      created_at DESC
+      cc.date DESC,
+      cc.created_at DESC
     ;`,
   });
   return results.rows;

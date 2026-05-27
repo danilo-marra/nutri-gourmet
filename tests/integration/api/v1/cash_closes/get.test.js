@@ -75,6 +75,7 @@ describe("GET /api/v1/cash_closes", () => {
       expect(close).toEqual({
         id: close.id,
         operator_id: operador.id,
+        operator_username: operador.username,
         closed_by_id: supervisor.id,
         date: "2026-02-01",
         total_sales: "0.00",
