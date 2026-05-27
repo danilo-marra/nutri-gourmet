@@ -243,6 +243,20 @@ function filterOutput(user, feature, resource) {
     };
   }
 
+  if (feature === "read:credit") {
+    return {
+      id: resource.id,
+      student_id: resource.student_id,
+      operator_id: resource.operator_id,
+      amount: resource.amount,
+      type: resource.type,
+      balance_after: resource.balance_after,
+      expires_at: resource.expires_at,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+    };
+  }
+
   if (feature === "read:status") {
     const output = {
       updated_at: resource.updated_at,

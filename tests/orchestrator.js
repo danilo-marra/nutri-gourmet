@@ -8,6 +8,7 @@ import session from "models/session";
 import activation from "models/activation.js";
 import student from "models/student.js";
 import product from "models/product.js";
+import credit from "models/credit.js";
 
 const emailHttpUrl = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_HTTP_PORT}`;
 
@@ -123,6 +124,18 @@ async function createProduct(overrides) {
   });
 }
 
+async function createCreditTransaction(studentId, operatorId, overrides) {
+  return await credit.create(
+    studentId,
+    {
+      amount: overrides?.amount ?? 10.0,
+      type: overrides?.type ?? "manual",
+      expires_at: overrides?.expires_at ?? null,
+    },
+    operatorId,
+  );
+}
+
 const orchestrator = {
   waitForAllServices,
   clearDatabase,
@@ -136,6 +149,7 @@ const orchestrator = {
   addFeaturesToUser,
   createStudent,
   createProduct,
+  createCreditTransaction,
 };
 
 export default orchestrator;
