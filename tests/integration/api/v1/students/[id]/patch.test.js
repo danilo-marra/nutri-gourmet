@@ -88,6 +88,31 @@ describe("PATCH /api/v1/students/[id]", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
     });
 
+    test("Sending name: '' should return 400 ValidationError", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const createdStudent = await orchestrator.createStudent();
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/students/${createdStudent.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ name: "" }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ValidationError");
+      expect(responseBody.status_code).toBe(400);
+    });
+
     test("With nonexistent id", async () => {
       const supervisor = await orchestrator.createUser({ role: "supervisor" });
       const supervisorSession = await orchestrator.createSession(supervisor.id);

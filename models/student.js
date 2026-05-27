@@ -89,6 +89,13 @@ async function findOneById(id) {
 async function update(id, values) {
   const currentStudent = await findOneById(id);
 
+  if ("name" in values && !values.name) {
+    throw new ValidationError({
+      message: "O campo 'name' não pode ser vazio.",
+      action: "Informe um nome válido para o aluno.",
+    });
+  }
+
   const studentWithNewValues = {
     ...currentStudent,
     name: values.name ?? currentStudent.name,
