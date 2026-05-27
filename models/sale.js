@@ -4,7 +4,6 @@ import student from "models/student.js";
 import { NotFoundError, ValidationError } from "infra/errors.js";
 
 const PAYMENT_METHODS = ["credit", "cash", "card"];
-const CANCEL_WINDOW_MS = 5 * 60 * 1000;
 
 async function create(operatorId, values) {
   const { student_id, payment_method, items } = values;
