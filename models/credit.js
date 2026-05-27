@@ -101,6 +101,24 @@ async function findAllByStudentId(studentId) {
   }
 }
 
-const credit = { create, findAllByStudentId };
+async function findPackagesByStudentId(studentId) {
+  const results = await database.query({
+    text: `
+    SELECT
+      *
+    FROM
+      credit_transactions
+    WHERE
+      student_id = $1
+      AND type = 'package'
+    ORDER BY
+      created_at DESC
+    ;`,
+    values: [studentId],
+  });
+  return results.rows;
+}
+
+const credit = { create, findAllByStudentId, findPackagesByStudentId };
 
 export default credit;
