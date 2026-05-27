@@ -38,7 +38,7 @@ async function postHandler(request, response) {
     });
   }
 
-  const foundStudent = await student.findOneById(id);
+  await student.findOneById(id);
 
   const newTransaction = await credit.create(
     id,
