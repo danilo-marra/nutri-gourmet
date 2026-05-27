@@ -111,6 +111,7 @@ async function findPackagesByStudentId(studentId) {
     WHERE
       student_id = $1
       AND type = 'package'
+      AND (expires_at IS NULL OR expires_at > NOW())
     ORDER BY
       created_at DESC
     ;`,
