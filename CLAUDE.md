@@ -60,6 +60,7 @@ Decisions live in `raw/decisions/` (one file per module). Read the relevant file
 | Credit/Package | Monetary R$; single pool; negative balance with operator confirmation but operator locked out when `balance < 0`; package: no expiry by default (`expires_at` optional), supervisor/admin only, multiple allowed | `raw/decisions/credito-pacote.md` |
 | Operations     | Cash close: not blocking (`pending` status), generates basic summary, supervisor/admin can close on behalf of operator; account creation: admin → email invite via existing activation flow                      | `raw/decisions/operacoes.md`      |
 | Reports        | 5 reports: sales by period, credits added, balance by student, cash closes, active packages; supervisor/admin only; table view; no export this phase                                                             | `raw/decisions/relatorios.md`     |
+| Supervisor     | All operator permissions + reversal, packages, negative credit, reports, global records (students/products), manage operator accounts; account via email invite; cannot manage supervisor/admin accounts         | `raw/decisions/supervisor.md`     |
 
 ## Wiki (knowledge base)
 
