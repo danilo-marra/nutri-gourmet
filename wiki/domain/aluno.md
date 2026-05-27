@@ -27,9 +27,7 @@ Flag `is_full_time` no cadastro do aluno. Determina elegibilidade a [[pacote|pac
 
 ### Saldo negativo
 
-Com a implementação atual, nenhuma operação normal deixa o saldo negativo: vendas a crédito são bloqueadas quando `balance < total` (source: raw/decisions/venda.md), e adição de crédito sempre soma um valor positivo.
-
-O sistema mantém uma guarda em `credit.js`: se `balance < 0` por qualquer motivo (ex: ajuste direto no banco), apenas **supervisor** ou **admin** podem creditar — operador fica bloqueado. (source: raw/decisions/credito-pacote.md)
+Nenhuma operação normal deixa o saldo negativo: vendas a crédito são bloqueadas quando `balance < total` (source: raw/decisions/venda.md), e adição de crédito sempre soma um valor positivo.
 
 ## Related pages
 

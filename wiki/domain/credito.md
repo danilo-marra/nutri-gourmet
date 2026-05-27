@@ -18,9 +18,7 @@ Saldo monetário em R$ — campo `balance DECIMAL(10,2)` no cadastro do aluno. C
 
 ### Saldo negativo
 
-Com a implementação atual, nenhuma operação normal deixa o saldo negativo: adição de crédito sempre soma um valor positivo ao `balance`, e vendas a crédito são bloqueadas quando `balance < total`. (source: raw/decisions/venda.md)
-
-Se o saldo estiver negativo por qualquer razão (ex: ajuste manual no banco), apenas **supervisor** ou **admin** podem adicionar crédito — operador fica bloqueado. Isso é uma guarda defensiva, não um fluxo normal. (source: raw/decisions/credito-pacote.md)
+Nenhuma operação normal deixa o saldo negativo: adição de crédito sempre soma um valor positivo ao `balance`, e vendas a crédito são bloqueadas quando `balance < total`. (source: raw/decisions/venda.md)
 
 ### Adição de crédito
 

@@ -111,3 +111,16 @@ Append-only record of all wiki operations.
 - `wiki/domain/supervisor.md` — removidas `[needs verification]`; permissões, restrições e criação de conta documentados
 - `wiki/rules/seguranca.md` — tabela de permissões expandida com coluna Supervisor totalmente preenchida e novas linhas (estorno, pacotes, crédito negativo, delegação de caixa, gestão de operadores)
 - `wiki/index.md` — descrição do Supervisor corrigida; entrada para `raw/decisions/supervisor.md` adicionada
+
+---
+
+## 2026-05-27 — Remoção de guard dead code em crédito
+
+**Código alterado (1):**
+
+- `pages/api/v1/students/[id]/credits/index.js` — removida guarda de saldo negativo no `postHandler`; com vendas bloqueando quando `balance < total`, o saldo nunca fica negativo por operação normal, tornando o guard inacessível
+
+**Páginas wiki atualizadas (2):**
+
+- `wiki/domain/credito.md` — seção Saldo Negativo simplificada; removida menção à guarda defensiva
+- `wiki/domain/aluno.md` — seção Saldo Negativo simplificada; removida menção à guarda em `credit.js`
