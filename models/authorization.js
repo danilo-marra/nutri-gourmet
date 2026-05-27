@@ -40,8 +40,9 @@ const SUPERVISOR_FEATURES = [
   "delete:package",
   // Fechamento de caixa
   "read:cash_close",
-  // Relatórios operacionais
+  // Relatórios
   "read:report:operational",
+  "read:report:financial",
   // Visibilidade de outros usuários
   "read:user",
 ];
@@ -51,8 +52,6 @@ const ADMIN_FEATURES = [
   // Gestão de usuários
   "create:user",
   "update:user:others",
-  // Relatórios financeiros
-  "read:report:financial",
   // Sistema
   "read:status:all",
   "read:migration",

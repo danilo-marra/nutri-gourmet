@@ -12,7 +12,7 @@
 
 Todos os relatórios são acessíveis por [[supervisor]] e [[administrador]]. O [[operador]] não acessa relatórios. (source: raw/decisions/relatorios.md)
 
-> ⚠️ **Inconsistência a resolver antes de implementar:** `models/authorization.js` define `read:report:operational` em `SUPERVISOR_FEATURES` e `read:report:financial` apenas em `ADMIN_FEATURES`. A decisão diz que todos os 5 são supervisor+, sem distinção operacional/financeiro. Ao implementar o módulo de relatórios, escolher entre: (a) adicionar `read:report:financial` ao supervisor e usar apenas essa feature; ou (b) mapear cada relatório a uma das duas features e atualizar a decisão.
+`SUPERVISOR_FEATURES` inclui tanto `read:report:operational` quanto `read:report:financial`.
 
 ## Relatórios disponíveis
 
