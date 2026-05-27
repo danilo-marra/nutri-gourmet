@@ -219,6 +219,30 @@ function filterOutput(user, feature, resource) {
     });
   }
 
+  if (feature === "read:student") {
+    return {
+      id: resource.id,
+      name: resource.name,
+      class: resource.class,
+      is_full_time: resource.is_full_time,
+      balance: resource.balance,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+    };
+  }
+
+  if (feature === "read:product") {
+    return {
+      id: resource.id,
+      name: resource.name,
+      price: resource.price,
+      category: resource.category,
+      active: resource.active,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+    };
+  }
+
   if (feature === "read:status") {
     const output = {
       updated_at: resource.updated_at,
