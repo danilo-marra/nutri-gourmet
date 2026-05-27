@@ -40,6 +40,10 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 - `tests/integration/api/v1/**` mirrors `pages/api/v1/**` path-for-path. Additional subdirectories: `_use-cases/` (end-to-end flows), `infra/` (infra tests e.g. email), `unit/` (unit tests for models e.g. `authorization`).
 - Shared setup lives in `tests/orchestrator.js` (use `waitForAllServices`, `clearDatabase`, `runPendingMigrations`, `createUser({ role? })`, `createSession`, `getLastEmail`, `extractUUID`, `activateUser`, `addFeaturesToUser`, `createStudent`, `createProduct`, `createCreditTransaction(studentId, operatorId, overrides?)`).
 
+## Git workflow
+
+Before editing any file in this repo, check the current branch with `git branch --show-current`. If it is `main`, stop and create a feature branch (`git checkout -b <type>/<feature-name>`) before proceeding. Never commit directly to `main`.
+
 ## Conventions
 
 - 2-space indent; Prettier 3 is the source of truth (don't hand-format).

@@ -243,6 +243,26 @@ function filterOutput(user, feature, resource) {
     };
   }
 
+  if (feature === "read:sale" || feature === "read:sale:self") {
+    return {
+      id: resource.id,
+      student_id: resource.student_id,
+      operator_id: resource.operator_id,
+      payment_method: resource.payment_method,
+      total: resource.total,
+      reversed_at: resource.reversed_at,
+      reversed_by: resource.reversed_by,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+      items: (resource.items ?? []).map((item) => ({
+        id: item.id,
+        product_id: item.product_id,
+        qty: item.qty,
+        unit_price: item.unit_price,
+      })),
+    };
+  }
+
   if (feature === "read:credit") {
     return {
       id: resource.id,
