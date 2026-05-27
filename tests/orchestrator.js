@@ -9,6 +9,7 @@ import activation from "models/activation.js";
 import student from "models/student.js";
 import product from "models/product.js";
 import credit from "models/credit.js";
+import sale from "models/sale.js";
 
 const emailHttpUrl = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_HTTP_PORT}`;
 
@@ -136,6 +137,19 @@ async function createCreditTransaction(studentId, operatorId, overrides) {
   );
 }
 
+async function createSale(studentId, operatorId, overrides) {
+  let items = overrides?.items;
+  if (!items) {
+    const newProduct = await createProduct();
+    items = [{ product_id: newProduct.id, qty: 1 }];
+  }
+  return await sale.create(operatorId, {
+    student_id: studentId,
+    payment_method: overrides?.payment_method ?? "cash",
+    items,
+  });
+}
+
 const orchestrator = {
   waitForAllServices,
   clearDatabase,
@@ -150,6 +164,7 @@ const orchestrator = {
   createStudent,
   createProduct,
   createCreditTransaction,
+  createSale,
 };
 
 export default orchestrator;

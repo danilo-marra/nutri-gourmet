@@ -23,10 +23,13 @@ O Operador é o usuário que executa as operações rotineiras da cantina. Sua v
 - Relatórios financeiros globais
 - Dados de desempenho de vendas agregados
 
-## Perguntas em aberto
+## Criação da conta
 
-- Como a conta do Operador é criada? Admin faz chamada direta à API ou há fluxo de convite por e-mail? `[needs verification]`
-- O Operador pode reverter (estornar) suas próprias vendas? Apenas no mesmo dia ou sem restrição de prazo? `[needs verification]`
+Admin cria via painel → convite por e-mail usando o fluxo de ativação existente (`models/activation.js`). Mesmo fluxo do [[supervisor]]. (source: raw/decisions/operacoes.md)
+
+## Cancelamento de vendas
+
+O operador pode **cancelar a própria venda em até 5 minutos** após o registro (feature `delete:sale:self`). Após esse prazo, apenas [[supervisor]] ou [[administrador]] podem estornar. (source: raw/decisions/venda.md)
 
 ## Related pages
 

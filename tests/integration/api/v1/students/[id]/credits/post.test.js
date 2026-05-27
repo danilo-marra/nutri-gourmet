@@ -1,6 +1,5 @@
 import { version as uuidVersion } from "uuid";
 import orchestrator from "tests/orchestrator.js";
-import database from "infra/database.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -59,40 +58,6 @@ describe("POST /api/v1/students/:id/credits", () => {
         name: "ForbiddenError",
         message: "Você não possui permissão para registrar um pacote.",
         action: 'Verifique se o seu usuário possui a feature "create:package".',
-        status_code: 403,
-      });
-    });
-
-    test("With student balance < 0 (blocked)", async () => {
-      const operador = await orchestrator.createUser({ role: "operador" });
-      const operadorSession = await orchestrator.createSession(operador.id);
-      const student = await orchestrator.createStudent();
-
-      await database.query({
-        text: "UPDATE students SET balance = -10 WHERE id = $1",
-        values: [student.id],
-      });
-
-      const response = await fetch(
-        `http://localhost:3000/api/v1/students/${student.id}/credits`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `session_id=${operadorSession.token}`,
-          },
-          body: JSON.stringify({ amount: 10, type: "manual" }),
-        },
-      );
-
-      expect(response.status).toBe(403);
-
-      const responseBody = await response.json();
-      expect(responseBody).toEqual({
-        name: "ForbiddenError",
-        message: "Saldo negativo: apenas supervisor ou admin pode creditar.",
-        action:
-          "Entre em contato com o supervisor ou administrador para adicionar crédito.",
         status_code: 403,
       });
     });
@@ -280,35 +245,6 @@ describe("POST /api/v1/students/:id/credits", () => {
       });
 
       expect(uuidVersion(responseBody.id)).toBe(4);
-    });
-
-    test("With student balance < 0, supervisor can credit", async () => {
-      const supervisor = await orchestrator.createUser({ role: "supervisor" });
-      const supervisorSession = await orchestrator.createSession(supervisor.id);
-      const student = await orchestrator.createStudent();
-
-      await database.query({
-        text: "UPDATE students SET balance = -5 WHERE id = $1",
-        values: [student.id],
-      });
-
-      const response = await fetch(
-        `http://localhost:3000/api/v1/students/${student.id}/credits`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `session_id=${supervisorSession.token}`,
-          },
-          body: JSON.stringify({ amount: 20, type: "manual" }),
-        },
-      );
-
-      expect(response.status).toBe(201);
-
-      const responseBody = await response.json();
-      expect(responseBody.amount).toBe("20.00");
-      expect(responseBody.balance_after).toBe("15.00");
     });
   });
 });

@@ -1,4 +1,5 @@
 #!/bin/sh
 npm run lint:prettier:fix
 git add -A
+npm run lint:eslint:check
 npm run check-secrets

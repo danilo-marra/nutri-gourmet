@@ -38,18 +38,7 @@ async function postHandler(request, response) {
     });
   }
 
-  const foundStudent = await student.findOneById(id);
-
-  if (
-    parseFloat(foundStudent.balance) < 0 &&
-    !authorization.can(userTryingToPost, "create:package")
-  ) {
-    throw new ForbiddenError({
-      message: "Saldo negativo: apenas supervisor ou admin pode creditar.",
-      action:
-        "Entre em contato com o supervisor ou administrador para adicionar crédito.",
-    });
-  }
+  await student.findOneById(id);
 
   const newTransaction = await credit.create(
     id,

@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/venda.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-05-27 (atualizado após implementação do módulo)
 
 ---
 
@@ -16,11 +16,13 @@ Duas tabelas:
 
 **`sales`** — cabeçalho da transação
 
-- `id`, `student_id`, `operator_id`, `payment_method`, `total`, `created_at`
+- `id`, `student_id` (nullable — venda avulsa futura), `operator_id`, `payment_method`, `total`
+- `reversed_at` (timestamptz, nullable), `reversed_by` (uuid FK→users, nullable) — preenchidos no estorno
+- `created_at`, `updated_at`
 
 **`sale_items`** — linhas da transação
 
-- `id`, `sale_id`, `product_id`, `qty`, `unit_price`
+- `id`, `sale_id`, `product_id`, `qty`, `unit_price`, `created_at`, `updated_at`
 
 `unit_price` é snapshot do preço no momento da venda. (source: raw/decisions/venda.md)
 
@@ -34,9 +36,20 @@ Campo `payment_method` no cabeçalho da venda (não por item):
 
 (source: raw/decisions/venda.md)
 
-## Estorno
+## Saldo insuficiente (pagamento credit)
 
-Apenas **supervisor** ou **admin** pode realizar estorno. Operador não tem permissão. Sem restrição de janela de tempo além do papel. (source: raw/decisions/venda.md)
+Se o saldo do [[aluno]] for inferior ao total da venda, a venda é **bloqueada** com `ValidationError`. O debit é feito atomicamente com `WHERE balance >= total` para prevenir race conditions. (source: raw/decisions/venda.md)
+
+Nota: essa regra difere do módulo de [[credito|crédito]], onde adição de crédito pode resultar em saldo negativo em casos específicos.
+
+## Cancelamento e estorno
+
+| Quem               | O quê                      | Janela                     |
+| ------------------ | -------------------------- | -------------------------- |
+| Operador           | Cancelar **própria** venda | Até 5 minutos após criação |
+| Supervisor / Admin | Estornar qualquer venda    | Sem restrição de tempo     |
+
+O estorno usa **soft delete**: preenche `reversed_at` e `reversed_by` na tabela `sales`. A venda original permanece no histórico. Se o pagamento foi `credit`, o saldo é devolvido atomicamente. (source: raw/decisions/venda.md)
 
 ## Venda avulsa
 

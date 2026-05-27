@@ -34,3 +34,21 @@ status: decided
 **Decisão:** Apenas **supervisor** ou **admin** pode realizar estorno de uma venda. Sem restrição de janela de tempo além do papel (qualquer venda passada pode ser estornada por esses perfis).
 
 **Justificativa:** Operador não tem permissão de estorno para evitar manipulação de registros. A ausência de janela de tempo deixa flexibilidade para corrigir erros antigos quando necessário.
+
+### Saldo insuficiente em venda a crédito
+
+**Decisão:** Se o saldo do aluno for menor que o total da venda e o pagamento for `credit`, a venda é **bloqueada** com `ValidationError`. O saldo nunca fica negativo via venda.
+
+**Justificativa:** Controle de saldo é responsabilidade do módulo de crédito. A cantina não concede crédito implícito.
+
+### Soft delete de estornos
+
+**Decisão:** O estorno não exclui os registros. A tabela `sales` terá colunas `reversed_at` (timestamptz, nullable) e `reversed_by` (uuid FK→users, nullable). Estorno marca essas colunas e devolve o saldo atomicamente se o pagamento foi `credit`.
+
+**Justificativa:** Auditoria completa — a operação original fica no histórico marcada como estornada.
+
+### Cancelamento por operador
+
+**Decisão:** Operador pode cancelar **própria venda dentro de 5 minutos** da criação (feature `delete:sale:self`). Após esse prazo, apenas supervisor/admin pode estornar (`delete:sale`).
+
+**Justificativa:** Permite corrigir erros de digitação sem abrir permissão de estorno ampla para operadores.
