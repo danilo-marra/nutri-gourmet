@@ -6,6 +6,8 @@ import migrator from "models/migrator.js";
 import user from "models/user.js";
 import session from "models/session";
 import activation from "models/activation.js";
+import student from "models/student.js";
+import product from "models/product.js";
 
 const emailHttpUrl = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_HTTP_PORT}`;
 
@@ -104,6 +106,23 @@ async function addFeaturesToUser(userObject, features) {
   return updatedUser;
 }
 
+async function createStudent(overrides) {
+  return await student.create({
+    name: overrides?.name || faker.person.fullName(),
+    class: overrides?.class || "3A",
+    is_full_time: overrides?.is_full_time ?? false,
+  });
+}
+
+async function createProduct(overrides) {
+  return await product.create({
+    name: overrides?.name || faker.commerce.productName(),
+    price: overrides?.price ?? 5.0,
+    category: overrides?.category || "lanche",
+    active: overrides?.active ?? true,
+  });
+}
+
 const orchestrator = {
   waitForAllServices,
   clearDatabase,
@@ -115,6 +134,8 @@ const orchestrator = {
   extractUUID,
   activateUser,
   addFeaturesToUser,
+  createStudent,
+  createProduct,
 };
 
 export default orchestrator;
