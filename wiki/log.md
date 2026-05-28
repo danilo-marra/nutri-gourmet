@@ -4,6 +4,34 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-28 — PR #25: remoção de graphify-out/ do rastreamento git
+
+**`.gitignore` atualizado:**
+
+- `graphify-out/` adicionado — artefatos gerados pelo graphify não pertencem ao repositório.
+
+**Rastreamento removido:**
+
+- `git rm -r --cached graphify-out/` aplicado para desrastrear os 78 arquivos já comitados no PR #24. Arquivos locais preservados; apenas o índice git foi limpo.
+
+**Não alterado:** nenhuma página wiki afetada — mudança puramente de infraestrutura do repositório.
+
+---
+
+## 2026-05-28 — PR #24: cobertura de teste para saldo parcialmente insuficiente
+
+**Arquivo alterado:**
+
+- `tests/integration/api/v1/sales/post.test.js` — adicionado teste `"Deve retornar 400 quando saldo parcial é insuficiente (balance < total)"`.
+
+**Cenário coberto:** aluno com R$5 de saldo tenta comprar produto de R$10 via `credit`. Verifica que a venda é bloqueada com `ValidationError` e que o saldo permanece intacto após a tentativa.
+
+**Motivação:** o teste anterior (`"saldo insuficiente"`) cobria apenas `balance = 0`. O novo teste cobre o caminho mais realista em produção — saldo existe, mas é insuficiente para o total — confirmando o comportamento documentado em [[venda]] (bloqueio + proteção atômica `WHERE balance >= total`).
+
+**Não alterado:** nenhuma página wiki afetada — comportamento já estava documentado em `wiki/domain/venda.md`.
+
+---
+
 ## 2026-05-28 — Sincronização pré-frontend: passwordReset + email PT-BR + DATABASE_URL
 
 **CLAUDE.md atualizado:**
