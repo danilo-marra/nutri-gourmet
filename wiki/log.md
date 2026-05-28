@@ -4,6 +4,24 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-28 — PR #16: gestão de contas de operador pelo supervisor
+
+**CLAUDE.md atualizado:**
+
+- Linha da tabela "Operations": corrigido "admin → email invite" para "supervisor/admin → email invite", refletindo que supervisores agora também podem criar contas.
+
+**Páginas wiki atualizadas:**
+
+- `wiki/domain/supervisor.md` — adicionada seção "Implementação — Gestão de contas de Operador" com tabela dos três endpoints (`GET`, `POST`, `PATCH /api/v1/users`) e suas restrições de role.
+- `wiki/domain/operador.md` — seção "Criação da conta" atualizada para incluir Supervisor como criador possível.
+
+**Não alterado (justificado):**
+
+- `wiki/rules/seguranca.md` — tabela de permissões já refletia corretamente as permissões de gestão de contas; nenhuma alteração necessária.
+- `wiki/domain/administrador.md` — `[needs verification]` sobre criação da conta de admin não é resolvido por este PR; mantido sem alteração.
+
+---
+
 ## 2026-05-27 — Ingestão inicial: raw/prd.md
 
 **Páginas criadas (13):**

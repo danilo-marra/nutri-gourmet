@@ -33,34 +33,7 @@ From the diff, identify:
 - **New migration files** in `infra/migrations/`
 - **New decision files** added to `raw/decisions/`
 
-## Step 2 — Check Codex review comments
-
-If a PR is open for this branch, fetch unresolved inline comments from Copilot/Codex before touching any file:
-
-```bash
-# Check if a PR exists
-gh pr view --json number,url,title 2>/dev/null || echo "no PR"
-```
-
-If a PR exists:
-
-```bash
-PR=$(gh pr view --json number --jq .number)
-REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
-gh api "/repos/$REPO/pulls/$PR/comments" \
-  --jq '.[] | select(.user.login | ascii_downcase | test("copilot|codex|github-advanced-security")) | "[\(.path):\(.line // .original_line)] \(.body)"'
-```
-
-For each comment returned:
-
-1. Read the referenced file at the cited line for context
-2. Decide if the concern is valid (apply your own judgment — Codex can be wrong)
-3. If valid: fix it now, before the wiki/CLAUDE.md steps
-4. If not valid: note why it was skipped in the Step 5 report
-
-If no PR exists, or there are no Copilot/Codex comments, skip this step and continue.
-
-## Step 3 — Audit CLAUDE.md
+## Step 2 — Audit CLAUDE.md
 
 Read `CLAUDE.md` and check:
 
@@ -70,7 +43,7 @@ Read `CLAUDE.md` and check:
 
 Apply fixes directly to `CLAUDE.md`.
 
-## Step 4 — Lint the wiki
+## Step 3 — Lint the wiki
 
 Read `wiki/index.md` to get the full list of pages. Then read each page and check:
 
@@ -103,7 +76,7 @@ Read `wiki/index.md` to get the full list of pages. Then read each page and chec
 
 Apply all fixes in place. Update `**Last updated**` on every page you touch.
 
-## Step 5 — Append to wiki/log.md
+## Step 4 — Append to wiki/log.md
 
 Append a new section at the top of the log (after the `---` separator line, before the previous most-recent entry). Format:
 
@@ -127,16 +100,54 @@ Append a new section at the top of the log (after the `---` separator line, befo
 
 If CLAUDE.md had no changes, say so explicitly. If no wiki pages were touched, say so. Never leave a section blank without explanation.
 
-## Step 6 — Report
+## Step 5 — Report (docs pass)
 
-Output a short summary:
+Output a short summary of the docs update:
 
-- Codex comments: how many found, how many applied, how many skipped (with reason)
 - How many wiki pages were updated/created
 - What was changed in CLAUDE.md
 - One sentence on what the log entry records
 
-Keep it to 6 lines max.
+Keep it to 4 lines max.
+
+## Step 6 — Codex pre-merge gate
+
+**Run this step only when the user is about to merge the PR into main.**
+Do NOT run it during the initial docs pass — Codex needs time to analyze the commits after the PR is opened.
+
+```bash
+# Check if a PR exists
+gh pr view --json number,url,title 2>/dev/null || echo "no PR"
+```
+
+If a PR exists, fetch Codex inline comments:
+
+```bash
+PR=$(gh pr view --json number --jq .number)
+REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+gh api "repos/$REPO/pulls/$PR/comments" \
+  --jq '.[] | select(.user.login | ascii_downcase | test("copilot|codex|github-advanced-security")) | "[\(.path):\(.line // .original_line)] \(.body)"'
+```
+
+Note: omit the leading `/` from the endpoint — on Windows, a leading slash is rewritten as a filesystem path by the shell, causing `invalid API endpoint` errors.
+
+For each comment returned:
+
+1. Read the referenced file at the cited line for context
+2. Decide if the concern is valid (apply your own judgment — Codex can be wrong)
+3. If valid: fix the file, commit, and push before merging
+4. If not valid: note why it was skipped in the final report
+
+If no PR exists, or there are no Codex comments, proceed with the merge.
+
+## Step 7 — Final report (pre-merge)
+
+After completing Step 6, output:
+
+- Codex comments: how many found, how many applied, how many skipped (with reason)
+- Whether it is safe to merge
+
+Keep it to 3 lines max.
 
 ---
 

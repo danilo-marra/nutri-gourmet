@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/supervisor.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-05-28
 
 ---
 
@@ -31,6 +31,18 @@ Herda todas as permissões do [[operador]], mais:
 ## Criação da conta
 
 Admin cria via painel → convite por e-mail usando o fluxo de ativação existente (`models/activation.js`). Mesmo fluxo do [[operador]]. (source: raw/decisions/supervisor.md)
+
+## Implementação — Gestão de contas de Operador
+
+Endpoints disponíveis para supervisor (e admin) gerenciarem contas de operador:
+
+| Método  | Rota                      | Descrição                                                                                                              |
+| ------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `GET`   | `/api/v1/users`           | Lista usuários. Supervisor recebe apenas `operador`/`pending`; admin recebe todos.                                     |
+| `POST`  | `/api/v1/users`           | Cria conta e envia convite por e-mail. Supervisor só pode criar com `role: "operador"` (ou omitir, fica `pending`).    |
+| `PATCH` | `/api/v1/users/:username` | Edita username, email ou password. Supervisor não pode editar supervisor/admin nem alterar `role` para nível superior. |
+
+Restrições aplicadas em `models/authorization.js` via `can(user, "update:user:others", targetUser)` e validação de `role` nos handlers.
 
 ## Related pages
 
