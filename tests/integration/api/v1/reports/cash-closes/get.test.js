@@ -44,6 +44,21 @@ describe("GET /api/v1/reports/cash-closes", () => {
       expect(response.status).toBe(400);
     });
 
+    test("Returns 400 when start_date is not a real calendar date", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const session = await orchestrator.createSession(supervisor.id);
+
+      const response = await fetch(
+        "http://localhost:3000/api/v1/reports/cash-closes?start_date=2026-99-99",
+        { headers: { Cookie: `session_id=${session.token}` } },
+      );
+
+      expect(response.status).toBe(400);
+
+      const body = await response.json();
+      expect(body.name).toBe("ValidationError");
+    });
+
     test("Returns 400 when operator_id is not a valid UUID", async () => {
       const supervisor = await orchestrator.createUser({ role: "supervisor" });
       const session = await orchestrator.createSession(supervisor.id);
@@ -93,10 +108,38 @@ describe("GET /api/v1/reports/cash-closes", () => {
       expect(close.operator_username).toBe(operador.username);
       expect(close.closed_by_username).toBe(supervisor.username);
       expect(close.date).toBe("2026-03-15");
+      expect(close.status).toBe("closed");
       expect(close).toHaveProperty("total_sales");
       expect(close).toHaveProperty("total_cash");
       expect(close).toHaveProperty("total_card");
       expect(close).toHaveProperty("total_credit");
+    });
+
+    test("Returns pending row for day with sales but no close", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const operador = await orchestrator.createUser({ role: "operador" });
+      const session = await orchestrator.createSession(supervisor.id);
+
+      await orchestrator.createSale(null, operador.id, {
+        payment_method: "cash",
+      });
+
+      const response = await fetch(
+        "http://localhost:3000/api/v1/reports/cash-closes?start_date=2026-01-01&end_date=2026-12-31",
+        { headers: { Cookie: `session_id=${session.token}` } },
+      );
+
+      expect(response.status).toBe(200);
+
+      const body = await response.json();
+      const pending = body.find(
+        (c) => c.operator_id === operador.id && c.status === "pending",
+      );
+      expect(pending).toBeDefined();
+      expect(pending.id).toBeNull();
+      expect(pending.closed_by_id).toBeNull();
+      expect(pending.closed_by_username).toBeNull();
+      expect(pending.total_sales).toBeNull();
     });
 
     test("Filters by operator_id", async () => {

@@ -50,6 +50,21 @@ describe("GET /api/v1/reports/sales", () => {
       expect(body.name).toBe("ValidationError");
     });
 
+    test("Returns 400 when start_date is not a real calendar date", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const session = await orchestrator.createSession(supervisor.id);
+
+      const response = await fetch(
+        "http://localhost:3000/api/v1/reports/sales?start_date=2026-99-99&end_date=2026-12-31",
+        { headers: { Cookie: `session_id=${session.token}` } },
+      );
+
+      expect(response.status).toBe(400);
+
+      const body = await response.json();
+      expect(body.name).toBe("ValidationError");
+    });
+
     test("Returns 400 when start_date is after end_date", async () => {
       const supervisor = await orchestrator.createUser({ role: "supervisor" });
       const session = await orchestrator.createSession(supervisor.id);

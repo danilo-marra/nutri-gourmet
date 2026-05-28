@@ -14,7 +14,11 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 async function getHandler(request, response) {
   const { start_date, end_date } = request.query;
 
-  if (!start_date || !DATE_REGEX.test(start_date)) {
+  if (
+    !start_date ||
+    !DATE_REGEX.test(start_date) ||
+    isNaN(new Date(start_date + "T00:00:00Z").getTime())
+  ) {
     throw new ValidationError({
       message:
         "O parâmetro 'start_date' é obrigatório e deve estar no formato YYYY-MM-DD.",
@@ -22,7 +26,11 @@ async function getHandler(request, response) {
     });
   }
 
-  if (!end_date || !DATE_REGEX.test(end_date)) {
+  if (
+    !end_date ||
+    !DATE_REGEX.test(end_date) ||
+    isNaN(new Date(end_date + "T00:00:00Z").getTime())
+  ) {
     throw new ValidationError({
       message:
         "O parâmetro 'end_date' é obrigatório e deve estar no formato YYYY-MM-DD.",

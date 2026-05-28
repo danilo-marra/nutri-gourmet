@@ -73,26 +73,73 @@ async function balanceByStudent() {
 async function cashCloses({ startDate, endDate, operatorId }) {
   const result = await database.query({
     text: `
+      WITH sales_dates AS (
+        SELECT operator_id, created_at::date AS date
+        FROM sales
+        WHERE reversed_at IS NULL
+          AND ($1::date IS NULL OR created_at::date >= $1)
+          AND ($2::date IS NULL OR created_at::date <= $2)
+          AND ($3::uuid IS NULL OR operator_id = $3)
+        GROUP BY operator_id, created_at::date
+      ),
+      closed_days AS (
+        SELECT
+          cc.id,
+          cc.operator_id,
+          cc.closed_by_id,
+          cc.date,
+          'closed'           AS status,
+          cc.total_sales,
+          cc.total_credit,
+          cc.total_cash,
+          cc.total_card,
+          cc.created_at
+        FROM cash_closes cc
+        WHERE ($1::date IS NULL OR cc.date >= $1)
+          AND ($2::date IS NULL OR cc.date <= $2)
+          AND ($3::uuid IS NULL OR cc.operator_id = $3)
+      ),
+      pending_days AS (
+        SELECT
+          NULL::uuid        AS id,
+          sd.operator_id,
+          NULL::uuid        AS closed_by_id,
+          sd.date,
+          'pending'         AS status,
+          NULL::numeric     AS total_sales,
+          NULL::numeric     AS total_credit,
+          NULL::numeric     AS total_cash,
+          NULL::numeric     AS total_card,
+          NULL::timestamptz AS created_at
+        FROM sales_dates sd
+        WHERE NOT EXISTS (
+          SELECT 1 FROM cash_closes cc
+          WHERE cc.operator_id = sd.operator_id
+            AND cc.date = sd.date
+        )
+      ),
+      combined AS (
+        SELECT * FROM closed_days
+        UNION ALL
+        SELECT * FROM pending_days
+      )
       SELECT
-        cc.id,
-        cc.operator_id,
-        u.username AS operator_username,
-        cc.closed_by_id,
-        cb.username AS closed_by_username,
-        cc.date::text AS date,
-        cc.total_sales,
-        cc.total_credit,
-        cc.total_cash,
-        cc.total_card,
-        cc.created_at,
-        cc.updated_at
-      FROM cash_closes cc
-      JOIN users u ON u.id = cc.operator_id
-      JOIN users cb ON cb.id = cc.closed_by_id
-      WHERE ($1::date IS NULL OR cc.date >= $1)
-        AND ($2::date IS NULL OR cc.date <= $2)
-        AND ($3::uuid IS NULL OR cc.operator_id = $3)
-      ORDER BY cc.date DESC, cc.created_at DESC
+        c.id,
+        c.operator_id,
+        u.username          AS operator_username,
+        c.closed_by_id,
+        cb.username         AS closed_by_username,
+        c.date::text        AS date,
+        c.status,
+        c.total_sales,
+        c.total_credit,
+        c.total_cash,
+        c.total_card,
+        c.created_at
+      FROM combined c
+      JOIN users u ON u.id = c.operator_id
+      LEFT JOIN users cb ON cb.id = c.closed_by_id
+      ORDER BY c.date DESC, u.username ASC
     `,
     values: [startDate ?? null, endDate ?? null, operatorId ?? null],
   });

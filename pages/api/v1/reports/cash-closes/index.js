@@ -16,14 +16,22 @@ const UUID_REGEX =
 async function getHandler(request, response) {
   const { start_date, end_date, operator_id } = request.query;
 
-  if (start_date !== undefined && !DATE_REGEX.test(start_date)) {
+  if (
+    start_date !== undefined &&
+    (!DATE_REGEX.test(start_date) ||
+      isNaN(new Date(start_date + "T00:00:00Z").getTime()))
+  ) {
     throw new ValidationError({
       message: "O parâmetro 'start_date' deve estar no formato YYYY-MM-DD.",
       action: "Informe uma data inicial válida ou omita o parâmetro.",
     });
   }
 
-  if (end_date !== undefined && !DATE_REGEX.test(end_date)) {
+  if (
+    end_date !== undefined &&
+    (!DATE_REGEX.test(end_date) ||
+      isNaN(new Date(end_date + "T00:00:00Z").getTime()))
+  ) {
     throw new ValidationError({
       message: "O parâmetro 'end_date' deve estar no formato YYYY-MM-DD.",
       action: "Informe uma data final válida ou omita o parâmetro.",
