@@ -42,3 +42,4 @@ O fechamento gera um resumo básico visível por [[supervisor]] e [[administrado
 - [[supervisor]]
 - [[administrador]]
 - [[venda]]
+- [[relatorios]]

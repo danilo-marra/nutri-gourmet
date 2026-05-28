@@ -146,6 +146,23 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-28 — Implementação do módulo de Relatórios (PR #14)
+
+**CLAUDE.md atualizado:**
+
+- `models/` — adicionado `report`
+
+**`wiki/rules/relatorios.md` atualizado:**
+
+- Seção "Implementação" adicionada: tabela com os 5 endpoints, split de permissões (`read:report:financial` vs `read:report:operational`), parâmetros obrigatórios/opcionais e formato de resposta de cada endpoint
+- "Last updated" atualizado para 2026-05-28
+
+**`wiki/domain/fechamento-de-caixa.md` atualizado:**
+
+- `[[relatorios]]` adicionado em Related pages (o endpoint `GET /api/v1/reports/cash-closes` usa dados de fechamentos)
+
+---
+
 ## 2026-05-27 — Remoção de guard dead code em crédito
 
 **Código alterado (1):**

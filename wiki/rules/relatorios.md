@@ -4,7 +4,7 @@
 
 **Sources**: raw/decisions/relatorios.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-05-28
 
 ---
 
@@ -43,6 +43,23 @@ Filtro por data suporta seleção de dia, semana ou mês. Sem granularidade de h
 ## Formato de saída
 
 Visualização em tela (tabela paginada). Exportação (CSV, PDF) fora do escopo desta fase. (source: raw/decisions/relatorios.md)
+
+## Implementação
+
+Todos os endpoints ficam em `pages/api/v1/reports/`. Permissões divididas em dois grupos:
+
+- **`read:report:financial`** — supervisor + admin: vendas, créditos, saldo por aluno
+- **`read:report:operational`** — supervisor + admin: fechamentos de caixa, pacotes vigentes
+
+| Endpoint                          | Permissão                 | Parâmetros obrigatórios               | Parâmetros opcionais                           |
+| --------------------------------- | ------------------------- | ------------------------------------- | ---------------------------------------------- |
+| `GET /api/v1/reports/sales`       | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/credits`     | `read:report:financial`   | `start_date`, `end_date`              | `student_id` (UUID)                            |
+| `GET /api/v1/reports/balances`    | `read:report:financial`   | —                                     | —                                              |
+| `GET /api/v1/reports/cash-closes` | `read:report:operational` | —                                     | `start_date`, `end_date`, `operator_id` (UUID) |
+| `GET /api/v1/reports/packages`    | `read:report:operational` | —                                     | —                                              |
+
+`/reports/sales` retorna `{ by_payment_method: [...], grand_total }`. Os demais retornam arrays. `/reports/cash-closes` inclui dias sem fechamento com `status: "pending"` via CTE.
 
 ## Related pages
 
