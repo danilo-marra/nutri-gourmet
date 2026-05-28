@@ -41,6 +41,18 @@ async function patchHandler(request, response) {
         "Verifique se você possui a feature necessária para atualizar outro usuário.",
     });
   }
+
+  if (
+    userTryingToPatch.role === "supervisor" &&
+    userInputValues.role !== undefined &&
+    !["operador", "pending"].includes(userInputValues.role)
+  ) {
+    throw new ForbiddenError({
+      message: "Supervisores não podem alterar o role para este nível.",
+      action: 'Defina o campo "role" como "operador" ou omita-o.',
+    });
+  }
+
   const updatedUser = await user.update(username, userInputValues);
 
   const secureOutputValues = authorization.filterOutput(

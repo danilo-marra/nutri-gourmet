@@ -349,6 +349,116 @@ describe("PATCH /api/v1/[username]", () => {
     });
   });
 
+  describe("Supervisor user", () => {
+    test("Can patch an operador account", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const operador = await orchestrator.createUser();
+      const activatedOperador = await orchestrator.activateUser(operador);
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${activatedOperador.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ username: "operadorEditadoPorSupervisor" }),
+        },
+      );
+
+      expect(response.status).toBe(200);
+
+      const responseBody = await response.json();
+      expect(responseBody.username).toBe("operadorEditadoPorSupervisor");
+    });
+
+    test("Cannot patch another supervisor", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const otherSupervisor = await orchestrator.createUser({
+        role: "supervisor",
+      });
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${otherSupervisor.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ username: "tentativaEdicao" }),
+        },
+      );
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Você não possui permissão para atualizar outro usuário.",
+        action:
+          "Verifique se você possui a feature necessária para atualizar outro usuário.",
+        status_code: 403,
+      });
+    });
+
+    test("Cannot patch an admin", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const admin = await orchestrator.createUser({ role: "admin" });
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${admin.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ username: "tentativaEdicaoAdmin" }),
+        },
+      );
+
+      expect(response.status).toBe(403);
+    });
+
+    test("Cannot escalate operador role to supervisor", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const operador = await orchestrator.createUser();
+      const activatedOperador = await orchestrator.activateUser(operador);
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${activatedOperador.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ role: "supervisor" }),
+        },
+      );
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Supervisores não podem alterar o role para este nível.",
+        action: 'Defina o campo "role" como "operador" ou omita-o.',
+        status_code: 403,
+      });
+    });
+  });
+
   describe("Privileged user", () => {
     test("With `update:user:others` targeting `defaultUser`", async () => {
       const privilegedUser = await orchestrator.createUser();

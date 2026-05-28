@@ -165,4 +165,109 @@ describe("POST /api/v1/users", () => {
       });
     });
   });
+
+  describe("Supervisor user", () => {
+    test("Creates operador account (role omitted)", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${supervisorSession.token}`,
+        },
+        body: JSON.stringify({
+          username: "novooperador",
+          email: "novooperador@cantina.dev",
+          password: "senha123",
+        }),
+      });
+
+      expect(response.status).toBe(201);
+
+      const responseBody = await response.json();
+      expect(responseBody.username).toBe("novooperador");
+      expect(responseBody.role).toBe("pending");
+      expect(responseBody).not.toHaveProperty("email");
+      expect(responseBody).not.toHaveProperty("password");
+    });
+
+    test("Creates operador account (role: operador)", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${supervisorSession.token}`,
+        },
+        body: JSON.stringify({
+          username: "operadorexplicito",
+          email: "operadorexplicito@cantina.dev",
+          password: "senha123",
+          role: "operador",
+        }),
+      });
+
+      expect(response.status).toBe(201);
+
+      const responseBody = await response.json();
+      expect(responseBody.username).toBe("operadorexplicito");
+    });
+
+    test("Cannot create supervisor account", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${supervisorSession.token}`,
+        },
+        body: JSON.stringify({
+          username: "tentativasupervisor",
+          email: "tentativasupervisor@cantina.dev",
+          password: "senha123",
+          role: "supervisor",
+        }),
+      });
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Supervisores podem criar apenas contas de operador.",
+        action: 'Defina o campo "role" como "operador" ou omita-o.',
+        status_code: 403,
+      });
+    });
+
+    test("Cannot create admin account", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${supervisorSession.token}`,
+        },
+        body: JSON.stringify({
+          username: "tentativaadmin",
+          email: "tentativaadmin@cantina.dev",
+          password: "senha123",
+          role: "admin",
+        }),
+      });
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ForbiddenError");
+    });
+  });
 });

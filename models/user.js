@@ -136,6 +136,18 @@ async function create(userInputValues) {
   }
 }
 
+async function findAll(roles = null) {
+  const results = roles
+    ? await database.query({
+        text: `SELECT * FROM users WHERE role = ANY($1) ORDER BY created_at ASC`,
+        values: [roles],
+      })
+    : await database.query({
+        text: `SELECT * FROM users ORDER BY created_at ASC`,
+      });
+  return results.rows;
+}
+
 async function update(username, userInputValues) {
   const currentUser = await findOneByUsername(username);
 
@@ -305,6 +317,7 @@ async function addFeatures(userId, features) {
 
 const user = {
   create,
+  findAll,
   findOneByUsername,
   findOneByEmail,
   findOneById,
