@@ -47,7 +47,7 @@ Redefine a senha usando o token do link.
 
 ## Tabela
 
-`password_reset_tokens`: `id` (UUID), `user_id` (FK), `expires_at` (timestamptz), `used_at` (timestamptz nullable), `created_at`, `updated_at`.
+`password_reset_tokens`: `id` (UUID PK), `user_id` (uuid NOT NULL — sem FK constraint no banco), `expires_at` (timestamptz), `used_at` (timestamptz nullable), `created_at`, `updated_at`.
 
 ## Related pages
 
