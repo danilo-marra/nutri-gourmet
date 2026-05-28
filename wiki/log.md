@@ -4,6 +4,18 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-28 — PR #27: adição de índices FK em todas as tabelas de domínio
+
+**CLAUDE.md atualizado:** Sem alterações necessárias — nenhum novo modelo, endpoint ou helper.
+
+**Páginas wiki atualizadas:** Nenhuma — mudança puramente de infraestrutura de banco de dados.
+
+**O que foi feito:** Migration `1779996263448_add-fk-indexes` adiciona 9 índices em colunas FK que o PostgreSQL não indexa automaticamente: `sessions.user_id`, `sales.student_id`, `sales.operator_id`, `sales.reversed_by`, `sale_items.sale_id`, `sale_items.product_id`, `credit_transactions.student_id`, `credit_transactions.operator_id`, `cash_closes.closed_by_id`. Detectado via skill `/perf` (auditoria de cobertura de índices). Índice `reversed_by` adicionado após revisão de código P2 (Codex).
+
+**Não alterado (justificado):** `CREATE INDEX CONCURRENTLY` não aplicado — requer `{ transaction: false }` na migration e as tabelas estão vazias em dev/prod. Nota salva em memória para aplicar antes do primeiro deploy com volume real.
+
+---
+
 ## 2026-05-28 — PR #25: remoção de graphify-out/ do rastreamento git
 
 **`.gitignore` atualizado:**
