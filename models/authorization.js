@@ -311,6 +311,13 @@ function filterOutput(user, feature, resource) {
     };
   }
 
+  if (
+    feature === "read:report:financial" ||
+    feature === "read:report:operational"
+  ) {
+    return resource;
+  }
+
   if (feature === "read:status") {
     const output = {
       updated_at: resource.updated_at,
