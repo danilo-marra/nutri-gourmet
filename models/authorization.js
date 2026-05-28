@@ -45,6 +45,9 @@ const SUPERVISOR_FEATURES = [
   "read:report:financial",
   // Visibilidade de outros usuários
   "read:user",
+  // Gestão de contas de operador
+  "create:user",
+  "update:user:others",
 ];
 
 const ADMIN_FEATURES = [
@@ -141,8 +144,17 @@ function can(user, feature, resource) {
   if (feature === "update:user" && resource) {
     authorized = false;
 
-    if (user.id === resource.id || can(user, "update:user:others")) {
+    if (user.id === resource.id || can(user, "update:user:others", resource)) {
       authorized = true;
+    }
+  }
+
+  if (feature === "update:user:others" && resource) {
+    if (
+      user.role === "supervisor" &&
+      !["operador", "pending"].includes(resource.role)
+    ) {
+      authorized = false;
     }
   }
 
