@@ -21,7 +21,7 @@ Run these commands to understand what the branch adds:
 ```bash
 git log main..HEAD --oneline
 git diff main...HEAD --stat
-git diff main...HEAD -- models/ pages/api/v1/ tests/orchestrator.js infra/migrations/
+git diff main...HEAD -- models/ pages/api/v1/ tests/orchestrator.js infra/migrations/ raw/decisions/
 ```
 
 From the diff, identify:
@@ -33,7 +33,34 @@ From the diff, identify:
 - **New migration files** in `infra/migrations/`
 - **New decision files** added to `raw/decisions/`
 
-## Step 2 — Audit CLAUDE.md
+## Step 2 — Check Codex review comments
+
+If a PR is open for this branch, fetch unresolved inline comments from Copilot/Codex before touching any file:
+
+```bash
+# Check if a PR exists
+gh pr view --json number,url,title 2>/dev/null || echo "no PR"
+```
+
+If a PR exists:
+
+```bash
+PR=$(gh pr view --json number --jq .number)
+REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+gh api "/repos/$REPO/pulls/$PR/comments" \
+  --jq '.[] | select(.user.login | ascii_downcase | test("copilot|codex|github-advanced-security")) | "[\(.path):\(.line // .original_line)] \(.body)"'
+```
+
+For each comment returned:
+
+1. Read the referenced file at the cited line for context
+2. Decide if the concern is valid (apply your own judgment — Codex can be wrong)
+3. If valid: fix it now, before the wiki/CLAUDE.md steps
+4. If not valid: note why it was skipped in the Step 5 report
+
+If no PR exists, or there are no Copilot/Codex comments, skip this step and continue.
+
+## Step 3 — Audit CLAUDE.md
 
 Read `CLAUDE.md` and check:
 
@@ -43,7 +70,7 @@ Read `CLAUDE.md` and check:
 
 Apply fixes directly to `CLAUDE.md`.
 
-## Step 3 — Lint the wiki
+## Step 4 — Lint the wiki
 
 Read `wiki/index.md` to get the full list of pages. Then read each page and check:
 
@@ -76,7 +103,7 @@ Read `wiki/index.md` to get the full list of pages. Then read each page and chec
 
 Apply all fixes in place. Update `**Last updated**` on every page you touch.
 
-## Step 4 — Append to wiki/log.md
+## Step 5 — Append to wiki/log.md
 
 Append a new section at the top of the log (after the `---` separator line, before the previous most-recent entry). Format:
 
@@ -100,15 +127,16 @@ Append a new section at the top of the log (after the `---` separator line, befo
 
 If CLAUDE.md had no changes, say so explicitly. If no wiki pages were touched, say so. Never leave a section blank without explanation.
 
-## Step 5 — Report
+## Step 6 — Report
 
 Output a short summary:
 
+- Codex comments: how many found, how many applied, how many skipped (with reason)
 - How many wiki pages were updated/created
 - What was changed in CLAUDE.md
 - One sentence on what the log entry records
 
-That's it. Keep the summary to 5 lines max.
+Keep it to 6 lines max.
 
 ---
 
