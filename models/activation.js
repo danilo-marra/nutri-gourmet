@@ -71,13 +71,17 @@ async function sendEmailToUser(user, activationToken) {
   await email.send({
     from: `${appName} <${appEmail}>`,
     to: user.email,
-    subject: `Activate your account on ${appName}!`,
-    text: `${user.username}, click the link below to activate your account on ${appName}:
+    subject: `Ative sua conta no ${appName}`,
+    text: `Olá, ${user.username}!
+
+Clique no link abaixo para ativar sua conta no ${appName}:
 
 ${webserver.origin}${activationPath}/${activationToken.id}
 
-Best regards,
-${appName} Team`,
+Este link expira em 15 minutos.
+
+Atenciosamente,
+Equipe ${appName}`,
   });
 }
 
