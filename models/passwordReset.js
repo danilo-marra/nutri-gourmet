@@ -75,11 +75,21 @@ async function markTokenAsUsed(tokenId) {
           updated_at = timezone('utc', now())
         WHERE
           id = $1
+          AND used_at IS NULL
+          AND expires_at > NOW()
         RETURNING
           *
         ;`,
       values: [tokenId],
     });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message:
+          "O token de recuperação de senha utilizado não foi encontrado no sistema ou expirou.",
+        action: "Solicite um novo link de recuperação de senha.",
+      });
+    }
 
     return results.rows[0];
   }

@@ -7,7 +7,7 @@ import { NotFoundError } from "infra/errors.js";
 const router = createRouter();
 
 router.use(controller.injectAnonymousOrUser);
-router.post(controller.canRequest("create:password_recovery"), postHandler);
+router.post(postHandler);
 
 export default router.handler(controller.errorHandlers);
 

@@ -80,8 +80,6 @@ const availableFeatures = [
   "update:user",
   "update:user:others",
   "create:user",
-  "create:password_recovery",
-
   // Sistema
   "read:migration",
   "create:migration",
