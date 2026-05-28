@@ -25,7 +25,7 @@ describe("Use case: Registration flow (all successful)", () => {
         },
         body: JSON.stringify({
           username: "RegistrationFlow",
-          email: "registration.flow@curso.dev",
+          email: "registration.flow@nutrigourmet.app",
           password: "RegistrationFlowPassword",
         }),
       },
@@ -50,7 +50,9 @@ describe("Use case: Registration flow (all successful)", () => {
 
     expect(lastEmail).not.toBeNull();
     expect(lastEmail.sender).toMatch(/^<.*>$/);
-    expect(lastEmail.recipients[0]).toBe("<registration.flow@curso.dev>");
+    expect(lastEmail.recipients[0]).toBe(
+      "<registration.flow@nutrigourmet.app>",
+    );
     expect(lastEmail.subject).toContain("Ative sua conta");
     expect(lastEmail.text).toContain("RegistrationFlow");
 
@@ -98,7 +100,7 @@ describe("Use case: Registration flow (all successful)", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: "registration.flow@curso.dev",
+          email: "registration.flow@nutrigourmet.app",
           password: "RegistrationFlowPassword",
         }),
       },
