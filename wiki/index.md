@@ -34,6 +34,7 @@
 - [Crédito](domain/credito.md) — saldo monetário R$; saldo negativo com confirmação do operador; pool único
 - [Pacote](domain/pacote.md) — credita R$ no saldo; validade opcional (expires_at); apenas supervisor/admin registra; múltiplos permitidos
 - [Fechamento de Caixa](domain/fechamento-de-caixa.md) — não bloqueante; gera resumo básico; supervisor/admin pode fechar em nome do operador
+- [Recuperação de Senha](domain/recuperacao-de-senha.md) — fluxo self-service via email; token de uso único; expiração de 30 minutos; anti-enumeração
 
 ## Regras (rules/)
 

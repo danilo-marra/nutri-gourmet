@@ -4,6 +4,27 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-28 — Sincronização pré-frontend: passwordReset + email PT-BR + DATABASE_URL
+
+**CLAUDE.md atualizado:**
+
+- Adicionado `passwordReset` à lista de models.
+- Adicionado `deleteAllEmails` à lista de helpers do orchestrator.
+
+**Páginas wiki criadas:**
+
+- `wiki/domain/recuperacao-de-senha.md` — fluxo completo de recuperação de senha, endpoints POST e PATCH, segurança (anti-enumeração, consumo atômico, expiração 30 min).
+
+**Páginas wiki atualizadas:**
+
+- `wiki/index.md` — adicionada entrada para `recuperacao-de-senha.md` na seção Entidades.
+
+**Não alterado (justificado):**
+
+- `wiki/rules/seguranca.md` — tabela de permissões não cobre fluxos anônimos; recuperação de senha não requer feature flag.
+
+---
+
 ## 2026-05-28 — PR #16: gestão de contas de operador pelo supervisor
 
 **CLAUDE.md atualizado:**

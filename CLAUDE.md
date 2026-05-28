@@ -35,10 +35,10 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 ## Repo layout (load-bearing)
 
 - `pages/api/v1/**` — handlers built with `next-connect` + `controller.errorHandlers`. Always go through `infra/controller.js` middlewares.
-- `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`).
+- `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `passwordReset`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`).
 - `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`.
 - `tests/integration/api/v1/**` mirrors `pages/api/v1/**` path-for-path. Additional subdirectories: `_use-cases/` (end-to-end flows), `infra/` (infra tests e.g. email), `unit/` (unit tests for models e.g. `authorization`).
-- Shared setup lives in `tests/orchestrator.js` (use `waitForAllServices`, `clearDatabase`, `runPendingMigrations`, `createUser({ role? })`, `createSession`, `getLastEmail`, `extractUUID`, `activateUser`, `addFeaturesToUser`, `createStudent`, `createProduct`, `createCreditTransaction(studentId, operatorId, overrides?)`, `createSale(studentId, operatorId, overrides?)`, `createCashClose(operatorId, closedById, overrides?)`).
+- Shared setup lives in `tests/orchestrator.js` (use `waitForAllServices`, `clearDatabase`, `runPendingMigrations`, `createUser({ role? })`, `createSession`, `deleteAllEmails`, `getLastEmail`, `extractUUID`, `activateUser`, `addFeaturesToUser`, `createStudent`, `createProduct`, `createCreditTransaction(studentId, operatorId, overrides?)`, `createSale(studentId, operatorId, overrides?)`, `createCashClose(operatorId, closedById, overrides?)`).
 
 ## Git workflow
 
