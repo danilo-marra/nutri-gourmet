@@ -1,14 +1,21 @@
 import { Client, Pool } from "pg";
 import { ServiceError } from "./errors.js";
 
-const pool = new Pool({
-  host: process.env.POSTGRES_HOST,
-  port: process.env.POSTGRES_PORT,
-  user: process.env.POSTGRES_USER,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  ssl: getSSLValues(),
-});
+function getConnectionConfig() {
+  if (process.env.DATABASE_URL) {
+    return { connectionString: process.env.DATABASE_URL, ssl: getSSLValues() };
+  }
+  return {
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    user: process.env.POSTGRES_USER,
+    database: process.env.POSTGRES_DB,
+    password: process.env.POSTGRES_PASSWORD,
+    ssl: getSSLValues(),
+  };
+}
+
+const pool = new Pool(getConnectionConfig());
 
 async function query(queryObject) {
   let client;
@@ -28,14 +35,7 @@ async function query(queryObject) {
 }
 
 async function getNewClient() {
-  const client = new Client({
-    host: process.env.POSTGRES_HOST,
-    port: process.env.POSTGRES_PORT,
-    user: process.env.POSTGRES_USER,
-    database: process.env.POSTGRES_DB,
-    password: process.env.POSTGRES_PASSWORD,
-    ssl: getSSLValues(),
-  });
+  const client = new Client(getConnectionConfig());
 
   await client.connect();
   return client;
