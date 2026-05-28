@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "api_user_index",
+      "label": "GET /user Handler (current session user)",
+      "file_type": "code",
+      "source_file": "pages/api/v1/user/index.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "api_user_index",
+      "target": "wiki_seguranca",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "pages/api/v1/user/index.js",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_user_index",
+      "target": "wiki_operador",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "pages/api/v1/user/index.js",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_user_index",
+      "target": "api_users_index",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "pages/api/v1/user/index.js",
+      "source_location": null,
+      "weight": 0.7
+    }
+  ],
+  "hyperedges": []
+}

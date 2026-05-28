@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "migration_createCashCloses",
+      "label": "Migration: create-cash-closes",
+      "file_type": "code",
+      "source_file": "infra/migrations/1779930004000_create-cash-closes.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "db_schema_cash_closes",
+      "label": "DB Table: cash_closes",
+      "file_type": "rationale",
+      "source_file": "infra/migrations/1779930004000_create-cash-closes.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "One close per operator per date (unique constraint). Stores aggregated totals by payment method. Non-blocking (pending status exists only in report queries)."
+    }
+  ],
+  "edges": [
+    {
+      "source": "migration_createCashCloses",
+      "target": "db_schema_cash_closes",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1779930004000_create-cash-closes.js",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "migration_createCashCloses",
+      "target": "migration_createUsers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1779930004000_create-cash-closes.js",
+      "source_location": "line 12",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

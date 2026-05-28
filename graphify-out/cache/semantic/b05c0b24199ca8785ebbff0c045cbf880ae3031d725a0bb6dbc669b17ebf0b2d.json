@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "api_users_username",
+      "label": "GET/PATCH /users/:username Handler",
+      "file_type": "code",
+      "source_file": "pages/api/v1/users/[username]/index.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "api_users_username",
+      "target": "wiki_supervisor",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "pages/api/v1/users/[username]/index.js",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_users_username",
+      "target": "wiki_seguranca",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "pages/api/v1/users/[username]/index.js",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

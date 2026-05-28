@@ -1,0 +1,83 @@
+{
+  "nodes": [
+    {
+      "id": "wiki_seguranca",
+      "label": "Seguran\u00e7a \u2014 RBAC Permission Table",
+      "file_type": "document",
+      "source_file": "wiki/rules/seguranca.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "wiki_seguranca",
+      "target": "wiki_operador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/rules/seguranca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_seguranca",
+      "target": "wiki_supervisor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/rules/seguranca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_seguranca",
+      "target": "wiki_administrador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/rules/seguranca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_seguranca",
+      "target": "wiki_escopo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/rules/seguranca.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_seguranca",
+      "target": "wiki_recuperacao_de_senha",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "wiki/rules/seguranca.md",
+      "source_location": null,
+      "weight": 0.8
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "rbac_persona_permission_system",
+      "label": "RBAC Persona-Permission System: Operador / Supervisor / Administrador",
+      "nodes": [
+        "wiki_operador",
+        "wiki_supervisor",
+        "wiki_administrador",
+        "wiki_seguranca"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "wiki/rules/seguranca.md"
+    }
+  ]
+}

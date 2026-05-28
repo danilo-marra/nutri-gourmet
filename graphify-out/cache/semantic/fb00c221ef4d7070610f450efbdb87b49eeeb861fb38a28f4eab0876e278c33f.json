@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "migration_createSales",
+      "label": "Migration: create-sales",
+      "file_type": "code",
+      "source_file": "infra/migrations/1779930003000_create-sales.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "db_schema_sales",
+      "label": "DB Table: sales + sale_items",
+      "file_type": "rationale",
+      "source_file": "infra/migrations/1779930003000_create-sales.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "sale_items child table holds line items with snapshot unit_price; reversed_at+reversed_by allow soft reversal by supervisor/admin; payment_method: credit|cash|card."
+    }
+  ],
+  "edges": [
+    {
+      "source": "migration_createSales",
+      "target": "db_schema_sales",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1779930003000_create-sales.js",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "migration_createSales",
+      "target": "migration_createStudents",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1779930003000_create-sales.js",
+      "source_location": "line 13",
+      "weight": 1.0
+    },
+    {
+      "source": "migration_createSales",
+      "target": "migration_createUsers",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1779930003000_create-sales.js",
+      "source_location": "line 19",
+      "weight": 1.0
+    },
+    {
+      "source": "migration_createSales",
+      "target": "migration_createProducts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1779930003000_create-sales.js",
+      "source_location": "line 75",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

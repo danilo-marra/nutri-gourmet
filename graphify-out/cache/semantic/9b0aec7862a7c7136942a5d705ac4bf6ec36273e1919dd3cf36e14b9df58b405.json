@@ -1,0 +1,88 @@
+{
+  "nodes": [
+    {
+      "id": "models_activation",
+      "label": "Activation Model",
+      "file_type": "code",
+      "source_file": "models/activation.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "models_activation",
+      "target": "database_query",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/activation.js",
+      "source_location": "line 51",
+      "weight": 1.0
+    },
+    {
+      "source": "models_activation",
+      "target": "email_send",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/activation.js",
+      "source_location": "line 71",
+      "weight": 1.0
+    },
+    {
+      "source": "models_activation",
+      "target": "webserver_webserver",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/activation.js",
+      "source_location": "line 79",
+      "weight": 1.0
+    },
+    {
+      "source": "models_activation",
+      "target": "errors_NotFoundError",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/activation.js",
+      "source_location": "line 34",
+      "weight": 1.0
+    },
+    {
+      "source": "models_activation",
+      "target": "errors_ForbiddenError",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/activation.js",
+      "source_location": "line 116",
+      "weight": 1.0
+    },
+    {
+      "source": "models_activation",
+      "target": "models_authorization",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/activation.js",
+      "source_location": "line 115",
+      "weight": 1.0
+    },
+    {
+      "source": "models_activation",
+      "target": "models_authentication",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "models/activation.js",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": []
+}

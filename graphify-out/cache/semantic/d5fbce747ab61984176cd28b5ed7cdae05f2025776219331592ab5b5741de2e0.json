@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "migration_createUsers",
+      "label": "Migration: create-users",
+      "file_type": "code",
+      "source_file": "infra/migrations/1740051316822_create-users.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "db_schema_users",
+      "label": "DB Table: users",
+      "file_type": "rationale",
+      "source_file": "infra/migrations/1740051316822_create-users.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "uuid PK, unique username (30 chars, mirroring GitHub limit) and email (254 chars), bcrypt password (60 chars), timestamptz UTC columns \u2014 rationale comments in migration cite each choice."
+    }
+  ],
+  "edges": [
+    {
+      "source": "migration_createUsers",
+      "target": "db_schema_users",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1740051316822_create-users.js",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

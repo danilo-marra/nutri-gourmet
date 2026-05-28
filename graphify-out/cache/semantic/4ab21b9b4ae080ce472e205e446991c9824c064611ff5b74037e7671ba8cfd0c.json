@@ -1,0 +1,52 @@
+{
+  "nodes": [
+    {
+      "id": "api_reports_balances",
+      "label": "API: GET /api/v1/reports/balances",
+      "file_type": "code",
+      "source_file": "pages/api/v1/reports/balances/index.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "api_reports_balances",
+      "target": "model_student",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "pages/api/v1/reports/balances/index.js",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_reports_balances",
+      "target": "api_reports_credits",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "pages/api/v1/reports/balances/index.js",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "reports_financial_cluster",
+      "label": "Financial Reports Cluster: balances, credits, sales reports all guarded by read:report:financial",
+      "nodes": [
+        "api_reports_balances",
+        "api_reports_credits",
+        "api_reports_sales"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "pages/api/v1/reports/balances/index.js"
+    }
+  ]
+}

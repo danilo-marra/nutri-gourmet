@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    {
+      "id": "api_reports_packages",
+      "label": "API: GET /api/v1/reports/packages",
+      "file_type": "code",
+      "source_file": "pages/api/v1/reports/packages/index.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

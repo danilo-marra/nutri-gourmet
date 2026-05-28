@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "migration_createStudents",
+      "label": "Migration: create-students",
+      "file_type": "code",
+      "source_file": "infra/migrations/1779930000000_create-students.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "db_schema_students",
+      "label": "DB Table: students",
+      "file_type": "rationale",
+      "source_file": "infra/migrations/1779930000000_create-students.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "balance is DECIMAL(10,2) on the student row; credit transactions separately track history. No enrollment/guardian per decision record."
+    }
+  ],
+  "edges": [
+    {
+      "source": "migration_createStudents",
+      "target": "db_schema_students",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "infra/migrations/1779930000000_create-students.js",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

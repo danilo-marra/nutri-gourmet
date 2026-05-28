@@ -1,0 +1,58 @@
+{
+  "nodes": [
+    {
+      "id": "wiki_aluno",
+      "label": "Aluno \u2014 Student Entity",
+      "file_type": "document",
+      "source_file": "wiki/domain/aluno.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "wiki_aluno",
+      "target": "wiki_credito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/aluno.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_aluno",
+      "target": "wiki_pacote",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/aluno.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_aluno",
+      "target": "wiki_venda",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/aluno.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_aluno",
+      "target": "wiki_operador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/aluno.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}
