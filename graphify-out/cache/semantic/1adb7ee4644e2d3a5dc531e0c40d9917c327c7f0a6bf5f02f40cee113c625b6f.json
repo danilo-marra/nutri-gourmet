@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    {
+      "id": "api_activations_token",
+      "label": "API: PATCH /api/v1/activations/[token_id]",
+      "file_type": "code",
+      "source_file": "pages/api/v1/activations/[token_id]/index.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "api_activations_token",
+      "target": "model_session",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "pages/api/v1/activations/[token_id]/index.js",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_activations_token",
+      "target": "model_user_activate",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pages/api/v1/activations/[token_id]/index.js",
+      "source_location": "19",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

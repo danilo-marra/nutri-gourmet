@@ -140,6 +140,41 @@ describe("POST /api/v1/sales", () => {
       expect(body.name).toBe("ValidationError");
     });
 
+    test("Deve retornar 400 quando saldo parcial é insuficiente (balance < total)", async () => {
+      const operator = await orchestrator.createUser({ role: "operador" });
+      const session = await orchestrator.createSession(operator.id);
+      const student = await orchestrator.createStudent();
+      await orchestrator.createCreditTransaction(student.id, operator.id, {
+        amount: 5.0,
+      });
+      const prod = await orchestrator.createProduct({ price: 10.0 });
+
+      const response = await fetch("http://localhost:3000/api/v1/sales", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${session.token}`,
+        },
+        body: JSON.stringify({
+          student_id: student.id,
+          payment_method: "credit",
+          items: [{ product_id: prod.id, qty: 1 }],
+        }),
+      });
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body.name).toBe("ValidationError");
+      expect(body.message).toBe("Saldo insuficiente para realizar a venda.");
+
+      const studentAfter = await fetch(
+        `http://localhost:3000/api/v1/students/${student.id}`,
+        { headers: { Cookie: `session_id=${session.token}` } },
+      );
+      const studentBody = await studentAfter.json();
+      expect(studentBody.balance).toBe("5.00");
+    });
+
     test("Deve retornar 400 com produto inativo", async () => {
       const operator = await orchestrator.createUser({ role: "operador" });
       const session = await orchestrator.createSession(operator.id);

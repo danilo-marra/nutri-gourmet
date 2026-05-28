@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "api_sessions",
+      "label": "API: POST/DELETE /api/v1/sessions",
+      "file_type": "code",
+      "source_file": "pages/api/v1/sessions/index.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "api_sessions",
+      "target": "model_session_create",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pages/api/v1/sessions/index.js",
+      "source_location": "31",
+      "weight": 1.0
+    },
+    {
+      "source": "api_sessions",
+      "target": "model_session_findonevalidbytoken",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pages/api/v1/sessions/index.js",
+      "source_location": "48",
+      "weight": 1.0
+    },
+    {
+      "source": "api_sessions",
+      "target": "model_session_expirebyid",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pages/api/v1/sessions/index.js",
+      "source_location": "49",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "auth_session_lifecycle",
+      "label": "Session Authentication Lifecycle: sessions API + session model + authentication model",
+      "nodes": [
+        "api_sessions",
+        "model_session_create",
+        "model_session_findonevalidbytoken",
+        "model_session_expirebyid"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "pages/api/v1/sessions/index.js"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "nodes": [
+    {
+      "id": "wiki_prd_summary",
+      "label": "PRD Summary \u2014 Sistema Integrado de Gest\u00e3o de Cantina",
+      "file_type": "document",
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_operador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_supervisor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_administrador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_aluno",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_produto",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_venda",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_credito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_escopo",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_seguranca",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_prd_summary",
+      "target": "wiki_ui_ux",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/prd-summary.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

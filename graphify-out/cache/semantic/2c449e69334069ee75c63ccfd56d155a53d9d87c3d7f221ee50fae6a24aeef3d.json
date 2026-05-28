@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "models_product",
+      "label": "Product Model",
+      "file_type": "code",
+      "source_file": "models/product.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "models_product",
+      "target": "database_query",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/product.js",
+      "source_location": "line 47",
+      "weight": 1.0
+    },
+    {
+      "source": "models_product",
+      "target": "errors_ValidationError",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/product.js",
+      "source_location": "line 15",
+      "weight": 1.0
+    },
+    {
+      "source": "models_product",
+      "target": "errors_NotFoundError",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/product.js",
+      "source_location": "line 105",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

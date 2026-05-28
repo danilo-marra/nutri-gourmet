@@ -1,0 +1,89 @@
+{
+  "nodes": [
+    {
+      "id": "wiki_pacote",
+      "label": "Pacote \u2014 Full-Time Student Credit Package",
+      "file_type": "document",
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rationale_single_credit_pool",
+      "label": "Single Credit Pool for Packages and Manual Credits",
+      "file_type": "rationale",
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "wiki_pacote",
+      "target": "wiki_credito",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_pacote",
+      "target": "wiki_aluno",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_pacote",
+      "target": "wiki_supervisor",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wiki_pacote",
+      "target": "wiki_administrador",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rationale_single_credit_pool",
+      "target": "wiki_pacote",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rationale_single_credit_pool",
+      "target": "wiki_credito",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "wiki/domain/pacote.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

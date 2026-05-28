@@ -1,0 +1,97 @@
+{
+  "nodes": [
+    {
+      "id": "models_authorization",
+      "label": "Authorization Model",
+      "file_type": "code",
+      "source_file": "models/authorization.js",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "authorization_rbac_role_features",
+      "label": "RBAC Role-Feature Map",
+      "file_type": "rationale",
+      "source_file": "models/authorization.js",
+      "source_location": "line 64",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Role features are derived hierarchically: ADMIN inherits SUPERVISOR which inherits OPERADOR. Manual per-user feature overrides are merged on top via getEffectiveFeatures, enabling additive RBAC without altering role definitions."
+    },
+    {
+      "id": "authorization_filterOutput_pattern",
+      "label": "filterOutput Output Sanitization Pattern",
+      "file_type": "rationale",
+      "source_file": "models/authorization.js",
+      "source_location": "line 163",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "filterOutput centralizes what fields are safe to expose per feature, preventing accidental data leaks. Inline permission logic in handlers is explicitly forbidden by the constitution."
+    }
+  ],
+  "edges": [
+    {
+      "source": "models_authorization",
+      "target": "errors_InternalServerError",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/authorization.js",
+      "source_location": "line 354",
+      "weight": 1.0
+    },
+    {
+      "source": "models_authorization",
+      "target": "authorization_rbac_role_features",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/authorization.js",
+      "source_location": "line 64",
+      "weight": 1.0
+    },
+    {
+      "source": "models_authorization",
+      "target": "authorization_filterOutput_pattern",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "models/authorization.js",
+      "source_location": "line 163",
+      "weight": 1.0
+    },
+    {
+      "source": "authorization_rbac_role_features",
+      "target": "authorization_filterOutput_pattern",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "models/authorization.js",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "rbac_feature_gate_pattern",
+      "label": "RBAC Feature Gate Pattern",
+      "nodes": [
+        "models_authorization",
+        "controller_canRequest",
+        "authorization_rbac_role_features",
+        "authorization_filterOutput_pattern"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "models/authorization.js"
+    }
+  ]
+}
