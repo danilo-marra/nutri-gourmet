@@ -56,14 +56,15 @@ async function patchHandler(request, response) {
     });
   }
 
+  // Mesmo podendo gerir o alvo, só admin atribui roles elevados; os demais
+  // ficam limitados a operador|pending (regra centralizada em authorization).
   if (
-    userTryingToPatch.role === "supervisor" &&
     userInputValues.role !== undefined &&
-    !["operador", "pending"].includes(userInputValues.role)
+    !authorization.canAssignRole(userTryingToPatch, userInputValues.role)
   ) {
     throw new ForbiddenError({
-      message: "Supervisores não podem alterar o role para este nível.",
-      action: 'Defina o campo "role" como "operador" ou omita-o.',
+      message: "Você não pode atribuir este nível de acesso.",
+      action: 'Defina o campo "role" como "operador" ou "pending", ou omita-o.',
     });
   }
 

@@ -240,8 +240,9 @@ describe("POST /api/v1/users", () => {
       const responseBody = await response.json();
       expect(responseBody).toEqual({
         name: "ForbiddenError",
-        message: "Supervisores podem criar apenas contas de operador.",
-        action: 'Defina o campo "role" como "operador" ou omita-o.',
+        message: "Você não pode atribuir este nível de acesso.",
+        action:
+          'Defina o campo "role" como "operador" ou "pending", ou omita-o.',
         status_code: 403,
       });
     });
@@ -268,6 +269,39 @@ describe("POST /api/v1/users", () => {
 
       const responseBody = await response.json();
       expect(responseBody.name).toBe("ForbiddenError");
+    });
+  });
+
+  describe("Feature-privileged user", () => {
+    test("With manual `create:user` cannot create an admin account", async () => {
+      const operador = await orchestrator.createUser();
+      const activatedOperador = await orchestrator.activateUser(operador);
+      await orchestrator.addFeaturesToUser(operador, ["create:user"]);
+      const operadorSession = await orchestrator.createSession(
+        activatedOperador.id,
+      );
+
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${operadorSession.token}`,
+        },
+        body: JSON.stringify({
+          username: "tentativaadminoperador",
+          email: "tentativaadminoperador@cantina.dev",
+          password: "senha123",
+          role: "admin",
+        }),
+      });
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ForbiddenError");
+      expect(responseBody.message).toBe(
+        "Você não pode atribuir este nível de acesso.",
+      );
     });
   });
 });

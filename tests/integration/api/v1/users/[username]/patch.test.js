@@ -452,8 +452,9 @@ describe("PATCH /api/v1/[username]", () => {
       const responseBody = await response.json();
       expect(responseBody).toEqual({
         name: "ForbiddenError",
-        message: "Supervisores não podem alterar o role para este nível.",
-        action: 'Defina o campo "role" como "operador" ou omita-o.',
+        message: "Você não pode atribuir este nível de acesso.",
+        action:
+          'Defina o campo "role" como "operador" ou "pending", ou omita-o.',
         status_code: 403,
       });
     });
@@ -507,6 +508,44 @@ describe("PATCH /api/v1/[username]", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
+    });
+
+    test("Cannot self-escalate role even with `update:user:others`", async () => {
+      const privilegedUser = await orchestrator.createUser();
+      const activatedPrivilegedUser =
+        await orchestrator.activateUser(privilegedUser);
+
+      await orchestrator.addFeaturesToUser(privilegedUser, [
+        "update:user:others",
+      ]);
+
+      const privilegedUserSession = await orchestrator.createSession(
+        activatedPrivilegedUser.id,
+      );
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${activatedPrivilegedUser.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${privilegedUserSession.token}`,
+          },
+          body: JSON.stringify({ role: "admin" }),
+        },
+      );
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ForbiddenError");
+      expect(responseBody.message).toBe(
+        "Você não pode atribuir este nível de acesso.",
+      );
+
+      // O role não pode ter mudado no banco.
+      const userInDb = await user.findOneById(activatedPrivilegedUser.id);
+      expect(userInDb.role).toBe("operador");
     });
   });
 

@@ -160,6 +160,17 @@ function can(user, feature, resource) {
   return authorized;
 }
 
+function canAssignRole(user, role) {
+  validateUser(user);
+
+  // Atribuir os roles elevados (supervisor/admin) é privilégio exclusivo do
+  // admin. Qualquer outro usuário autorizado a gerir contas fica limitado a
+  // operador|pending — vale para supervisores e para quem recebeu
+  // `update:user:others`/`create:user` por feature manual, fechando o caminho
+  // de auto-promoção de não-admins.
+  return user.role === "admin" || ["operador", "pending"].includes(role);
+}
+
 function filterOutput(user, feature, resource) {
   validateUser(user);
   validateFeature(feature);
@@ -377,6 +388,7 @@ function validateResource(resource) {
 
 const authorization = {
   can,
+  canAssignRole,
   filterOutput,
   getEffectiveFeatures,
 };

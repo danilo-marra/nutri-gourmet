@@ -35,6 +35,35 @@ describe("models/authorization.js", () => {
     });
   });
 
+  describe(".canAssignRole()", () => {
+    test("without `user`", () => {
+      expect(() => {
+        authorization.canAssignRole();
+      }).toThrow(InternalServerError);
+    });
+
+    test("admin can assign any role", () => {
+      const admin = { role: "admin", features: [] };
+      expect(authorization.canAssignRole(admin, "admin")).toBe(true);
+      expect(authorization.canAssignRole(admin, "supervisor")).toBe(true);
+      expect(authorization.canAssignRole(admin, "operador")).toBe(true);
+    });
+
+    test("non-admin is limited to operador|pending", () => {
+      const supervisor = { role: "supervisor", features: [] };
+      expect(authorization.canAssignRole(supervisor, "operador")).toBe(true);
+      expect(authorization.canAssignRole(supervisor, "pending")).toBe(true);
+      expect(authorization.canAssignRole(supervisor, "supervisor")).toBe(false);
+      expect(authorization.canAssignRole(supervisor, "admin")).toBe(false);
+    });
+
+    test("feature-privileged non-admin cannot assign elevated role", () => {
+      const operador = { role: "operador", features: ["update:user:others"] };
+      expect(authorization.canAssignRole(operador, "admin")).toBe(false);
+      expect(authorization.canAssignRole(operador, "operador")).toBe(true);
+    });
+  });
+
   describe(".filterOutput()", () => {
     test("without `user`", () => {
       expect(() => {
