@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/supervisor.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-05-29
 
 ---
 
@@ -39,6 +39,17 @@ Isso se traduz diretamente no RBAC já implementado via `users.role` e `authoriz
 
 - Controle via `authorization.can()` e `authorization.filterOutput()` em `models/authorization.js`
 - Nunca incluir lógica de permissão inline nos handlers
+
+## Achados de auditoria (skill `security-check`, 2026-05-29)
+
+Auditoria OWASP Top 10 pontual sobre o repo. Detalhes em `.claude/skills/security-check/`.
+
+**Corrigido (🔴):** escalada de privilégio no `PATCH /api/v1/users/[username]` — um operador conseguia se auto-promover a admin enviando `{ "role": "admin" }` no próprio username. Alterar `role` agora exige `update:user:others` sobre o alvo. (PR #29)
+
+**Dívidas conhecidas (🟡, adiadas conscientemente):**
+
+- **Sem rate limiting no login** (`POST /api/v1/sessions`) — sem proteção a brute-force. Aceitável no contexto single-tenant; reavaliar antes de exposição pública. Rastreado na issue #30.
+- **Lógica de role inline** em `pages/api/v1/users/index.js` e `pages/api/v1/users/[username]/index.js` (`role === "supervisor"`) — contraria a regra "nunca incluir lógica de permissão inline nos handlers" acima. A regra "supervisor → operador|pending" vive em 3 lugares (esses 2 handlers + `authorization.js`). Refactor opcional para centralizar.
 
 ## Related pages
 
