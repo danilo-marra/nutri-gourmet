@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors */
+  --color-brand-green: #5bbf4e;
+  --color-brand-green-hover: #4aa33e;
+  --color-brand-green-subtle: #edf7eb;
+  --color-brand-teal: #2abaa6;
+  --color-brand-teal-subtle: #e6f7f5;
+  --color-brand-orange: #f5a623;
+  --color-brand-orange-subtle: #fff3dc;
+
+  /* Foreground / text */
+  --color-fg-1: #272932;
+  --color-fg-2: #52545b;
+  --color-fg-3: #8a8c90;
+  --color-fg-4: #4d5260;
+
+  /* Backgrounds */
+  --color-bg-page: #fefcfb;
+  --color-bg-card: #ffffff;
+
+  /* Semantic */
+  --color-danger: #ff434e;
+  --color-danger-subtle: #ffe1e3;
+  --color-danger-bg: #fff4f4;
+  --color-success-dark: #8eb83a;
+
+  /* Neutrals */
+  --color-gray-line: #dbdddf;
+  --color-gray-bg: #f2f3f4;
+  --color-border: #e1e1e2;
+
+  /* Fonts */
+  --font-brand: "Fredoka", system-ui, sans-serif;
+  --font-primary: "Poppins", system-ui, sans-serif;
+  --font-body: "Figtree", "Poppins", system-ui, sans-serif;
+  --font-button: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  background-color: var(--color-bg-page);
+  color: var(--color-fg-1);
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+}

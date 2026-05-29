@@ -6,4 +6,7 @@ CLAUDE.local.md
 .obsidian/
 cookies*.txt
 graphify-out/
+.playwright-mcp/
+/login-*.png
+/login-*.jpeg
 
