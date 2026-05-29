@@ -4,6 +4,22 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-29 — PR #33: frontend de autenticação + design system (Tailwind v4)
+
+**CLAUDE.md atualizado:**
+
+- Stack: adicionado bullet de frontend (Tailwind CSS v4, tokens `@theme`, fontes via `next/font`)
+- Comandos: adicionado `npm run seed:admin` com descrição de uso e variáveis
+- infra/: adicionado `scripts/seed-admin.js` ao bullet
+
+**Páginas wiki atualizadas:**
+
+- `wiki/rules/ui-ux.md` — reescrita com a implementação real: paleta Nutrigourmet (verde/teal/laranja), tabela de tokens, tipografia (Fredoka/Poppins/Figtree/Plus Jakarta Sans), diretrizes de radii/sombra/botão. A versão anterior descrevia "paleta azul e cinza" que nunca foi implementada.
+
+**Não alterado (justificado):** páginas de domínio (`operador`, `supervisor`, `administrador`, etc.) não foram afetadas — PR #33 toca apenas frontend e infra de seed, sem mudança de regras de negócio.
+
+---
+
 ## 2026-05-29 — Sincronização: correção da escalada de privilégio (PR #29)
 
 **Páginas wiki atualizadas:** `wiki/rules/seguranca.md`.
