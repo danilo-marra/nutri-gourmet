@@ -11,13 +11,13 @@ This app is **single-tenant, API-first (Next.js Pages Router), raw SQL via `pg`,
 
 ## How to run
 
-1. **Detect frontend scope first.** Decide whether the conditional frontend block (below) is live or dormant. The frontend exists if any of these are true:
+1. **Detect frontend scope first.** Decide whether the conditional frontend block (below) is live or dormant. Treat the frontend as **present** only when there is real UI with attack surface — any of:
 
-   - non-API page files under `pages/` (anything outside `pages/api/`), e.g. `pages/index.js`, `pages/login.js`
-   - a `components/`, `src/components/`, or `app/` directory with `.jsx`/`.tsx`
-   - any `NEXT_PUBLIC_*` env var referenced in code or `.env.example`
+   - a non-API page under `pages/` that renders a form, calls `fetch`/the API, or uses React state/hooks. A static placeholder returning only literal JSX (e.g. a stub `pages/index.js` with `<h1>...</h1>`) does **not** count — no input, no data flow.
+   - a `components/`, `src/components/`, or `app/` directory containing `.jsx`/`.tsx`
+   - any `NEXT_PUBLIC_*` env var referenced in app code (ignore matches inside this skill's own files under `.claude/`)
 
-   If none exist, mark every A0x-FE item as `n/a — sem front-end ainda` and skip those greps. State at the top of the report which mode you ran in.
+   If none hold, mark every A0x-FE item as `n/a — sem front-end ainda` and skip those greps. State at the top of the report which mode you ran in, and name the evidence (e.g. "only page is a static stub").
 
 2. **Sweep each category** using the greps/heuristics below. Prefer `Grep` over reading every file. Read a file only to confirm a hit is real (avoid false positives).
 
@@ -34,7 +34,7 @@ The core risk in an RBAC app. Permission logic must flow through `models/authori
 - **Every handler in `pages/api/v1/**`is gated.** For each route file, confirm`router.use(controller.injectAnonymousOrUser)`and that each verb has a`controller.canRequest("...")`guard (or a deliberate, justified public route like`POST /sessions`, `POST /users`, activation/recovery). A verb with no guard and no justification is 🔴.
 - **IDOR on `[id]` / `[username]` / `[token_id]` routes.** A user fetching/mutating a resource by id must be constrained to what their feature allows. Watch the self-vs-all split: `read:sale:self`/`delete:sale:self` vs `read:sale`/`delete:sale`, and `update:user` (self) vs `update:user:others`. A handler that takes an id from the URL and returns/mutates without checking ownership _or_ the broad feature is 🔴.
 - **Output always filtered.** Anything returned from a handler that carries a DB row should pass through `authorization.filterOutput(user, feature, resource)`. Raw `response.json(rowFromDb)` is 🟡→🔴 (leaks columns like `password`, `email`, `token`).
-- **Inline permission logic.** `if (user.role === "admin")` or `user.features.includes(...)` _inside a handler or model_ instead of calling `authorization.can(...)` — flag as 🟡 (drift from the single source of truth).
+- **Inline permission logic.** `if (user.role === "admin")` or `user.features.includes(...)` _inside a handler or model_ instead of calling `authorization.can(...)` — flag as 🟡 (drift from the single source of truth). **Carve-out:** role/feature logic _inside_ `models/authorization.js` (e.g. the `can`/`filterOutput` bodies) IS the source of truth — never flag it. Flag only when the check lives in a handler under `pages/api/**` or another model.
 - **Privilege escalation via update.** A `PATCH`/`PUT` on a user that lets the caller set their own `role`/`features` from `request.body` without an `authorization.can(user, "update:user:others", resource)` check is 🔴.
 
 Grep starters: `controller.canRequest`, `request.context.user`, `filterOutput`, `\.role ===`, `features.includes`.
@@ -52,6 +52,7 @@ Grep starters: `Math.random`, `randomBytes`, `bcrypt`, `httpOnly`, `secure:`, `s
 
 - **SQL injection** is the headline. All DB access goes through `infra/database.js` `database.query({ text, values })`. Every dynamic value MUST be a `$1`/`$2` placeholder in `values`, never interpolated into `text`.
   - 🔴 patterns: template literals with `${...}` _inside_ the SQL string, string concatenation building SQL, `client.query(\`...${userInput}...\`)`, building `WHERE`/`ORDER BY`/column names from request data.
+  - **Trace the variable before flagging.** A `${...}` in SQL is only 🔴 when the value traces back to caller input (`request.body`/`request.query`/path params/any argument fed from a handler). Interpolating a **hardcoded constant** is safe and must NOT be flagged — e.g. `models/product.js` `const whereClause = activeOnly ? "WHERE active = true" : ""` is a boolean-driven literal, not user data.
   - Pay special attention to `models/report.js` (date ranges, optional filters) and any list endpoint that accepts sort/filter query params.
 - **Other injection.** Command injection via `child_process` with user input; NoSQL n/a. XSS → see A03-FE.
 
