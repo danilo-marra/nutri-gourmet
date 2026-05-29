@@ -1,9 +1,15 @@
 .next
 node_modules
+.env.production
+.env.staging
+.env.local
 CLAUDE.local.md
 .claude/settings.local.json
 .claude/worktrees/
 .obsidian/
 cookies*.txt
 graphify-out/
+.playwright-mcp/
+/login-*.png
+/login-*.jpeg
 
