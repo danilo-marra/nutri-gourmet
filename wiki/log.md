@@ -4,6 +4,16 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-29 — Auditoria de segurança (skill `security-check`)
+
+**Páginas wiki atualizadas:** `wiki/rules/seguranca.md` — nova seção "Achados de auditoria (skill `security-check`)".
+
+**O que foi feito:** primeira execução da skill `security-check` (auditoria OWASP Top 10) sobre o repo. Registrado na wiki: o 🔴 corrigido (escalada de privilégio no `PATCH /users/[username]`, PR #29) e as dívidas 🟡 conscientemente adiadas — sem rate limit no login (issue #30) e lógica de role inline nos handlers de `users` (contradiz a regra "nunca permissão inline").
+
+**Não alterado (justificado):** sem mudança em páginas de domínio — achados são sobre implementação/segurança, não sobre regras de negócio novas.
+
+---
+
 ## 2026-05-28 — PR #27: adição de índices FK em todas as tabelas de domínio
 
 **CLAUDE.md atualizado:** Sem alterações necessárias — nenhum novo modelo, endpoint ou helper.
