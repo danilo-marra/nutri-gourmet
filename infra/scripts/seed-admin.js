@@ -15,7 +15,22 @@ const { config } = require("dotenv");
 const { expand } = require("dotenv-expand");
 
 const envPath = process.env.ENV_PATH || ".env.development";
-expand(config({ path: envPath }));
+const loaded = config({ path: envPath });
+
+if (loaded.error) {
+  console.error(`Erro: não foi possível carregar "${envPath}".`);
+  console.error(`  ${loaded.error.message}`);
+  console.error(`  Verifique se o arquivo existe e se ENV_PATH está correto.`);
+  process.exit(1);
+}
+
+expand(loaded);
+
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  console.error(`Erro: DATABASE_URL não encontrado em "${envPath}".`);
+  process.exit(1);
+}
 
 const email = process.env.ADMIN_EMAIL;
 const password = process.env.ADMIN_PASSWORD;
@@ -24,7 +39,7 @@ const username = process.env.ADMIN_USERNAME || email?.split("@")[0] || "admin";
 if (!email || !password) {
   console.error("Erro: ADMIN_EMAIL e ADMIN_PASSWORD são obrigatórios.");
   console.error(
-    "Uso: ADMIN_EMAIL=x@y.com ADMIN_PASSWORD=senha npm run seed:admin",
+    "PowerShell: $env:ADMIN_EMAIL='x@y.com'; $env:ADMIN_PASSWORD='senha'; node infra/scripts/seed-admin.js",
   );
   process.exit(1);
 }
