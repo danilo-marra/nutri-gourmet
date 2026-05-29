@@ -42,14 +42,29 @@ async function patchHandler(request, response) {
     });
   }
 
+  // `update:user` permite editar o próprio perfil, mas alterar `role` é uma
+  // operação de gestão de contas — só quem pode atuar sobre outros usuários
+  // (`update:user:others`) muda role. Sem esta guarda, um operador conseguiria
+  // se auto-promover via PATCH no próprio username.
   if (
-    userTryingToPatch.role === "supervisor" &&
     userInputValues.role !== undefined &&
-    !["operador", "pending"].includes(userInputValues.role)
+    !authorization.can(userTryingToPatch, "update:user:others", targetUser)
   ) {
     throw new ForbiddenError({
-      message: "Supervisores não podem alterar o role para este nível.",
-      action: 'Defina o campo "role" como "operador" ou omita-o.',
+      message: "Você não pode alterar o role deste usuário.",
+      action: 'Remova o campo "role" da requisição.',
+    });
+  }
+
+  // Mesmo podendo gerir o alvo, só admin atribui roles elevados; os demais
+  // ficam limitados a operador|pending (regra centralizada em authorization).
+  if (
+    userInputValues.role !== undefined &&
+    !authorization.canAssignRole(userTryingToPatch, userInputValues.role)
+  ) {
+    throw new ForbiddenError({
+      message: "Você não pode atribuir este nível de acesso.",
+      action: 'Defina o campo "role" como "operador" ou "pending", ou omita-o.',
     });
   }
 

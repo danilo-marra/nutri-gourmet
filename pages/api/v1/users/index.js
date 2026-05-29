@@ -28,13 +28,10 @@ async function postHandler(request, response) {
   const userInputValues = request.body;
 
   const targetRole = userInputValues.role ?? "pending";
-  if (
-    userTryingToPost.role === "supervisor" &&
-    !["operador", "pending"].includes(targetRole)
-  ) {
+  if (!authorization.canAssignRole(userTryingToPost, targetRole)) {
     throw new ForbiddenError({
-      message: "Supervisores podem criar apenas contas de operador.",
-      action: 'Defina o campo "role" como "operador" ou omita-o.',
+      message: "Você não pode atribuir este nível de acesso.",
+      action: 'Defina o campo "role" como "operador" ou "pending", ou omita-o.',
     });
   }
 
