@@ -1,5 +1,8 @@
 .next
 node_modules
+.env.production
+.env.staging
+.env.local
 CLAUDE.local.md
 .claude/settings.local.json
 .claude/worktrees/
