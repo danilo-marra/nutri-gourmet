@@ -4,6 +4,16 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-29 — Sincronização: correção da escalada de privilégio (PR #29)
+
+**Páginas wiki atualizadas:** `wiki/rules/seguranca.md`.
+
+**O que foi feito:** alinhada a seção "Achados de auditoria" ao que o PR #29 efetivamente entregou. O PR de docs anterior (PR #31) foi mergeado antes do fix e registrava como dívida 🟡 a "lógica de role inline nos 2 handlers"; o PR #29 removeu esses caps inline e centralizou em `authorization.canAssignRole()` (PATCH + POST). Atualizado: o item 🔴 agora cita PATCH+POST e `canAssignRole`; o item de role inline virou "resíduo" (resta só o filtro de leitura em `users/index.js:18`); seção Implementação ganhou bullet de `canAssignRole`.
+
+**Não alterado:** CLAUDE.md (sem novo model/helper — `canAssignRole` é função de model já listado); issue #30 (rate limit) segue como dívida aberta.
+
+---
+
 ## 2026-05-29 — Auditoria de segurança (skill `security-check`)
 
 **Páginas wiki atualizadas:** `wiki/rules/seguranca.md` — nova seção "Achados de auditoria (skill `security-check`)".
