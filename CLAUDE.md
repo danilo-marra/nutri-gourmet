@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Migrations via `node-pg-migrate` in `infra/migrations/`
 - Session auth (cookie `session_id`, DB-backed) + role-based RBAC (`users.role` derives features; manual feature overrides still supported)
 - Email via `nodemailer`; Mailcatcher in dev
+- Frontend: Tailwind CSS v4 (`@tailwindcss/postcss`); design tokens em `styles/globals.css` via `@theme`; fontes via `next/font/google` (Poppins, Fredoka, Figtree, Plus Jakarta Sans)
 - Jest integration tests against a real DB and the running Next dev server
 
 ## Constitution authority
@@ -30,13 +31,14 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 - `npm run migrations:create -- <name>` scaffolds a migration. `migrations:up:dry` previews; `migrations:status` lists pending.
 - Migrations target `.env.development` explicitly (the `--envPath` flag). New env vars must be added to `.env.example` and `.env.development`.
 - `npm run check-secrets` runs Secretlint against the tree; husky `pre-commit` runs `lint:prettier:fix` + `lint:eslint:check` + `check-secrets`, `commit-msg` runs commitlint (Conventional Commits).
+- `npm run seed:admin` creates/promotes a user to admin role. Requires `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars; uses `ENV_PATH` to select the env file (default `.env.development`).
 - Stop services with `npm run services:stop` (preserves volumes) or `services:down` (destroys).
 
 ## Repo layout (load-bearing)
 
 - `pages/api/v1/**` — handlers built with `next-connect` + `controller.errorHandlers`. Always go through `infra/controller.js` middlewares.
 - `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `passwordReset`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`).
-- `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`.
+- `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`, `scripts/seed-admin.js`.
 - `tests/integration/api/v1/**` mirrors `pages/api/v1/**` path-for-path. Additional subdirectories: `_use-cases/` (end-to-end flows), `infra/` (infra tests e.g. email), `unit/` (unit tests for models e.g. `authorization`).
 - Shared setup lives in `tests/orchestrator.js` (use `waitForAllServices`, `clearDatabase`, `runPendingMigrations`, `createUser({ role? })`, `createSession`, `deleteAllEmails`, `getLastEmail`, `extractUUID`, `activateUser`, `addFeaturesToUser`, `createStudent`, `createProduct`, `createCreditTransaction(studentId, operatorId, overrides?)`, `createSale(studentId, operatorId, overrides?)`, `createCashClose(operatorId, closedById, overrides?)`).
 
