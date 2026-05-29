@@ -42,6 +42,20 @@ async function patchHandler(request, response) {
     });
   }
 
+  // `update:user` permite editar o próprio perfil, mas alterar `role` é uma
+  // operação de gestão de contas — só quem pode atuar sobre outros usuários
+  // (`update:user:others`) muda role. Sem esta guarda, um operador conseguiria
+  // se auto-promover via PATCH no próprio username.
+  if (
+    userInputValues.role !== undefined &&
+    !authorization.can(userTryingToPatch, "update:user:others", targetUser)
+  ) {
+    throw new ForbiddenError({
+      message: "Você não pode alterar o role deste usuário.",
+      action: 'Remova o campo "role" da requisição.',
+    });
+  }
+
   if (
     userTryingToPatch.role === "supervisor" &&
     userInputValues.role !== undefined &&

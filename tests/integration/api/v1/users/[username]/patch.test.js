@@ -509,4 +509,36 @@ describe("PATCH /api/v1/[username]", () => {
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
     });
   });
+
+  describe("Operador self-update", () => {
+    test("Cannot escalate own role via PATCH", async () => {
+      const operador = await orchestrator.createUser();
+      const activatedOperador = await orchestrator.activateUser(operador);
+      const operadorSession = await orchestrator.createSession(
+        activatedOperador.id,
+      );
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${activatedOperador.username}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${operadorSession.token}`,
+          },
+          body: JSON.stringify({ role: "admin" }),
+        },
+      );
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ForbiddenError");
+      expect(responseBody.status_code).toBe(403);
+
+      // The role must not have changed in the database.
+      const userInDb = await user.findOneById(activatedOperador.id);
+      expect(userInDb.role).toBe("operador");
+    });
+  });
 });
