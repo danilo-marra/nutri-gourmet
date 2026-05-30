@@ -4,6 +4,21 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-30 — PR #35: landing page de marketing (`/`)
+
+**CLAUDE.md atualizado:**
+
+- Stack: fontes adicionadas — Dancing Script (`--font-tagline`) e Inter (`--font-data`)
+
+**Páginas wiki atualizadas:**
+
+- `wiki/rules/ui-ux.md` — nova seção "Superfícies" (landing/login/app); tabela de paleta expandida com `--color-brand-teal-hover`, `--color-accent-yellow`, `--color-gray-bg-section`; tabela de tipografia expandida com Dancing Script e Inter; seção "Intenção" diferencia landing page (pais/diretores, paleta quente) do app interno (operadores/gestores)
+- `wiki/index.md` — descrição de ui-ux.md atualizada (removia "paleta azul e cinza" que nunca foi implementada)
+
+**Não alterado (justificado):** páginas de domínio e segurança não foram afetadas — PR #35 é exclusivamente frontend/marketing sem mudança de regras de negócio, endpoints ou RBAC.
+
+---
+
 ## 2026-05-29 — PR #33: frontend de autenticação + design system (Tailwind v4)
 
 **CLAUDE.md atualizado:**

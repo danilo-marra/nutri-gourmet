@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Migrations via `node-pg-migrate` in `infra/migrations/`
 - Session auth (cookie `session_id`, DB-backed) + role-based RBAC (`users.role` derives features; manual feature overrides still supported)
 - Email via `nodemailer`; Mailcatcher in dev
-- Frontend: Tailwind CSS v4 (`@tailwindcss/postcss`); design tokens em `styles/globals.css` via `@theme`; fontes via `next/font/google` (Poppins, Fredoka, Figtree, Plus Jakarta Sans)
+- Frontend: Tailwind CSS v4 (`@tailwindcss/postcss`); design tokens em `styles/globals.css` via `@theme`; fontes via `next/font/google` (Poppins, Fredoka, Figtree, Plus Jakarta Sans, Dancing Script, Inter)
 - Jest integration tests against a real DB and the running Next dev server
 
 ## Constitution authority

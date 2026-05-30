@@ -40,7 +40,7 @@
 
 - [Escopo](rules/escopo.md) — o que está fora desta fase (mobile, fiscal, multi-unidade)
 - [Segurança e Controle de Acesso](rules/seguranca.md) — visibilidade restrita por perfil; tabela de permissões por persona
-- [UI/UX](rules/ui-ux.md) — estilo corporativo moderno, fundo claro, paleta azul e cinza
+- [UI/UX](rules/ui-ux.md) — design system Nutrigourmet: paleta verde/teal/laranja, 6 fontes, tokens de cor; landing page (`/`) e app interno
 - [Relatórios](rules/relatorios.md) — 5 relatórios; supervisor/admin; tabela paginada; sem exportação nesta fase
 
 ---
