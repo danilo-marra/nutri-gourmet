@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, design bundle Nutrigourmet (Tailwind v4 + tokens)
 
-**Last updated**: 2026-05-29
+**Last updated**: 2026-05-30
 
 ---
 
@@ -16,25 +16,39 @@ O PRD define estilo corporativo moderno com foco em valor percebido. A implement
 - **Tokens**: definidos em `styles/globals.css` com `@theme` (cores, fontes, radii, sombras)
 - **Fontes**: carregadas via `next/font/google` em `pages/_app.js`
 
+## Superfícies
+
+| Superfície    | Rota     | Descrição                                                       |
+| ------------- | -------- | --------------------------------------------------------------- |
+| Landing page  | `/`      | Página de marketing para pais e diretores de escolas            |
+| Login         | `/login` | Autenticação de operadores, supervisores e administradores      |
+| App (interno) | `/...`   | Dashboard de gestão (sidebar, módulos de venda, crédito, caixa) |
+
 ## Paleta de cores
 
-| Token                  | Valor     | Uso                               |
-| ---------------------- | --------- | --------------------------------- |
-| `--color-brand-green`  | `#5BBF4E` | CTAs principais, botões primários |
-| `--color-brand-teal`   | `#2ABAA6` | Foco de inputs, links secundários |
-| `--color-brand-orange` | `#F5A623` | Tagline, acentos decorativos      |
-| `--color-bg-page`      | `#FEFCFB` | Fundo da página                   |
-| `--color-fg-1`         | `#272932` | Texto principal                   |
-| `--color-danger`       | `#FF434E` | Erros, estados negativos          |
+| Token                       | Valor     | Uso                               |
+| --------------------------- | --------- | --------------------------------- |
+| `--color-brand-green`       | `#5BBF4E` | CTAs principais, botões primários |
+| `--color-brand-green-hover` | `#4AA33E` | Hover de botão primário           |
+| `--color-brand-teal`        | `#2ABAA6` | Foco de inputs, links secundários |
+| `--color-brand-teal-hover`  | `#239E8C` | Hover de teal                     |
+| `--color-brand-orange`      | `#F5A623` | Tagline, acentos decorativos      |
+| `--color-accent-yellow`     | `#FFCB65` | Blobs decorativos, hero landing   |
+| `--color-bg-page`           | `#FEFCFB` | Fundo da página                   |
+| `--color-gray-bg-section`   | `#F6F7F6` | Fundo de seções alternadas        |
+| `--color-fg-1`              | `#272932` | Texto principal                   |
+| `--color-danger`            | `#FF434E` | Erros, estados negativos          |
 
 ## Tipografia
 
-| Fonte             | Variável         | Uso                        |
-| ----------------- | ---------------- | -------------------------- |
-| Fredoka 700       | `--font-brand`   | Wordmark, títulos de marca |
-| Poppins           | `--font-primary` | Corpo, headings da UI      |
-| Figtree           | `--font-body`    | Texto corrido              |
-| Plus Jakarta Sans | `--font-button`  | Labels de botões           |
+| Fonte             | Variável         | Uso                               |
+| ----------------- | ---------------- | --------------------------------- |
+| Fredoka 700       | `--font-brand`   | Wordmark, títulos de marca        |
+| Dancing Script    | `--font-tagline` | Tagline decorativa (landing page) |
+| Poppins           | `--font-primary` | Corpo, headings da UI             |
+| Figtree           | `--font-body`    | Texto corrido                     |
+| Plus Jakarta Sans | `--font-button`  | Labels de botões                  |
+| Inter             | `--font-data`    | Valores numéricos, stats          |
 
 ## Diretrizes visuais
 
@@ -46,7 +60,11 @@ O PRD define estilo corporativo moderno com foco em valor percebido. A implement
 
 ## Intenção
 
-A interface deve transmitir confiabilidade e profissionalismo para a Gestora ([[administrador]]), ao mesmo tempo que é ágil e direta para o [[operador]] no fluxo de vendas diárias.
+A **landing page** (`/`) usa paleta quente (gradiente creme→laranja→verde claro), hero com blobs decorativos em amarelo/laranja, e cópia direcionada a pais de alunos e diretores de escolas — transmitindo confiança e profissionalismo antes de qualquer login.
+
+O **app interno** deve transmitir confiabilidade e profissionalismo para a Gestora ([[administrador]]), ao mesmo tempo que é ágil e direta para o [[operador]] no fluxo de vendas diárias.
+
+Imagens da landing page são placeholders (`picsum.photos`) — substituir por fotografia real de alimentos quando disponível.
 
 ## Related pages
 
