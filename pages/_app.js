@@ -1,5 +1,12 @@
 import "@/styles/globals.css";
-import { Poppins, Figtree, Plus_Jakarta_Sans, Fredoka } from "next/font/google";
+import {
+  Poppins,
+  Figtree,
+  Plus_Jakarta_Sans,
+  Fredoka,
+  Dancing_Script,
+  Inter,
+} from "next/font/google";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,10 +36,24 @@ const fredoka = Fredoka({
   display: "swap",
 });
 
+const dancingScript = Dancing_Script({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-tagline",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-data",
+  display: "swap",
+});
+
 export default function App({ Component, pageProps }) {
   return (
     <main
-      className={`${poppins.variable} ${figtree.variable} ${plusJakartaSans.variable} ${fredoka.variable}`}
+      className={`${poppins.variable} ${figtree.variable} ${plusJakartaSans.variable} ${fredoka.variable} ${dancingScript.variable} ${inter.variable}`}
     >
       <Component {...pageProps} />
     </main>
