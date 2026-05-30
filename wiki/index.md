@@ -7,6 +7,7 @@
 ## Fontes (raw/)
 
 - [PRD — Sistema Integrado de Gestão de Cantina](prd-summary.md) — documento de requisitos original do projeto
+- [Institucional — Cantina NutriGourmet](institucional.md) — identidade, equipe, missão/visão/valores, serviços, escolas e contatos
 
 ## Decisões (raw/decisions/)
 

@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Migrations via `node-pg-migrate` in `infra/migrations/`
 - Session auth (cookie `session_id`, DB-backed) + role-based RBAC (`users.role` derives features; manual feature overrides still supported)
 - Email via `nodemailer`; Mailcatcher in dev
-- Frontend: Tailwind CSS v4 (`@tailwindcss/postcss`); design tokens em `styles/globals.css` via `@theme`; fontes via `next/font/google` (Poppins, Fredoka, Figtree, Plus Jakarta Sans, Dancing Script, Inter)
+- Frontend: Tailwind CSS v4 (`@tailwindcss/postcss`); design tokens em `styles/globals.css` via `@theme`; fontes via `next/font/google` (Poppins, Fredoka, Figtree, Plus Jakarta Sans, Dancing Script, Inter); `sharp` para otimização de imagens; `nprogress` para loading bar + fade-in de página em `pages/_app.js`
 - Jest integration tests against a real DB and the running Next dev server
 
 ## Constitution authority
@@ -26,7 +26,7 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 
 ## Non-obvious commands
 
-- `npm run dev` orchestrates `services:up` → `services:wait:database` → `migrations:up` → `next dev`. Don't start `next dev` directly during normal work.
+- `npm run dev` orchestrates `kill-port 3000` → `services:up` → `services:wait:database` → `migrations:up` → `next dev -p 3000`. Always runs on port 3000, killing any existing process first. Don't start `next dev` directly.
 - `npm test` waits for DB, runs `migrations:up` on dev DB, clears `.next` cache, then starts Jest + Next dev server via `concurrently`. `posttest` stops services. Use `npm run test:watch` only when services are already up.
 - `npm run migrations:create -- <name>` scaffolds a migration. `migrations:up:dry` previews; `migrations:status` lists pending.
 - Migrations target `.env.development` explicitly (the `--envPath` flag). New env vars must be added to `.env.example` and `.env.development`.
@@ -38,7 +38,7 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 
 - `pages/api/v1/**` — handlers built with `next-connect` + `controller.errorHandlers`. Always go through `infra/controller.js` middlewares.
 - `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `passwordReset`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`).
-- `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`, `scripts/seed-admin.js`.
+- `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`, `scripts/seed-admin.js`, `scripts/kill-port.js`.
 - `tests/integration/api/v1/**` mirrors `pages/api/v1/**` path-for-path. Additional subdirectories: `_use-cases/` (end-to-end flows), `infra/` (infra tests e.g. email), `unit/` (unit tests for models e.g. `authorization`).
 - Shared setup lives in `tests/orchestrator.js` (use `waitForAllServices`, `clearDatabase`, `runPendingMigrations`, `createUser({ role? })`, `createSession`, `deleteAllEmails`, `getLastEmail`, `extractUUID`, `activateUser`, `addFeaturesToUser`, `createStudent`, `createProduct`, `createCreditTransaction(studentId, operatorId, overrides?)`, `createSale(studentId, operatorId, overrides?)`, `createCashClose(operatorId, closedById, overrides?)`).
 

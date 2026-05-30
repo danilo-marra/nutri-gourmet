@@ -60,10 +60,10 @@ function IconShieldCheck() {
 }
 
 const STATS = [
-  { value: "120+", label: "Escolas atendidas" },
-  { value: "8.500+", label: "Alunos servidos diariamente" },
-  { value: "10 anos", label: "De experiência em cantinas" },
-  { value: "98%", label: "De satisfação" },
+  { value: "5", label: "Escolas parceiras no DF" },
+  { value: "11 anos", label: "De experiência em cantinas escolares" },
+  { value: "100%", label: "Cardápios por nutricionistas especializados" },
+  { value: "GDF", label: "Cardápios alinhados às diretrizes oficiais" },
 ];
 
 const FEATURES = [
@@ -71,33 +71,41 @@ const FEATURES = [
     Icon: IconLeaf,
     title: "Cardápio saudável e balanceado",
     desc: "Refeições elaboradas com ingredientes frescos e adequadas para cada faixa etária. A escola oferece nutrição de qualidade, e os pais sabem exatamente o que os filhos estão comendo.",
-    iconBg: "bg-[var(--color-brand-green-subtle)]",
-    iconColor: "text-[var(--color-brand-green)]",
+    iconBg: "bg-brand-green-subtle",
+    iconColor: "text-brand-green",
   },
   {
     Icon: IconChart,
     title: "Controle de crédito para os pais",
     desc: "Adicione saldo, acompanhe o histórico de consumo e fique tranquilo sobre o que seu filho compra na cantina. Tudo registrado, sem surpresas no bolso.",
     iconBg: "bg-[var(--color-brand-teal-subtle)]",
-    iconColor: "text-[var(--color-brand-teal)]",
+    iconColor: "text-brand-teal",
   },
   {
     Icon: IconShieldCheck,
     title: "Gestão transparente para a escola",
     desc: "Diretores têm acesso a relatórios completos, fechamentos de caixa e controle financeiro da cantina em tempo real. Sem retrabalho, sem dúvidas.",
     iconBg: "bg-[var(--color-brand-orange-subtle)]",
-    iconColor: "text-[var(--color-brand-orange)]",
+    iconColor: "text-brand-orange",
   },
 ];
 
-// Substituir por fotografia real de alimentos
-const GALLERY_SEEDS = [
-  "salad-colorful",
-  "fruit-bowl-fresh",
-  "vegetables-healthy",
-  "soup-warm",
-  "lunch-nutritious",
-  "juice-natural",
+const GALLERY_IMAGES = [
+  {
+    src: "/cantina/bandejas_01.JPG",
+    alt: "Aluno se servindo no buffet da cantina",
+  },
+  { src: "/cantina/bandejas_02.jpg", alt: "Macarrão preparado fresquinho" },
+  { src: "/cantina/cozinha_01.JPG", alt: "Equipe de cozinha em ação" },
+  { src: "/cantina/uvas_01.jpg", alt: "Lanche saudável com frutas" },
+  {
+    src: "/cantina/brigadeiro_01.jpg",
+    alt: "Brigadeiros para eventos e aniversários",
+  },
+  {
+    src: "/cantina/cozinha_02.JPG",
+    alt: "Cozinha profissional da NutriGourmet",
+  },
 ];
 
 const NAV_LINKS = [
@@ -117,7 +125,7 @@ export default function LandingPage() {
 
   return (
     <div
-      className="min-h-screen bg-[var(--color-bg-page)]"
+      className="min-h-screen bg-bg-page"
       style={{ fontFamily: "var(--font-primary)" }}
     >
       {/* ── Navbar ── */}
@@ -125,7 +133,7 @@ export default function LandingPage() {
         className={`fixed top-0 inset-x-0 z-50 bg-white border-b transition-shadow duration-200 ${
           scrolled
             ? "shadow-[0_1px_8px_rgba(0,0,0,0.08)] border-transparent"
-            : "border-[var(--color-border)]"
+            : "border-border"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -144,7 +152,7 @@ export default function LandingPage() {
               <a
                 key={label}
                 href={href}
-                className="text-sm font-medium text-[var(--color-fg-2)] transition-colors hover:text-[var(--color-brand-green)]"
+                className="text-sm font-medium text-fg-2 transition-colors hover:text-brand-green"
               >
                 {label}
               </a>
@@ -152,8 +160,8 @@ export default function LandingPage() {
           </nav>
 
           <a
-            href="mailto:contato@nutrigourmet.com.br"
-            className="bg-[var(--color-brand-green)] hover:bg-[var(--color-brand-green-hover)] text-white text-sm font-medium px-5 py-2.5 rounded-[var(--radius-lg)] transition-colors"
+            href="mailto:cantinanutrigourmet@gmail.com"
+            className="bg-brand-green hover:bg-brand-green-hover text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
             style={{ fontFamily: "var(--font-button)" }}
           >
             Fale conosco
@@ -173,7 +181,7 @@ export default function LandingPage() {
 
         {/* Blobs decorativos */}
         <div
-          className="absolute -top-28 -right-24 w-[460px] h-[460px] rounded-full opacity-30 z-0 blur-2xl"
+          className="absolute -top-28 -right-24 w-115 h-115 rounded-full opacity-30 z-0 blur-2xl"
           style={{ background: "var(--color-accent-yellow)" }}
         />
         <div
@@ -194,34 +202,25 @@ export default function LandingPage() {
                 color: "var(--color-brand-orange)",
               }}
             >
-              Comida natural para crianças saudáveis
+              Alimentação escolar feita com amor e qualidade
             </p>
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-fg-1)] leading-[1.1] mb-6">
+            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-fg-1 leading-[1.1] mb-6">
               Nutrição que transforma a{" "}
-              <span className="text-[var(--color-brand-green)]">
-                vida escolar
-              </span>
+              <span className="text-brand-green">vida escolar</span>
             </h1>
             <p
-              className="text-lg text-[var(--color-fg-2)] mb-10 leading-relaxed max-w-md"
+              className="text-lg text-fg-2 mb-10 leading-relaxed max-w-md"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Parceira das melhores escolas, a Nutrigourmet garante refeições
-              nutritivas, controle de crédito para os pais e relatórios
-              completos para a diretoria — tudo com a transparência que sua
-              escola merece.
+              Empresa familiar que cuida da alimentação escolar no DF com a
+              mesma dedicação que temos em casa. Cardápios saudáveis, controle
+              de crédito para os pais e gestão transparente para a diretoria —
+              tudo com carinho e responsabilidade.
             </p>
             <div className="flex flex-wrap gap-4">
               <a
                 href="#escolas"
-                className="bg-[var(--color-brand-green)] hover:bg-[var(--color-brand-green-hover)] text-white font-semibold px-7 py-3.5 rounded-[var(--radius-lg)] transition-colors text-sm"
-                style={{ fontFamily: "var(--font-button)" }}
-              >
-                Conheça o sistema
-              </a>
-              <a
-                href="#sobre"
-                className="border border-[var(--color-brand-orange)] text-[var(--color-brand-orange)] font-medium px-7 py-3.5 rounded-[var(--radius-lg)] hover:bg-[var(--color-brand-orange-subtle)] transition-colors text-sm"
+                className="bg-brand-green hover:bg-brand-green-hover text-white font-semibold px-7 py-3.5 rounded-lg transition-colors text-sm"
                 style={{ fontFamily: "var(--font-button)" }}
               >
                 Saiba mais
@@ -229,40 +228,41 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Imagem do hero — substituir por fotografia real */}
           <div className="relative hidden lg:flex justify-center items-center">
             <div
               className="absolute -inset-5 rounded-[2.5rem] opacity-40 z-0"
               style={{ background: "var(--color-accent-yellow)" }}
             />
             <div
-              className="absolute -bottom-6 -left-6 w-28 h-28 rounded-[var(--radius-2xl)] opacity-60 z-0"
+              className="absolute -bottom-6 -left-6 w-28 h-28 rounded-2xl opacity-60 z-0"
               style={{ background: "var(--color-brand-green-subtle)" }}
             />
-            <img
-              src="https://picsum.photos/seed/bowl-healthy-food/560/560"
-              alt="Refeição nutritiva e colorida"
+            <Image
+              src="/cantina/refeicao_01.JPG"
+              alt="Prato completo e nutritivo da NutriGourmet"
+              width={560}
+              height={560}
+              priority
               className="relative z-10 w-full max-w-lg rounded-[1.75rem] object-cover shadow-[0_24px_64px_rgba(180,120,30,0.25)]"
-              style={{ aspectRatio: "1/1" }}
             />
           </div>
         </div>
       </section>
 
       {/* ── Stats ── */}
-      <section className="bg-white border-b border-[var(--color-border)]">
+      <section className="bg-white border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-14">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {STATS.map((stat) => (
               <div key={stat.label} className="text-center">
                 <p
-                  className="text-3xl lg:text-4xl font-bold text-[var(--color-brand-green)] mb-1"
+                  className="text-3xl lg:text-4xl font-bold text-brand-green mb-1"
                   style={{ fontFamily: "var(--font-data)" }}
                 >
                   {stat.value}
                 </p>
                 <p
-                  className="text-sm text-[var(--color-fg-3)]"
+                  className="text-sm text-fg-3"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {stat.label}
@@ -274,20 +274,20 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features ── */}
-      <section id="escolas" className="py-20 bg-[var(--color-gray-bg-section)]">
+      <section id="escolas" className="py-20 bg-gray-bg-section">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
             <p
-              className="text-xs font-semibold uppercase tracking-[0.15em] mb-3 text-[var(--color-brand-green)]"
+              className="text-xs font-semibold uppercase tracking-[0.15em] mb-3 text-brand-green"
               style={{ fontFamily: "var(--font-button)" }}
             >
               Por que a Nutrigourmet
             </p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[var(--color-fg-1)] mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-fg-1 mb-4">
               Tudo que sua escola precisa, em um só lugar
             </h2>
             <p
-              className="text-[var(--color-fg-2)] max-w-xl mx-auto leading-relaxed"
+              className="text-fg-2 max-w-xl mx-auto leading-relaxed"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Escolha uma cantina que os pais confiam e a escola pode recomendar
@@ -299,18 +299,18 @@ export default function LandingPage() {
             {FEATURES.map(({ Icon, title, desc, iconBg, iconColor }) => (
               <div
                 key={title}
-                className="bg-white rounded-[var(--radius-xl)] p-8 border border-[var(--color-border)]"
+                className="bg-white rounded-xl p-8 border border-border"
               >
                 <div
-                  className={`${iconBg} ${iconColor} w-11 h-11 rounded-[var(--radius-md)] flex items-center justify-center mb-5`}
+                  className={`${iconBg} ${iconColor} w-11 h-11 rounded-md flex items-center justify-center mb-5`}
                 >
                   <Icon />
                 </div>
-                <h3 className="text-base font-semibold text-[var(--color-fg-1)] mb-3">
+                <h3 className="text-base font-semibold text-fg-1 mb-3">
                   {title}
                 </h3>
                 <p
-                  className="text-sm text-[var(--color-fg-2)] leading-relaxed"
+                  className="text-sm text-fg-2 leading-relaxed"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {desc}
@@ -326,16 +326,16 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
             <p
-              className="text-xs font-semibold uppercase tracking-[0.15em] mb-3 text-[var(--color-brand-teal)]"
+              className="text-xs font-semibold uppercase tracking-[0.15em] mb-3 text-brand-teal"
               style={{ fontFamily: "var(--font-button)" }}
             >
               Nossa culinária
             </p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[var(--color-fg-1)] mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-fg-1 mb-4">
               Uma cantina que cuida da saúde
             </h2>
             <p
-              className="text-[var(--color-fg-2)] max-w-xl mx-auto leading-relaxed"
+              className="text-fg-2 max-w-xl mx-auto leading-relaxed"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Refeições coloridas, nutritivas e preparadas com ingredientes
@@ -344,16 +344,14 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Grade de fotos — substituir por fotografia real de alimentos */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {GALLERY_SEEDS.map((seed) => (
-              <div
-                key={seed}
-                className="overflow-hidden rounded-[var(--radius-xl)]"
-              >
-                <img
-                  src={`https://picsum.photos/seed/${seed}/600/400`}
-                  alt="Alimento nutritivo"
+            {GALLERY_IMAGES.map(({ src, alt }) => (
+              <div key={src} className="overflow-hidden rounded-xl">
+                <Image
+                  src={src}
+                  alt={alt}
+                  width={600}
+                  height={400}
                   className="w-full h-52 object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
@@ -363,21 +361,19 @@ export default function LandingPage() {
       </section>
 
       {/* ── Quote ── */}
-      <section
-        id="sobre"
-        className="py-20 bg-[var(--color-brand-green-subtle)]"
-      >
+      <section id="sobre" className="py-20 bg-brand-green-subtle">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <blockquote className="text-xl lg:text-2xl font-medium text-[var(--color-fg-1)] leading-relaxed mb-6">
-            &ldquo;A alimentação escolar adequada contribui diretamente para o
-            aprendizado, a concentração e o desenvolvimento integral de cada
-            criança.&rdquo;
+          <blockquote className="text-xl lg:text-2xl font-medium text-fg-1 leading-relaxed mb-6">
+            &ldquo;Somos uma empresa familiar e a mesma atenção que temos com
+            nossos filhos é a que levamos para cada aluno. Preparamos cada
+            refeição com dedicação e responsabilidade, garantindo saúde, sabor e
+            tranquilidade para os pais e gestores de escolas.&rdquo;
           </blockquote>
           <cite
-            className="text-sm text-[var(--color-fg-3)] not-italic"
+            className="text-sm text-fg-3 not-italic"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Organização Mundial da Saúde — Nutrição Escolar
+            Família Ribeiro — Fundadores da NutriGourmet
           </cite>
         </div>
       </section>
@@ -402,8 +398,8 @@ export default function LandingPage() {
             gestão e melhorar a nutrição dos seus alunos.
           </p>
           <a
-            href="mailto:contato@nutrigourmet.com.br"
-            className="inline-block bg-white text-[var(--color-brand-green)] font-semibold px-8 py-4 rounded-[var(--radius-lg)] hover:bg-[var(--color-brand-green-subtle)] transition-colors text-sm"
+            href="mailto:cantinanutrigourmet@gmail.com"
+            className="inline-block bg-white text-brand-green font-semibold px-8 py-4 rounded-lg hover:bg-brand-green-subtle transition-colors text-sm"
             style={{ fontFamily: "var(--font-button)" }}
           >
             Entrar em contato
@@ -412,7 +408,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-[var(--color-fg-1)] py-14">
+      <footer className="bg-fg-1 py-14">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
             <div>
@@ -461,8 +457,9 @@ export default function LandingPage() {
                 className="space-y-2.5 text-sm text-white/50"
                 style={{ fontFamily: "var(--font-body)" }}
               >
-                <li>contato@nutrigourmet.com.br</li>
-                <li>São Paulo, SP — Brasil</li>
+                <li>cantinanutrigourmet@gmail.com</li>
+                <li>@cantinanutrigourmet</li>
+                <li>Brasília, DF — Brasil</li>
               </ul>
             </div>
           </div>
