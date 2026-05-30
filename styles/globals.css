@@ -29,13 +29,20 @@
   /* Neutrals */
   --color-gray-line: #dbdddf;
   --color-gray-bg: #f2f3f4;
+  --color-gray-bg-section: #f6f7f6;
   --color-border: #e1e1e2;
+
+  /* Extended brand */
+  --color-brand-teal-hover: #239e8c;
+  --color-accent-yellow: #ffcb65;
 
   /* Fonts */
   --font-brand: "Fredoka", system-ui, sans-serif;
+  --font-tagline: "Dancing Script", cursive;
   --font-primary: "Poppins", system-ui, sans-serif;
   --font-body: "Figtree", "Poppins", system-ui, sans-serif;
   --font-button: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-data: "Inter", system-ui, sans-serif;
 
   /* Border radius */
   --radius-sm: 6px;
