@@ -4,6 +4,18 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-05-30 — Ingestão: Media Kit Cantina NutriGourmet
+
+**Página criada:**
+
+- `wiki/institucional.md` — identidade institucional completa: apresentação, equipe fundadora (Caroline, Ana Paz, Álvaro), nutricionista (Georgia Garrido), missão/visão/valores, serviços, diferenciais, 5 escolas atendidas e contatos por unidade.
+
+**Observações:** PDF com 362 páginas predominantemente visuais; o texto extraído via `pdftotext` resultou em ~110 linhas. As citações pessoais dos sócios estavam em layers sobrepostos no design e não foram extraídas com fidelidade — marcadas como `[INSERIR MANUALMENTE]`.
+
+**`wiki/index.md`** atualizado: entrada para `institucional.md` adicionada na seção Fontes.
+
+---
+
 ## 2026-05-30 — PR #35: landing page de marketing (`/`)
 
 **CLAUDE.md atualizado:**

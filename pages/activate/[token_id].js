@@ -57,26 +57,24 @@ export default function Activate() {
             className="mb-3"
           />
           <h1
-            className="text-2xl font-bold text-[var(--color-fg-1)]"
+            className="text-2xl font-bold text-fg-1"
             style={{ fontFamily: "var(--font-brand)" }}
           >
             Nutrigourmet
           </h1>
         </div>
 
-        <div className="bg-white rounded-[var(--radius-xl)] shadow-[var(--shadow-md)] p-8 text-center">
+        <div className="bg-white rounded-xl shadow-md p-8 text-center">
           {status === STATUS.LOADING && (
             <>
-              <div className="w-12 h-12 rounded-full border-4 border-[var(--color-gray-bg)] border-t-[var(--color-brand-green)] animate-spin mx-auto mb-4" />
-              <p className="text-sm text-[var(--color-fg-2)]">
-                Ativando sua conta…
-              </p>
+              <div className="w-12 h-12 rounded-full border-4 border-gray-bg border-t-brand-green animate-spin mx-auto mb-4" />
+              <p className="text-sm text-fg-2">Ativando sua conta…</p>
             </>
           )}
 
           {status === STATUS.SUCCESS && (
             <>
-              <div className="w-12 h-12 rounded-full bg-[var(--color-brand-green-subtle)] flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 rounded-full bg-brand-green-subtle flex items-center justify-center mx-auto mb-4">
                 <svg
                   width="24"
                   height="24"
@@ -90,15 +88,15 @@ export default function Activate() {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <h2 className="text-base font-semibold text-[var(--color-fg-1)] mb-2">
+              <h2 className="text-base font-semibold text-fg-1 mb-2">
                 Conta ativada!
               </h2>
-              <p className="text-sm text-[var(--color-fg-2)] mb-6">
+              <p className="text-sm text-fg-2 mb-6">
                 Sua conta foi ativada com sucesso. Você já pode fazer login.
               </p>
               <Link
                 href="/login?activated=1"
-                className="inline-block w-full bg-[var(--color-brand-green)] hover:bg-[var(--color-brand-green-hover)] text-white font-medium text-sm rounded-[var(--radius-lg)] py-2.5 transition-colors"
+                className="inline-block w-full bg-brand-green hover:bg-brand-green-hover text-white font-medium text-sm rounded-lg py-2.5 transition-colors"
                 style={{ fontFamily: "var(--font-button)" }}
               >
                 Ir para o login
@@ -108,7 +106,7 @@ export default function Activate() {
 
           {status === STATUS.ERROR && (
             <>
-              <div className="w-12 h-12 rounded-full bg-[var(--color-danger-bg)] flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 rounded-full bg-danger-bg flex items-center justify-center mx-auto mb-4">
                 <svg
                   width="24"
                   height="24"
@@ -124,22 +122,18 @@ export default function Activate() {
                   <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
               </div>
-              <h2 className="text-base font-semibold text-[var(--color-fg-1)] mb-2">
+              <h2 className="text-base font-semibold text-fg-1 mb-2">
                 Não foi possível ativar
               </h2>
               {error && (
-                <p className="text-sm text-[var(--color-fg-2)] mb-2">
-                  {error.message}
-                </p>
+                <p className="text-sm text-fg-2 mb-2">{error.message}</p>
               )}
               {error?.action && (
-                <p className="text-xs text-[var(--color-fg-3)] mb-6">
-                  {error.action}
-                </p>
+                <p className="text-xs text-fg-3 mb-6">{error.action}</p>
               )}
               <Link
                 href="/login"
-                className="inline-block text-sm text-[var(--color-brand-teal)] hover:underline"
+                className="inline-block text-sm text-brand-teal hover:underline"
               >
                 Voltar ao login
               </Link>
