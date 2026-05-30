@@ -10,6 +10,8 @@ CLAUDE.local.md
 cookies*.txt
 graphify-out/
 .playwright-mcp/
-/login-*.png
-/login-*.jpeg
+# screenshots de debug (playwright, testes visuais)
+/*.png
+/*.jpeg
+/*.jpg
 
