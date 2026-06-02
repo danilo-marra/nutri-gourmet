@@ -275,6 +275,52 @@ async function topProducts({ startDate, endDate, limit }) {
   return result.rows;
 }
 
+async function salesByProduct({ startDate, endDate }) {
+  const result = await database.query({
+    text: `
+      SELECT
+        p.id                              AS product_id,
+        p.name                            AS product_name,
+        p.category,
+        SUM(si.qty)::int                  AS qty_sold,
+        SUM(si.qty * si.unit_price)       AS revenue
+      FROM sale_items si
+      JOIN products p ON p.id = si.product_id
+      JOIN sales    s ON s.id = si.sale_id
+      WHERE s.reversed_at IS NULL
+        AND s.created_at::date BETWEEN $1 AND $2
+      GROUP BY p.id, p.name, p.category
+      ORDER BY revenue DESC
+    `,
+    values: [startDate, endDate],
+  });
+
+  return result.rows;
+}
+
+async function creditsConsumed({ startDate, endDate }) {
+  const result = await database.query({
+    text: `
+      SELECT
+        s.student_id,
+        st.name           AS student_name,
+        st.class,
+        COUNT(s.id)::int  AS sale_count,
+        SUM(s.total)      AS total_consumed
+      FROM sales s
+      JOIN students st ON st.id = s.student_id
+      WHERE s.payment_method = 'credit'
+        AND s.reversed_at IS NULL
+        AND s.created_at::date BETWEEN $1 AND $2
+      GROUP BY s.student_id, st.name, st.class
+      ORDER BY total_consumed DESC
+    `,
+    values: [startDate, endDate],
+  });
+
+  return result.rows;
+}
+
 async function categoryBreakdown({ startDate, endDate }) {
   const result = await database.query({
     text: `
@@ -371,6 +417,8 @@ const report = {
   dashboardSummary,
   revenueTrend,
   topProducts,
+  salesByProduct,
+  creditsConsumed,
   categoryBreakdown,
   operatorSummary,
   myShiftSummary,
