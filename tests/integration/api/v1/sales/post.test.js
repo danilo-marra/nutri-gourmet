@@ -236,7 +236,7 @@ describe("POST /api/v1/sales", () => {
         },
         body: JSON.stringify({
           student_id: student.id,
-          payment_method: "pix",
+          payment_method: "bitcoin",
           items: [{ product_id: prod.id, qty: 1 }],
         }),
       });
@@ -244,6 +244,31 @@ describe("POST /api/v1/sales", () => {
       expect(response.status).toBe(400);
       const body = await response.json();
       expect(body.name).toBe("ValidationError");
+    });
+
+    test("Deve criar venda com pagamento pix", async () => {
+      const operator = await orchestrator.createUser({ role: "operador" });
+      const session = await orchestrator.createSession(operator.id);
+      const student = await orchestrator.createStudent();
+      const prod = await orchestrator.createProduct({ price: 4.0 });
+
+      const response = await fetch("http://localhost:3000/api/v1/sales", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${session.token}`,
+        },
+        body: JSON.stringify({
+          student_id: student.id,
+          payment_method: "pix",
+          items: [{ product_id: prod.id, qty: 1 }],
+        }),
+      });
+
+      expect(response.status).toBe(201);
+      const body = await response.json();
+      expect(body.payment_method).toBe("pix");
+      expect(body.total).toBe("4.00");
     });
   });
 });

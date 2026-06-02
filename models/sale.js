@@ -3,14 +3,14 @@ import product from "models/product.js";
 import student from "models/student.js";
 import { NotFoundError, ValidationError } from "infra/errors.js";
 
-const PAYMENT_METHODS = ["credit", "cash", "card"];
+const PAYMENT_METHODS = ["credit", "cash", "card", "pix"];
 
 async function create(operatorId, values) {
   const { student_id, payment_method, items } = values;
 
   if (!payment_method || !PAYMENT_METHODS.includes(payment_method)) {
     throw new ValidationError({
-      message: `O campo 'payment_method' deve ser 'credit', 'cash' ou 'card'.`,
+      message: `O campo 'payment_method' deve ser 'credit', 'cash', 'card' ou 'pix'.`,
       action: "Informe uma forma de pagamento válida.",
     });
   }

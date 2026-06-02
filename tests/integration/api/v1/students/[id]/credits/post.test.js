@@ -200,7 +200,7 @@ describe("POST /api/v1/students/:id/credits", () => {
       const responseBody = await response.json();
       expect(responseBody).toEqual({
         name: "ValidationError",
-        message: "O campo 'type' deve ser 'manual' ou 'package'.",
+        message: "O campo 'type' deve ser 'manual', 'package' ou 'stone'.",
         action: "Informe um tipo válido para o crédito.",
         status_code: 400,
       });
