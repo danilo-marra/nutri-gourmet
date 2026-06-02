@@ -4,6 +4,21 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-02 — PR #42: AppShell + dashboard com dados mock (issue #40)
+
+**CLAUDE.md atualizado:**
+
+- Stack: adicionados `recharts`, `swr` e menção ao padrão `getLayout`
+- Repo layout: adicionadas entradas para `pages/app/**`, `hooks/useUser.js` e `components/AppShell.js`
+
+**Páginas wiki atualizadas:**
+
+- `wiki/rules/ui-ux.md` — seção Superfícies expandida: tabela de rotas `/app/**` com status; seção "Área autenticada" documentando `AppShell`, `getLayout` e proteção de rotas via `useUser`
+
+**Não alterado (justificado):** páginas de domínio e segurança não foram afetadas — PR #42 é exclusivamente frontend sem mudança de regras de negócio, endpoints ou RBAC.
+
+---
+
 ## 2026-05-30 — Ingestão: Media Kit Cantina NutriGourmet
 
 **Página criada:**

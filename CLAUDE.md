@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Migrations via `node-pg-migrate` in `infra/migrations/`
 - Session auth (cookie `session_id`, DB-backed) + role-based RBAC (`users.role` derives features; manual feature overrides still supported)
 - Email via `nodemailer`; Mailcatcher in dev
-- Frontend: Tailwind CSS v4 (`@tailwindcss/postcss`); design tokens em `styles/globals.css` via `@theme`; fontes via `next/font/google` (Poppins, Fredoka, Figtree, Plus Jakarta Sans, Dancing Script, Inter); `sharp` para otimização de imagens; `nprogress` para loading bar + fade-in de página em `pages/_app.js`
+- Frontend: Tailwind CSS v4 (`@tailwindcss/postcss`); design tokens em `styles/globals.css` via `@theme`; fontes via `next/font/google` (Poppins, Fredoka, Figtree, Plus Jakarta Sans, Dancing Script, Inter); `sharp` para otimização de imagens; `nprogress` para loading bar + fade-in de página em `pages/_app.js`; `recharts` para gráficos; `swr` para estado de sessão client-side; padrão `getLayout` em `_app.js` mantém `AppShell` montado entre navegações
 - Jest integration tests against a real DB and the running Next dev server
 
 ## Constitution authority
@@ -37,6 +37,9 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 ## Repo layout (load-bearing)
 
 - `pages/api/v1/**` — handlers built with `next-connect` + `controller.errorHandlers`. Always go through `infra/controller.js` middlewares.
+- `pages/app/**` — área autenticada; cada página exporta `getLayout = (page) => <AppShell>{page}</AppShell>`.
+- `hooks/useUser.js` — SWR sobre `GET /api/v1/user`; retorna `{ user, isLoading }`; redireciona para `/login` se não autenticado.
+- `components/AppShell.js` — shell autenticado (sidebar com nav filtrado por `user.features` + topbar com título e badge de role).
 - `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `passwordReset`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`).
 - `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`, `scripts/seed-admin.js`, `scripts/kill-port.js`.
 - `tests/integration/api/v1/**` mirrors `pages/api/v1/**` path-for-path. Additional subdirectories: `_use-cases/` (end-to-end flows), `infra/` (infra tests e.g. email), `unit/` (unit tests for models e.g. `authorization`).
