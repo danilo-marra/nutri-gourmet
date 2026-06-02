@@ -24,6 +24,12 @@ function fmt(n) {
   }).format(n ?? 0);
 }
 
+function fmtDate(isoDate) {
+  if (!isoDate) return "";
+  const [year, month, day] = isoDate.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 function today() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -185,7 +191,7 @@ function FaturamentoDiario() {
                   key={row.date}
                   className={`border-b border-border last:border-0 ${i % 2 === 1 ? "bg-gray-bg" : ""}`}
                 >
-                  <td className="px-4 py-2.5 text-fg-2">{row.date}</td>
+                  <td className="px-4 py-2.5 text-fg-2">{fmtDate(row.date)}</td>
                   <td
                     className="px-4 py-2.5 text-fg-1 font-medium text-right"
                     style={{ fontFamily: "var(--font-data)" }}
