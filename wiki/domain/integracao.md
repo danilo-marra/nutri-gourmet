@@ -2,15 +2,17 @@
 
 **Summary**: Potencial de integração com os três sistemas externos (MarketUp, Vlupt, Stone), estratégia técnica para cada um e decisões pendentes antes de implementar.
 
-**Sources**: raw/possivel-integrar.md, raw/mapeamento-sistemas-atuais.md
+**Sources**: raw/possivel-integrar.md, raw/mapeamento-sistemas-atuais.md, raw/decisions/sistemas-externos.md
 
 **Last updated**: 2026-06-02
 
 ---
 
-## Stone — Integração mais simples
+## Stone — Integração mais simples (urgência fiscal elevada)
 
 **Disponibilidade**: Stone possui documentação aberta para desenvolvedores, APIs e webhooks. (source: raw/possivel-integrar.md)
+
+**Urgência confirmada**: vendas via link Stone não estão sendo registradas → faturamento subdeclarado → **risco fiscal ativo**. Meta do cliente: 100% das vendas registradas independente do canal. NF-e automática é pré-requisito downstream do módulo fiscal. (source: raw/decisions/sistemas-externos.md)
 
 **Estratégia técnica**:
 
@@ -34,6 +36,8 @@ Definir essa opção antes de iniciar a implementação.
 ## Vlupt — Integração a confirmar
 
 **Disponibilidade**: A Vlupt se apresenta como plataforma completa para cantinas escolares com controle de vendas, estoque, pagamentos, app para pais e soluções White Label. Sistemas desse tipo normalmente possuem alguma forma de integração ou exportação. A Vlupt oferece customizações para empresas com múltiplas unidades. (source: raw/possivel-integrar.md)
+
+**Confirmado pelo cliente**: pais adicionam crédito via **app ou site da Vlupt**. Quando o pagamento é confirmado, a cantina vê a informação e o crédito fica disponível para o aluno. Processo hoje é manual. API/webhook ainda pendente de confirmação com o suporte da Vlupt. (source: raw/decisions/sistemas-externos.md)
 
 **Estratégia técnica (se API/webhook disponível)**:
 
@@ -72,11 +76,11 @@ Definir essa opção antes de iniciar a implementação.
 
 ## Resumo de prioridade
 
-| Sistema      | Facilidade                                        | Impacto                                              | Prioridade |
-| ------------ | ------------------------------------------------- | ---------------------------------------------------- | ---------- |
-| **Stone**    | Alta (webhook aberto, sem confirmação necessária) | Alto (pagamento card automatizado)                   | 🟢 Alta    |
-| **Vlupt**    | Média (confirmar API)                             | Alto (recarga automática de crédito)                 | 🟡 Média   |
-| **MarketUp** | Baixa (API limitada/fechada)                      | Médio (fiscal e estoque, mas pode ficar em MarketUp) | 🔴 Baixa   |
+| Sistema      | Facilidade                                        | Impacto                                                           | Prioridade |
+| ------------ | ------------------------------------------------- | ----------------------------------------------------------------- | ---------- |
+| **Stone**    | Alta (webhook aberto, sem confirmação necessária) | Alto — **risco fiscal ativo** (vendas não registradas)            | 🟢 Alta    |
+| **Vlupt**    | Média (confirmar API com suporte)                 | Alto (recarga automática; app/site confirmados pelo cliente)      | 🟡 Média   |
+| **MarketUp** | Baixa (API limitada/fechada)                      | Médio (fiscal e estoque; decisão de substituição ainda em aberto) | 🔴 Baixa   |
 
 ---
 

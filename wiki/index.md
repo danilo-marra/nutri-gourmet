@@ -18,6 +18,8 @@
 - [Operações](../raw/decisions/operacoes.md) — fechamento de caixa (relatório básico, delegação), criação de contas
 - [Relatórios](../raw/decisions/relatorios.md) — 5 relatórios prioritários, permissões, granularidade de data
 - [Supervisor](../raw/decisions/supervisor.md) — tabela de permissões completa; criação de conta via convite
+- [Sistemas Externos](../raw/decisions/sistemas-externos.md) — MarketUp/Vlupt/Stone: status confirmado pelo cliente; risco fiscal Stone; estoque curto prazo
+- [Eventos e Integral](../raw/decisions/eventos-integral.md) — eventos ≥ 1–2/mês com NF-e; Integral 10 parcelas/ano, `is_full_time`
 
 ## Domínio (domain/)
 
@@ -29,7 +31,7 @@
 
 ### Operação e Integrações
 
-- [Fluxo Operacional](domain/fluxo-operacional.md) — os 4 fluxos da cantina (crédito, venda direta, Stone, eventos) e os 12 relatórios desejados pelo cliente
+- [Fluxo Operacional](domain/fluxo-operacional.md) — os 5 fluxos da cantina (crédito, venda direta, Stone, eventos, Integral) e os 12 relatórios desejados pelo cliente
 - [Sistemas Externos](domain/sistemas-externos.md) — MarketUp, Vlupt e Stone: papéis, problemas atuais e como deveriam se integrar ao sistema central
 - [Integração](domain/integracao.md) — estratégia técnica e prioridade de integração com cada sistema externo
 - [Gap Analysis](domain/gap-analysis.md) — consolidado: o que está entregue, o que precisa de ajuste e o que está fora do Phase 1
@@ -43,6 +45,8 @@
 - [Pacote](domain/pacote.md) — credita R$ no saldo; validade opcional (expires_at); apenas supervisor/admin registra; múltiplos permitidos
 - [Fechamento de Caixa](domain/fechamento-de-caixa.md) — não bloqueante; gera resumo básico; supervisor/admin pode fechar em nome do operador
 - [Recuperação de Senha](domain/recuperacao-de-senha.md) — fluxo self-service via email; token de uso único; expiração de 30 minutos; anti-enumeração
+- [Eventos](domain/eventos.md) — módulo de eventos escolares; ciclo: solicitação → consumo → encerramento → NF-e → cobrança; ≥ 1–2/mês
+- [Integral](domain/integral.md) — faturamento recorrente para alunos `is_full_time`; 10 parcelas/ano; NF-e mensal
 
 ## Regras (rules/)
 
@@ -50,6 +54,7 @@
 - [Segurança e Controle de Acesso](rules/seguranca.md) — visibilidade restrita por perfil; tabela de permissões por persona
 - [UI/UX](rules/ui-ux.md) — design system Nutrigourmet: paleta verde/teal/laranja, 6 fontes, tokens de cor; landing page (`/`) e app interno
 - [Relatórios](rules/relatorios.md) — 8 endpoints de relatório (5 originais + 3 do PR #47); supervisor/admin; tabela paginada; sem exportação nesta fase
+- [Fiscal](rules/fiscal.md) — regras de emissão (NFC-e presencial, NF-e digital/eventos/Integral); 100% cobertura de canal; P5 no roadmap
 
 ---
 

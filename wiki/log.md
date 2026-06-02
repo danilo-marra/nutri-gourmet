@@ -4,6 +4,39 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-02 — Q&A com o cliente: sistemas externos, fiscal, eventos e módulo Integral
+
+**Fontes**: respostas diretas do cliente (dono da cantina) em sessão de Q&A.
+
+**Arquivos de decisão criados (2):**
+
+- `raw/decisions/sistemas-externos.md`
+- `raw/decisions/eventos-integral.md`
+
+**Páginas wiki criadas (3):**
+
+- `wiki/domain/eventos.md`
+- `wiki/domain/integral.md`
+- `wiki/rules/fiscal.md`
+
+**Páginas wiki atualizadas (5):**
+
+- `wiki/domain/sistemas-externos.md` — seção "Perguntas abertas" substituída por confirmações do Q&A; risco fiscal Stone documentado
+- `wiki/domain/integracao.md` — urgência fiscal adicionada à Stone; Vlupt app/site confirmado; tabela de prioridades atualizada
+- `wiki/domain/fluxo-operacional.md` — Fluxo 4 detalhado com ciclo completo; Fluxo 5 (Integral) adicionado
+- `wiki/rules/escopo.md` — fiscal, eventos e Integral elevados a backlog prioritário (⚠️)
+- `wiki/domain/gap-analysis.md` — Integral adicionado; urgências P1–P5 documentadas; decisões resolvidas registradas
+
+**Principais confirmações do Q&A:**
+
+- Stone: risco fiscal ativo (vendas não registradas); 100% de cobertura de canal é meta do cliente.
+- Vlupt: pais usam app/site; processo hoje manual; API/webhook pendente de confirmação.
+- MarketUp: permanece por ora; substituição depende de integração própria funcionar.
+- Eventos: ≥ 1–2/mês, cobrança manual, NF-e obrigatória — P3 no roadmap.
+- Integral: 10 parcelas/ano, NF-e mensal, `is_full_time` já no schema — P4 no roadmap.
+
+---
+
 ## 2026-06-02 — PR #47: relatórios parciais complementados (issue #46)
 
 **Páginas wiki atualizadas (3):**
