@@ -31,7 +31,7 @@ export default function Login() {
         return;
       }
 
-      router.push("/");
+      router.push("/app");
     } catch {
       setError({
         message: "Erro de conexão. Tente novamente.",

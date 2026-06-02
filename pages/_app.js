@@ -58,6 +58,7 @@ NProgress.configure({ showSpinner: false });
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   useEffect(() => {
     const handleRouteStart = () => NProgress.start();
@@ -78,9 +79,11 @@ export default function App({ Component, pageProps }) {
     <main
       className={`${poppins.variable} ${figtree.variable} ${plusJakartaSans.variable} ${fredoka.variable} ${dancingScript.variable} ${inter.variable}`}
     >
-      <div key={router.asPath} className="page-transition">
-        <Component {...pageProps} />
-      </div>
+      {getLayout(
+        <div key={router.asPath} className="page-transition">
+          <Component {...pageProps} />
+        </div>,
+      )}
     </main>
   );
 }
