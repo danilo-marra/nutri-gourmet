@@ -27,6 +27,13 @@
 - [Supervisor](domain/supervisor.md) — estorno, pacotes, crédito negativo, relatórios, cadastros globais, gestão de operadores; criado via convite como operador
 - [Administrador](domain/administrador.md) — acesso total, relatórios financeiros, cadastros
 
+### Operação e Integrações
+
+- [Fluxo Operacional](domain/fluxo-operacional.md) — os 4 fluxos da cantina (crédito, venda direta, Stone, eventos) e os 12 relatórios desejados pelo cliente
+- [Sistemas Externos](domain/sistemas-externos.md) — MarketUp, Vlupt e Stone: papéis, problemas atuais e como deveriam se integrar ao sistema central
+- [Integração](domain/integracao.md) — estratégia técnica e prioridade de integração com cada sistema externo
+- [Gap Analysis](domain/gap-analysis.md) — consolidado: o que está entregue, o que precisa de ajuste e o que está fora do Phase 1
+
 ### Entidades
 
 - [Aluno](domain/aluno.md) — campos: name, class, is_full_time, balance; regras de saldo negativo definidas
