@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, design bundle Nutrigourmet (Tailwind v4 + tokens)
 
-**Last updated**: 2026-05-30
+**Last updated**: 2026-06-02
 
 ---
 
@@ -18,11 +18,30 @@ O PRD define estilo corporativo moderno com foco em valor percebido. A implement
 
 ## Superfícies
 
-| Superfície    | Rota     | Descrição                                                       |
-| ------------- | -------- | --------------------------------------------------------------- |
-| Landing page  | `/`      | Página de marketing para pais e diretores de escolas            |
-| Login         | `/login` | Autenticação de operadores, supervisores e administradores      |
-| App (interno) | `/...`   | Dashboard de gestão (sidebar, módulos de venda, crédito, caixa) |
+| Superfície    | Rota      | Descrição                                                  |
+| ------------- | --------- | ---------------------------------------------------------- |
+| Landing page  | `/`       | Página de marketing para pais e diretores de escolas       |
+| Login         | `/login`  | Autenticação de operadores, supervisores e administradores |
+| App (interno) | `/app/**` | Área autenticada — dashboard e módulos operacionais        |
+
+### Área autenticada (`/app/**`)
+
+Todas as rotas sob `/app` usam o componente `AppShell` via padrão `getLayout`:
+
+| Rota              | Módulo           | Status                    |
+| ----------------- | ---------------- | ------------------------- |
+| `/app`            | Dashboard        | Implementado (dados mock) |
+| `/app/vendas`     | Vendas           | Placeholder               |
+| `/app/creditos`   | Créditos         | Placeholder               |
+| `/app/fechamento` | Fechamento Caixa | Placeholder               |
+| `/app/relatorios` | Relatórios       | Placeholder               |
+| `/app/alunos`     | Alunos           | Placeholder               |
+| `/app/produtos`   | Produtos         | Placeholder               |
+| `/app/usuarios`   | Usuários         | Placeholder               |
+
+**AppShell** (`components/AppShell.js`): sidebar fixa (logo, nav filtrado por `user.features`, user card + logout) + topbar (título da página + badge de role). Usa `useUser` hook internamente — exibe spinner durante carregamento, retorna `null` se não autenticado (redirect gerenciado pelo hook).
+
+**Proteção de rotas**: `hooks/useUser.js` — SWR sobre `GET /api/v1/user`; redireciona para `/login` automaticamente se sessão inválida ou expirada.
 
 ## Paleta de cores
 
