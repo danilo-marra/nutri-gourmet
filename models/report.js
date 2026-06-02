@@ -170,12 +170,210 @@ async function activePackages() {
   return result.rows;
 }
 
+async function dashboardSummary() {
+  const result = await database.query({
+    text: `
+      WITH
+      today_sales AS (
+        SELECT
+          COALESCE(SUM(total), 0) AS revenue_today,
+          COUNT(*)::int            AS count_today
+        FROM sales
+        WHERE reversed_at IS NULL
+          AND created_at::date = CURRENT_DATE
+      ),
+      week_sales AS (
+        SELECT
+          COALESCE(SUM(total), 0) AS revenue_week,
+          COUNT(*)::int            AS count_week
+        FROM sales
+        WHERE reversed_at IS NULL
+          AND created_at::date >= date_trunc('week', CURRENT_DATE)::date
+      ),
+      month_sales AS (
+        SELECT
+          COALESCE(SUM(total), 0) AS revenue_month,
+          COUNT(*)::int            AS count_month
+        FROM sales
+        WHERE reversed_at IS NULL
+          AND created_at::date >= date_trunc('month', CURRENT_DATE)::date
+      ),
+      negative_balances AS (
+        SELECT COUNT(*)::int AS count_negative_balances
+        FROM students
+        WHERE balance < 0
+      ),
+      pending_closes AS (
+        SELECT COUNT(DISTINCT operator_id)::int AS count_pending_closes
+        FROM sales
+        WHERE reversed_at IS NULL
+          AND created_at::date = CURRENT_DATE
+          AND operator_id NOT IN (
+            SELECT operator_id FROM cash_closes WHERE date = CURRENT_DATE
+          )
+      )
+      SELECT
+        t.revenue_today,
+        t.count_today,
+        w.revenue_week,
+        w.count_week,
+        m.revenue_month,
+        m.count_month,
+        nb.count_negative_balances,
+        pc.count_pending_closes
+      FROM today_sales t, week_sales w, month_sales m, negative_balances nb, pending_closes pc
+    `,
+  });
+
+  return result.rows[0];
+}
+
+async function revenueTrend({ days }) {
+  const result = await database.query({
+    text: `
+      SELECT
+        d.date::date::text            AS date,
+        COALESCE(SUM(s.total), 0)     AS total
+      FROM generate_series(
+        (CURRENT_DATE - ($1::int - 1) * INTERVAL '1 day')::date,
+        CURRENT_DATE,
+        INTERVAL '1 day'
+      ) AS d(date)
+      LEFT JOIN sales s
+        ON s.created_at::date = d.date
+        AND s.reversed_at IS NULL
+      GROUP BY d.date
+      ORDER BY d.date ASC
+    `,
+    values: [days],
+  });
+
+  return result.rows;
+}
+
+async function topProducts({ startDate, endDate, limit }) {
+  const result = await database.query({
+    text: `
+      SELECT
+        p.id           AS product_id,
+        p.name         AS product_name,
+        p.category,
+        SUM(si.qty)::int                  AS qty_sold,
+        SUM(si.qty * si.unit_price)       AS revenue
+      FROM sale_items si
+      JOIN products p ON p.id = si.product_id
+      JOIN sales    s ON s.id = si.sale_id
+      WHERE s.reversed_at IS NULL
+        AND s.created_at::date BETWEEN $1 AND $2
+      GROUP BY p.id, p.name, p.category
+      ORDER BY qty_sold DESC
+      LIMIT $3
+    `,
+    values: [startDate, endDate, limit],
+  });
+
+  return result.rows;
+}
+
+async function categoryBreakdown({ startDate, endDate }) {
+  const result = await database.query({
+    text: `
+      SELECT
+        p.category,
+        SUM(si.qty)::int                  AS qty_sold,
+        SUM(si.qty * si.unit_price)       AS revenue
+      FROM sale_items si
+      JOIN products p ON p.id = si.product_id
+      JOIN sales    s ON s.id = si.sale_id
+      WHERE s.reversed_at IS NULL
+        AND s.created_at::date BETWEEN $1 AND $2
+      GROUP BY p.category
+      ORDER BY revenue DESC
+    `,
+    values: [startDate, endDate],
+  });
+
+  return result.rows;
+}
+
+async function operatorSummary({ startDate, endDate }) {
+  const result = await database.query({
+    text: `
+      SELECT
+        u.id                          AS operator_id,
+        u.username                    AS operator_username,
+        COUNT(s.id)::int              AS sale_count,
+        COALESCE(SUM(s.total), 0)     AS revenue
+      FROM sales s
+      JOIN users u ON u.id = s.operator_id
+      WHERE s.reversed_at IS NULL
+        AND s.created_at::date BETWEEN $1 AND $2
+      GROUP BY u.id, u.username
+      ORDER BY revenue DESC
+    `,
+    values: [startDate, endDate],
+  });
+
+  return result.rows;
+}
+
+async function myShiftSummary({ operatorId }) {
+  const [salesResult, closeResult, studentsResult] = await Promise.all([
+    database.query({
+      text: `
+        SELECT
+          COALESCE(SUM(total), 0) AS revenue_today,
+          COUNT(*)::int            AS count_today
+        FROM sales
+        WHERE reversed_at IS NULL
+          AND operator_id = $1
+          AND created_at::date = CURRENT_DATE
+      `,
+      values: [operatorId],
+    }),
+    database.query({
+      text: `
+        SELECT id, date::text, total_sales, total_credit, total_cash, total_card, created_at
+        FROM cash_closes
+        WHERE operator_id = $1
+          AND date = CURRENT_DATE
+      `,
+      values: [operatorId],
+    }),
+    database.query({
+      text: `
+        SELECT DISTINCT st.id, st.name, st.class
+        FROM sales sa
+        JOIN students st ON st.id = sa.student_id
+        WHERE sa.reversed_at IS NULL
+          AND sa.operator_id = $1
+          AND sa.created_at::date = CURRENT_DATE
+          AND sa.student_id IS NOT NULL
+      `,
+      values: [operatorId],
+    }),
+  ]);
+
+  return {
+    revenue_today: salesResult.rows[0].revenue_today,
+    count_today: salesResult.rows[0].count_today,
+    cash_close: closeResult.rows[0] ?? null,
+    students_served: studentsResult.rows,
+  };
+}
+
 const report = {
   salesByPeriod,
   creditsAdded,
   balanceByStudent,
   cashCloses,
   activePackages,
+  dashboardSummary,
+  revenueTrend,
+  topProducts,
+  categoryBreakdown,
+  operatorSummary,
+  myShiftSummary,
 };
 
 export default report;
