@@ -330,3 +330,37 @@ Append-only record of all wiki operations.
 
 - `wiki/domain/credito.md` — seção Saldo Negativo simplificada; removida menção à guarda defensiva
 - `wiki/domain/aluno.md` — seção Saldo Negativo simplificada; removida menção à guarda em `credit.js`
+
+---
+
+## 2026-06-02 — Ingestão dos documentos operacionais do cliente (fluxo-cantina, mapeamento-sistemas, possivel-integrar)
+
+**Fontes ingeridas (3):**
+
+- `raw/fluxo-cantina.md` — 4 fluxos operacionais + princípio fiscal + 12 relatórios desejados
+- `raw/mapeamento-sistemas-atuais.md` — MarketUp, Vlupt e Stone: papéis, problemas de integração e cenários do sistema unificado
+- `raw/possivel-integrar.md` — avaliação preliminar do potencial de integração de cada sistema
+
+**Páginas wiki criadas (4):**
+
+- `wiki/domain/fluxo-operacional.md` — os 4 fluxos, os 12 relatórios com status de implementação, princípio de automação total
+- `wiki/domain/sistemas-externos.md` — descrição de MarketUp/Vlupt/Stone, seus problemas atuais e papel no sistema unificado
+- `wiki/domain/integracao.md` — estratégia técnica e prioridade de integração; Stone (alta), Vlupt (média), MarketUp (baixa)
+- `wiki/domain/gap-analysis.md` — consolidado completo: entregável hoje / ajuste necessário / fora do Phase 1 / o que não precisará ser construído
+
+**Páginas wiki atualizadas (2):**
+
+- `wiki/rules/escopo.md` — nova seção comparando expectativa do cliente vs. Phase 1; link para gap-analysis
+- `wiki/rules/relatorios.md` — nova seção com tabela dos 12 relatórios desejados vs. 5 implementados no Phase 1
+
+**Índice atualizado:**
+
+- `wiki/index.md` — nova seção "Operação e Integrações" com as 4 páginas criadas
+
+**Principais insights do gap analysis:**
+
+- Venda direta e crédito interno já cobrem os fluxos 1 (parcial) e 2 do cliente
+- Stone pode ser integrado com webhook leve reutilizando `models/sale` — sem módulo novo
+- Vlupt requer confirmação de API antes de planejar; crédito interno já está na arquitetura correta
+- MarketUp permanece responsável por estoque e fiscal — módulo de estoque próprio desnecessário enquanto MarketUp estiver no stack
+- 5 dos 12 relatórios desejados estão implementados; 3 são parcialmente cobertos por endpoints existentes
