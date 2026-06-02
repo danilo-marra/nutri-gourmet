@@ -1,10 +1,10 @@
 # Relatórios
 
-**Summary**: Cinco relatórios operacionais e financeiros prioritários para esta fase — acessíveis por supervisor e admin.
+**Summary**: Oito endpoints de relatório — 5 originais do Phase 1 + 3 adicionados no PR #47 (vendas por produto, créditos consumidos, consumo por aluno). Todos acessíveis por supervisor e admin.
 
 **Sources**: raw/decisions/relatorios.md
 
-**Last updated**: 2026-05-28
+**Last updated**: 2026-06-02 (PR #47)
 
 ---
 
@@ -51,34 +51,37 @@ Todos os endpoints ficam em `pages/api/v1/reports/`. Permissões divididas em do
 - **`read:report:financial`** — supervisor + admin: vendas, créditos, saldo por aluno
 - **`read:report:operational`** — supervisor + admin: fechamentos de caixa, pacotes vigentes
 
-| Endpoint                          | Permissão                 | Parâmetros obrigatórios               | Parâmetros opcionais                           |
-| --------------------------------- | ------------------------- | ------------------------------------- | ---------------------------------------------- |
-| `GET /api/v1/reports/sales`       | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
-| `GET /api/v1/reports/credits`     | `read:report:financial`   | `start_date`, `end_date`              | `student_id` (UUID)                            |
-| `GET /api/v1/reports/balances`    | `read:report:financial`   | —                                     | —                                              |
-| `GET /api/v1/reports/cash-closes` | `read:report:operational` | —                                     | `start_date`, `end_date`, `operator_id` (UUID) |
-| `GET /api/v1/reports/packages`    | `read:report:operational` | —                                     | —                                              |
+| Endpoint                                  | Permissão                 | Parâmetros obrigatórios               | Parâmetros opcionais                           |
+| ----------------------------------------- | ------------------------- | ------------------------------------- | ---------------------------------------------- |
+| `GET /api/v1/reports/sales`               | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/credits`             | `read:report:financial`   | `start_date`, `end_date`              | `student_id` (UUID)                            |
+| `GET /api/v1/reports/balances`            | `read:report:financial`   | —                                     | —                                              |
+| `GET /api/v1/reports/cash-closes`         | `read:report:operational` | —                                     | `start_date`, `end_date`, `operator_id` (UUID) |
+| `GET /api/v1/reports/packages`            | `read:report:operational` | —                                     | —                                              |
+| `GET /api/v1/reports/sales-by-product`    | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/credits-consumed`    | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/student-consumption` | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
 
-`/reports/sales` retorna `{ by_payment_method: [...], grand_total }`. Os demais retornam arrays. `/reports/cash-closes` inclui dias sem fechamento com `status: "pending"` via CTE.
+`/reports/sales` retorna `{ by_payment_method: [...], grand_total }`. Os demais retornam arrays. `/reports/cash-closes` inclui dias sem fechamento com `status: "pending"` via CTE. `/reports/sales-by-product` e `/reports/credits-consumed` e `/reports/student-consumption` retornam arrays ordenados por `revenue DESC` / `total_consumed DESC`.
 
 ## 12 relatórios desejados pelo cliente (comparativo)
 
-O cliente listou 12 relatórios como necessários para a operação (source: raw/fluxo-cantina.md). Comparação com os 5 implementados no Phase 1:
+O cliente listou 12 relatórios como necessários para a operação (source: raw/fluxo-cantina.md). Status atualizado após PR #47:
 
-| #   | Relatório desejado     | Status                                                                        |
-| --- | ---------------------- | ----------------------------------------------------------------------------- |
-| 1   | Vendas por escola      | ❌ requer multi-unidade                                                       |
-| 2   | Vendas por unidade     | ❌ requer multi-unidade                                                       |
-| 3   | Vendas por produto     | ⚠️ coberto por `GET /api/v1/reports/dashboard/top-products`                   |
-| 4   | Consumo por aluno      | ❌ endpoint/query dedicados não existem; `salesByPeriod` não filtra por aluno |
-| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                                              |
-| 6   | Créditos consumidos    | ⚠️ implícito em vendas com `payment_method=credit`                            |
-| 7   | Faturamento diário     | ✅ `GET /api/v1/reports/dashboard/revenue-trend`                              |
-| 8   | Faturamento mensal     | ✅ `GET /api/v1/reports/sales` (filtro por mês)                               |
-| 9   | Recebimentos Stone     | ❌ requer integração Stone                                                    |
-| 10  | Eventos realizados     | ❌ requer módulo de eventos                                                   |
-| 11  | Estoque atual          | ❌ requer controle de estoque (no MarketUp por ora)                           |
-| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`                               |
+| #   | Relatório desejado     | Status                                                                       |
+| --- | ---------------------- | ---------------------------------------------------------------------------- |
+| 1   | Vendas por escola      | ❌ requer multi-unidade                                                      |
+| 2   | Vendas por unidade     | ❌ requer multi-unidade                                                      |
+| 3   | Vendas por produto     | ✅ `GET /api/v1/reports/sales-by-product` + `pages/app/relatorios.js`        |
+| 4   | Consumo por aluno      | ✅ `GET /api/v1/reports/student-consumption` + `pages/app/relatorios.js`     |
+| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                                             |
+| 6   | Créditos consumidos    | ✅ `GET /api/v1/reports/credits-consumed` + `pages/app/relatorios.js`        |
+| 7   | Faturamento diário     | ✅ `GET /api/v1/reports/dashboard/revenue-trend` + `pages/app/relatorios.js` |
+| 8   | Faturamento mensal     | ✅ `GET /api/v1/reports/sales` (filtro por mês) + `pages/app/relatorios.js`  |
+| 9   | Recebimentos Stone     | ❌ requer integração Stone                                                   |
+| 10  | Eventos realizados     | ❌ requer módulo de eventos                                                  |
+| 11  | Estoque atual          | ❌ requer controle de estoque (no MarketUp por ora)                          |
+| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`                              |
 
 Ver [[fluxo-operacional]] e [[gap-analysis]] para o contexto completo.
 

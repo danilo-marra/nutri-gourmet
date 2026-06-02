@@ -47,3 +47,4 @@ Ver [[escopo]] para a lista completa de exclusões desta fase.
 - [[escopo]]
 - [[seguranca]]
 - [[ui-ux]]
+- [[institucional]]

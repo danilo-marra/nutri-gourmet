@@ -18,7 +18,7 @@ Herda todas as permissões do [[operador]], mais:
 - **Registro de pacotes** — junto com admin; operador não pode registrar.
 - **Creditar saldo negativo** — quando `balance < 0`, operador é bloqueado; supervisor pode creditar.
 - **Fechar caixa em nome de operador** — delegação com registro de `closed_by_id` distinto do `operator_id`.
-- **Relatórios** — acesso a todos os 5 relatórios operacionais e financeiros (ver [[relatorios]]).
+- **Relatórios** — acesso a todos os relatórios operacionais e financeiros (ver [[relatorios]]).
 - **Criar/editar contas de Operador** — supervisor gerencia os operadores.
 - **Cadastros globais (alunos, produtos)** — supervisor pode criar e editar alunos e produtos.
 

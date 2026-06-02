@@ -28,7 +28,7 @@ Isso se traduz diretamente no RBAC já implementado via `users.role` e `authoriz
 | Registrar pacotes                    | ❌           | ✅             | ✅                |
 | Creditar saldo negativo              | ❌           | ✅             | ✅                |
 | Fechar caixa em nome de operador     | ❌           | ✅             | ✅                |
-| Relatórios (todos os 5)              | ❌           | ✅             | ✅                |
+| Relatórios                           | ❌           | ✅             | ✅                |
 | Criar/editar contas de Operador      | ❌           | ✅             | ✅                |
 | Criar/editar contas de Supervisor    | ❌           | ❌             | ✅                |
 | Cadastros globais (alunos, produtos) | ❌           | ✅             | ✅                |
@@ -58,3 +58,4 @@ Auditoria OWASP Top 10 pontual sobre o repo. Detalhes em `.claude/skills/securit
 - [[supervisor]]
 - [[administrador]]
 - [[escopo]]
+- [[recuperacao-de-senha]]

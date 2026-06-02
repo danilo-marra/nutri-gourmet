@@ -4,39 +4,39 @@
 
 **Sources**: raw/fluxo-cantina.md, raw/mapeamento-sistemas-atuais.md, raw/possivel-integrar.md
 
-**Last updated**: 2026-06-02
+**Last updated**: 2026-06-02 (PR #47)
 
 ---
 
 ## ✅ Entregável hoje (já implementado)
 
-| Funcionalidade                                                                | Onde no sistema                                               |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| Venda direta no caixa (cash/card)                                             | `POST /api/v1/sales` + `pages/app/vendas.js`                  |
-| Crédito manual de aluno (operador)                                            | `POST /api/v1/students/[id]/credits`                          |
-| Pacotes de crédito (supervisor/admin)                                         | `models/credit.js` + rotas de pacotes                         |
-| Fechamento de caixa por turno                                                 | `POST /api/v1/cash_closes`                                    |
-| Gestão de alunos, produtos, usuários                                          | CRUD completo                                                 |
-| RBAC Operador / Supervisor / Admin                                            | `models/authorization.js` com `can()` e `filterOutput()`      |
-| Relatório de vendas por período                                               | `GET /api/v1/reports/sales`                                   |
-| Relatório de créditos adicionados                                             | `GET /api/v1/reports/credits`                                 |
-| Relatório de saldo por aluno                                                  | `GET /api/v1/reports/balances`                                |
-| Relatório de fechamentos de caixa                                             | `GET /api/v1/reports/cash-closes`                             |
-| Relatório de pacotes vigentes                                                 | `GET /api/v1/reports/packages`                                |
-| Dashboard: summary, revenue trend, top products, category, operator, my-shift | `GET /api/v1/reports/dashboard/*` (6 endpoints)               |
-| Auth completa (sessão, ativação, reset de senha)                              | `models/session`, `models/activation`, `models/passwordReset` |
+| Funcionalidade                                                                | Onde no sistema                                                       |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Venda direta no caixa (cash/card)                                             | `POST /api/v1/sales` + `pages/app/vendas.js`                          |
+| Crédito manual de aluno (operador)                                            | `POST /api/v1/students/[id]/credits`                                  |
+| Pacotes de crédito (supervisor/admin)                                         | `models/credit.js` + rotas de pacotes                                 |
+| Fechamento de caixa por turno                                                 | `POST /api/v1/cash_closes`                                            |
+| Gestão de alunos, produtos, usuários                                          | CRUD completo                                                         |
+| RBAC Operador / Supervisor / Admin                                            | `models/authorization.js` com `can()` e `filterOutput()`              |
+| Relatório de vendas por período                                               | `GET /api/v1/reports/sales`                                           |
+| Relatório de créditos adicionados                                             | `GET /api/v1/reports/credits`                                         |
+| Relatório de saldo por aluno                                                  | `GET /api/v1/reports/balances`                                        |
+| Relatório de fechamentos de caixa                                             | `GET /api/v1/reports/cash-closes`                                     |
+| Relatório de pacotes vigentes                                                 | `GET /api/v1/reports/packages`                                        |
+| Dashboard: summary, revenue trend, top products, category, operator, my-shift | `GET /api/v1/reports/dashboard/*` (6 endpoints)                       |
+| Auth completa (sessão, ativação, reset de senha)                              | `models/session`, `models/activation`, `models/passwordReset`         |
+| Relatório de vendas por produto                                               | `GET /api/v1/reports/sales-by-product` + `pages/app/relatorios.js`    |
+| Relatório de créditos consumidos                                              | `GET /api/v1/reports/credits-consumed` + `pages/app/relatorios.js`    |
+| Relatório de consumo por aluno                                                | `GET /api/v1/reports/student-consumption` + `pages/app/relatorios.js` |
+| Faturamento diário/mensal — exposição na UI                                   | `pages/app/relatorios.js` (seções Faturamento Diário/Mensal)          |
 
 ---
 
 ## ⚠️ Parcialmente coberto (ajuste ou complemento necessário)
 
-| Funcionalidade                              | Status atual                                                                                                   | O que falta                                                                                       |
-| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| **Vendas por produto** (relatório dedicado) | `topProducts` existe como widget de dashboard com parâmetros de data                                           | Expor como relatório gerencial com paginação; ou documentar que o endpoint de dashboard já atende |
-| **Consumo por aluno**                       | ❌ Não derivável do estado atual — `salesByPeriod` não filtra por `student_id`, só agrupa por `payment_method` | Endpoint e query dedicados: `/reports/student-consumption` com filtro de período e aluno          |
-| **Créditos consumidos**                     | Implícito em vendas com `payment_method=credit`                                                                | Relatório separado ou adicionar coluna `consumed` ao endpoint de créditos                         |
-| **Dashboard com dados reais**               | `pages/app/index.js` usa mocks (TODO no código)                                                                | Substituir mocks por chamadas reais aos endpoints de dashboard já implementados                   |
-| **Faturamento diário/mensal**               | `revenueTrend` e `salesByPeriod` cobrem isso                                                                   | Nenhum ajuste técnico; só garantir que a UI exponha os filtros corretos                           |
+| Funcionalidade                | Status atual                                    | O que falta                                                                     |
+| ----------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| **Dashboard com dados reais** | `pages/app/index.js` usa mocks (TODO no código) | Substituir mocks por chamadas reais aos endpoints de dashboard já implementados |
 
 ---
 

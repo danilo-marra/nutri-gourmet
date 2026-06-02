@@ -4,6 +4,27 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-02 — PR #47: relatórios parciais complementados (issue #46)
+
+**Páginas wiki atualizadas (3):**
+
+- `wiki/domain/gap-analysis.md` — 4 itens movidos de ⚠️ para ✅: vendas por produto, consumo por aluno, créditos consumidos e faturamento diário/mensal. Seção ⚠️ mantém apenas "Dashboard com dados reais".
+- `wiki/rules/relatorios.md` — Summary atualizado (5 → 8 endpoints); tabela de endpoints expandida com `sales-by-product`, `credits-consumed`, `student-consumption`; tabela dos 12 relatórios atualizada: #3, #4, #6 passam de ⚠️/❌ para ✅.
+- `wiki/domain/fluxo-operacional.md` — tabela dos 12 relatórios sincronizada: #3, #4, #6 passam para ✅; #7 e #8 atualizados para citar `pages/app/relatorios.js`.
+
+**O que foi entregue no PR #47:**
+
+- `models/report.js` — adicionadas `salesByProduct()`, `creditsConsumed()`, `studentConsumption()`
+- `pages/api/v1/reports/sales-by-product/index.js` — novo endpoint (criado)
+- `pages/api/v1/reports/credits-consumed/index.js` — novo endpoint (criado)
+- `pages/api/v1/reports/student-consumption/index.js` — novo endpoint (criado)
+- `pages/app/relatorios.js` — reconstruído do stub; 5 seções: Faturamento Diário, Faturamento Mensal, Vendas por Produto, Créditos Consumidos, Consumo por Aluno
+- Testes de integração criados para os 3 novos endpoints (25 testes novos)
+
+**Issue #46 fechada.**
+
+---
+
 ## 2026-06-02 — PR #42: AppShell + dashboard com dados mock (issue #40)
 
 **CLAUDE.md atualizado:**

@@ -4,7 +4,7 @@
 
 **Sources**: raw/fluxo-cantina.md
 
-**Last updated**: 2026-06-02
+**Last updated**: 2026-06-02 (PR #47)
 
 ---
 
@@ -78,22 +78,22 @@ ESCOLAS → FATURAMENTO ─┘
 
 ## 12 relatórios desejados pelo cliente
 
-| #   | Relatório              | Status no projeto                                |
-| --- | ---------------------- | ------------------------------------------------ |
-| 1   | Vendas por escola      | ❌ requer multi-unidade                          |
-| 2   | Vendas por unidade     | ❌ requer multi-unidade                          |
-| 3   | Vendas por produto     | ⚠️ `topProducts` existe como widget de dashboard |
-| 4   | Consumo por aluno      | ⚠️ derivável de sales por student_id             |
-| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                 |
-| 6   | Créditos consumidos    | ⚠️ implícito em vendas com payment_method=credit |
-| 7   | Faturamento diário     | ✅ `revenueTrend` + `dashboardSummary`           |
-| 8   | Faturamento mensal     | ✅ `salesByPeriod` com filtro de mês             |
-| 9   | Recebimentos Stone     | ❌ requer integração Stone                       |
-| 10  | Eventos realizados     | ❌ requer módulo de eventos                      |
-| 11  | Estoque atual          | ❌ requer controle de estoque                    |
-| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`  |
+| #   | Relatório              | Status no projeto                               |
+| --- | ---------------------- | ----------------------------------------------- |
+| 1   | Vendas por escola      | ❌ requer multi-unidade                         |
+| 2   | Vendas por unidade     | ❌ requer multi-unidade                         |
+| 3   | Vendas por produto     | ✅ `GET /api/v1/reports/sales-by-product`       |
+| 4   | Consumo por aluno      | ✅ `GET /api/v1/reports/student-consumption`    |
+| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                |
+| 6   | Créditos consumidos    | ✅ `GET /api/v1/reports/credits-consumed`       |
+| 7   | Faturamento diário     | ✅ `revenueTrend` + `pages/app/relatorios.js`   |
+| 8   | Faturamento mensal     | ✅ `salesByPeriod` + `pages/app/relatorios.js`  |
+| 9   | Recebimentos Stone     | ❌ requer integração Stone                      |
+| 10  | Eventos realizados     | ❌ requer módulo de eventos                     |
+| 11  | Estoque atual          | ❌ requer controle de estoque                   |
+| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products` |
 
-Ver também [[relatorios]] para os 5 relatórios priorizados no Phase 1.
+Ver também [[relatorios]] para os 8 endpoints de relatório disponíveis.
 
 ---
 
