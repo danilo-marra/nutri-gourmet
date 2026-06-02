@@ -321,6 +321,28 @@ async function creditsConsumed({ startDate, endDate }) {
   return result.rows;
 }
 
+async function studentConsumption({ startDate, endDate }) {
+  const result = await database.query({
+    text: `
+      SELECT
+        s.student_id,
+        st.name           AS student_name,
+        st.class,
+        COUNT(s.id)::int  AS sale_count,
+        SUM(s.total)      AS total_consumed
+      FROM sales s
+      JOIN students st ON st.id = s.student_id
+      WHERE s.reversed_at IS NULL
+        AND s.created_at::date BETWEEN $1 AND $2
+      GROUP BY s.student_id, st.name, st.class
+      ORDER BY total_consumed DESC
+    `,
+    values: [startDate, endDate],
+  });
+
+  return result.rows;
+}
+
 async function categoryBreakdown({ startDate, endDate }) {
   const result = await database.query({
     text: `
@@ -419,6 +441,7 @@ const report = {
   topProducts,
   salesByProduct,
   creditsConsumed,
+  studentConsumption,
   categoryBreakdown,
   operatorSummary,
   myShiftSummary,

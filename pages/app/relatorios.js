@@ -497,6 +497,95 @@ function CreditosConsumidos() {
   );
 }
 
+function ConsumoPorAluno() {
+  const [startDate, setStartDate] = useState(firstOfMonth());
+  const [endDate, setEndDate] = useState(today());
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const rows = await fetchJson(
+        `/api/v1/reports/student-consumption?start_date=${startDate}&end_date=${endDate}`,
+      );
+      setData(rows);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <SectionCard title="Consumo por Aluno">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-wrap gap-3 items-end mb-4"
+      >
+        <DateInput label="De" value={startDate} onChange={setStartDate} />
+        <DateInput label="Até" value={endDate} onChange={setEndDate} />
+        <SubmitButton loading={loading} />
+      </form>
+
+      {loading && <LoadingState />}
+      {error && <ErrorState message={error} />}
+      {!loading && !error && data === null && <HintState />}
+      {!loading && !error && data !== null && data.length === 0 && (
+        <EmptyState />
+      )}
+      {!loading && !error && data !== null && data.length > 0 && (
+        <div className="-mx-4 -mb-4">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-bg border-b border-border">
+                <th className="text-left text-xs font-semibold text-fg-3 px-4 py-2">
+                  Aluno
+                </th>
+                <th className="text-left text-xs font-semibold text-fg-3 px-4 py-2">
+                  Turma
+                </th>
+                <th className="text-right text-xs font-semibold text-fg-3 px-4 py-2">
+                  Nº vendas
+                </th>
+                <th className="text-right text-xs font-semibold text-fg-3 px-4 py-2">
+                  Total consumido
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((row, i) => (
+                <tr
+                  key={row.student_id}
+                  className={`border-b border-border last:border-0 ${i % 2 === 1 ? "bg-gray-bg" : ""}`}
+                >
+                  <td className="px-4 py-2.5 text-fg-1">{row.student_name}</td>
+                  <td className="px-4 py-2.5 text-fg-2">{row.class}</td>
+                  <td
+                    className="px-4 py-2.5 text-fg-2 text-right"
+                    style={{ fontFamily: "var(--font-data)" }}
+                  >
+                    {row.sale_count}
+                  </td>
+                  <td
+                    className="px-4 py-2.5 text-fg-1 font-medium text-right"
+                    style={{ fontFamily: "var(--font-data)" }}
+                  >
+                    {fmt(row.total_consumed)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </SectionCard>
+  );
+}
+
 export default function RelatoriosPage() {
   const { user } = useUser();
   const router = useRouter();
@@ -515,6 +604,7 @@ export default function RelatoriosPage() {
       <FaturamentoMensal />
       <VendasPorProduto />
       <CreditosConsumidos />
+      <ConsumoPorAluno />
     </div>
   );
 }
