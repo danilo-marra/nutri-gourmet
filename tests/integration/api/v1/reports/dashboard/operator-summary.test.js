@@ -50,6 +50,21 @@ describe("GET /api/v1/reports/dashboard/operator-summary", () => {
       expect(body.name).toBe("ValidationError");
     });
 
+    test("Returns 400 when start_date is a non-existent calendar date (e.g. Feb 30)", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const session = await orchestrator.createSession(supervisor.id);
+
+      const response = await fetch(
+        "http://localhost:3000/api/v1/reports/dashboard/operator-summary?start_date=2026-02-30&end_date=2026-12-31",
+        { headers: { Cookie: `session_id=${session.token}` } },
+      );
+
+      expect(response.status).toBe(400);
+
+      const body = await response.json();
+      expect(body.name).toBe("ValidationError");
+    });
+
     test("Returns 400 when start_date is after end_date", async () => {
       const supervisor = await orchestrator.createUser({ role: "supervisor" });
       const session = await orchestrator.createSession(supervisor.id);

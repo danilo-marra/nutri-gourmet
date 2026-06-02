@@ -12,10 +12,12 @@ export default router.handler(controller.errorHandlers);
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 function validateDate(value, name) {
+  const d = new Date((value ?? "") + "T00:00:00Z");
   if (
     !value ||
     !DATE_REGEX.test(value) ||
-    isNaN(new Date(value + "T00:00:00Z").getTime())
+    isNaN(d.getTime()) ||
+    d.toISOString().slice(0, 10) !== value
   ) {
     throw new ValidationError({
       message: `O parâmetro '${name}' é obrigatório e deve estar no formato YYYY-MM-DD.`,
