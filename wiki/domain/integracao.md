@@ -16,10 +16,16 @@
 
 - Criar endpoint `POST /api/v1/webhooks/stone/payment` que recebe a notificação de pagamento confirmado
 - Validar assinatura do webhook (chave secreta compartilhada ou HMAC)
-- Internamente, chamar `models/sale` para criar a venda com `payment_method: 'card'`
-- **Reutiliza toda a infraestrutura existente de sale** — não é necessário módulo Stone separado
+- Mapear o método de pagamento informado pela Stone para o enum interno e registrar a venda via `models/sale`
 
-**O que NÃO precisar criar**: tabelas novas, fluxo de pagamento assíncrono complexo, módulo financeiro dedicado — o modelo de sale já cobre tudo.
+**⚠️ Decisão de schema necessária antes de implementar**: links Stone podem ser pagos via cartão, Pix ou outros meios. O enum atual de `payment_method` em `sales` aceita apenas `credit`, `cash` e `card`. Registrar um pagamento Pix como `card` corromperia os relatórios de fechamento de caixa e os totais por forma de pagamento. Duas opções:
+
+| Opção                                                 | O que exige                                            | Impacto                                        |
+| ----------------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------- |
+| Adicionar `pix` ao enum (+ outros meios futuros)      | Migration de schema; atualizar fechamento e relatórios | Correto e extensível; mais trabalho            |
+| Restringir integração Stone a links card-only por ora | Nenhum; usar `payment_method: 'card'` diretamente      | Simples, mas limita os meios aceitos via Stone |
+
+Definir essa opção antes de iniciar a implementação.
 
 **Perguntas abertas**: formato exato do payload do webhook Stone, chave de validação, idempotência (como evitar dupla criação se o webhook chegar duas vezes).
 

@@ -65,20 +65,20 @@ Todos os endpoints ficam em `pages/api/v1/reports/`. Permissões divididas em do
 
 O cliente listou 12 relatórios como necessários para a operação (source: raw/fluxo-cantina.md). Comparação com os 5 implementados no Phase 1:
 
-| #   | Relatório desejado     | Status                                                      |
-| --- | ---------------------- | ----------------------------------------------------------- |
-| 1   | Vendas por escola      | ❌ requer multi-unidade                                     |
-| 2   | Vendas por unidade     | ❌ requer multi-unidade                                     |
-| 3   | Vendas por produto     | ⚠️ coberto por `GET /api/v1/reports/dashboard/top-products` |
-| 4   | Consumo por aluno      | ⚠️ derivável de `/reports/sales` com `student_id`           |
-| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                            |
-| 6   | Créditos consumidos    | ⚠️ implícito em vendas com `payment_method=credit`          |
-| 7   | Faturamento diário     | ✅ `GET /api/v1/reports/dashboard/revenue-trend`            |
-| 8   | Faturamento mensal     | ✅ `GET /api/v1/reports/sales` (filtro por mês)             |
-| 9   | Recebimentos Stone     | ❌ requer integração Stone                                  |
-| 10  | Eventos realizados     | ❌ requer módulo de eventos                                 |
-| 11  | Estoque atual          | ❌ requer controle de estoque (no MarketUp por ora)         |
-| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`             |
+| #   | Relatório desejado     | Status                                                                        |
+| --- | ---------------------- | ----------------------------------------------------------------------------- |
+| 1   | Vendas por escola      | ❌ requer multi-unidade                                                       |
+| 2   | Vendas por unidade     | ❌ requer multi-unidade                                                       |
+| 3   | Vendas por produto     | ⚠️ coberto por `GET /api/v1/reports/dashboard/top-products`                   |
+| 4   | Consumo por aluno      | ❌ endpoint/query dedicados não existem; `salesByPeriod` não filtra por aluno |
+| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                                              |
+| 6   | Créditos consumidos    | ⚠️ implícito em vendas com `payment_method=credit`                            |
+| 7   | Faturamento diário     | ✅ `GET /api/v1/reports/dashboard/revenue-trend`                              |
+| 8   | Faturamento mensal     | ✅ `GET /api/v1/reports/sales` (filtro por mês)                               |
+| 9   | Recebimentos Stone     | ❌ requer integração Stone                                                    |
+| 10  | Eventos realizados     | ❌ requer módulo de eventos                                                   |
+| 11  | Estoque atual          | ❌ requer controle de estoque (no MarketUp por ora)                           |
+| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`                               |
 
 Ver [[fluxo-operacional]] e [[gap-analysis]] para o contexto completo.
 

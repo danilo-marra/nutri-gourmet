@@ -30,13 +30,13 @@
 
 ## ⚠️ Parcialmente coberto (ajuste ou complemento necessário)
 
-| Funcionalidade                              | Status atual                                                         | O que falta                                                                                       |
-| ------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| **Vendas por produto** (relatório dedicado) | `topProducts` existe como widget de dashboard com parâmetros de data | Expor como relatório gerencial com paginação; ou documentar que o endpoint de dashboard já atende |
-| **Consumo por aluno**                       | Derivável das vendas filtrando por `student_id`                      | Endpoint dedicado `/reports/student-consumption` ou parâmetro `student_id` em `/reports/sales`    |
-| **Créditos consumidos**                     | Implícito em vendas com `payment_method=credit`                      | Relatório separado ou adicionar coluna `consumed` ao endpoint de créditos                         |
-| **Dashboard com dados reais**               | `pages/app/index.js` usa mocks (TODO no código)                      | Substituir mocks por chamadas reais aos endpoints de dashboard já implementados                   |
-| **Faturamento diário/mensal**               | `revenueTrend` e `salesByPeriod` cobrem isso                         | Nenhum ajuste técnico; só garantir que a UI exponha os filtros corretos                           |
+| Funcionalidade                              | Status atual                                                                                                   | O que falta                                                                                       |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Vendas por produto** (relatório dedicado) | `topProducts` existe como widget de dashboard com parâmetros de data                                           | Expor como relatório gerencial com paginação; ou documentar que o endpoint de dashboard já atende |
+| **Consumo por aluno**                       | ❌ Não derivável do estado atual — `salesByPeriod` não filtra por `student_id`, só agrupa por `payment_method` | Endpoint e query dedicados: `/reports/student-consumption` com filtro de período e aluno          |
+| **Créditos consumidos**                     | Implícito em vendas com `payment_method=credit`                                                                | Relatório separado ou adicionar coluna `consumed` ao endpoint de créditos                         |
+| **Dashboard com dados reais**               | `pages/app/index.js` usa mocks (TODO no código)                                                                | Substituir mocks por chamadas reais aos endpoints de dashboard já implementados                   |
+| **Faturamento diário/mensal**               | `revenueTrend` e `salesByPeriod` cobrem isso                                                                   | Nenhum ajuste técnico; só garantir que a UI exponha os filtros corretos                           |
 
 ---
 
