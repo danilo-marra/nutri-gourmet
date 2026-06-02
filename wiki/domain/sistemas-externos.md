@@ -2,7 +2,7 @@
 
 **Summary**: Os três sistemas que a cantina usa hoje — MarketUp (PDV/estoque/fiscal), Vlupt (carteira digital dos alunos) e Stone (gateway de pagamento) — seus papéis, problemas de integração e como deveriam se conectar ao sistema central.
 
-**Sources**: raw/mapeamento-sistemas-atuais.md
+**Sources**: raw/mapeamento-sistemas-atuais.md, raw/decisions/sistemas-externos.md
 
 **Last updated**: 2026-06-02
 
@@ -21,6 +21,10 @@
 ### Problema atual
 
 Nem todas as vendas passam por ele automaticamente. Quando uma venda acontece via Vlupt ou Stone, a informação não entra no MarketUp automaticamente → lançamentos manuais → diferença entre faturamento real e registrado → risco de erros fiscais. (source: raw/mapeamento-sistemas-atuais.md)
+
+### Status confirmado pelo cliente (Q&A 2026-06-02)
+
+Permanece no stack por ora. Decisão de substituição depende da capacidade do novo sistema de se integrar ao caixa e aos meios de pagamento (link próprio + conciliação automática + caixa e faturamento unificados). Sem prazo definido. **Estoque**: continua no MarketUp no curto prazo; melhoria no médio prazo é desejada mas não bloqueante agora. (source: raw/decisions/sistemas-externos.md)
 
 ### Papel no sistema unificado
 
@@ -44,6 +48,10 @@ Histórico de recargas, histórico de consumo, saldos dos alunos.
 
 Quando o pai carrega crédito ou o aluno consome, essa movimentação não gera automaticamente registro fiscal e financeiro no sistema principal. As informações ficam separadas. (source: raw/mapeamento-sistemas-atuais.md)
 
+### Status confirmado pelo cliente (Q&A 2026-06-02)
+
+Pais adicionam crédito via **app ou site da Vlupt**. Quando o pagamento é confirmado, a cantina vê a informação e o crédito fica disponível para o aluno. Processo hoje é **manual** — não há integração automática com o sistema central. API/webhook da Vlupt ainda pendente de confirmação com o suporte. (source: raw/decisions/sistemas-externos.md)
+
 ### Papel no sistema unificado
 
 Canal de pagamento e interface com o pai/aluno. O sistema central mantém o livro-razão de crédito; a Vlupt envia webhook a cada recarga → sistema registra `credit_transaction`. A arquitetura atual já está correta para isso; falta confirmar se a Vlupt oferece API/webhook. Ver [[integracao]].
@@ -62,9 +70,9 @@ Canal de pagamento e interface com o pai/aluno. O sistema central mantém o livr
 
 Comprovante de pagamento, confirmação de recebimento, relatórios financeiros.
 
-### Problema atual
+### Problema atual — risco fiscal ativo
 
-Após o pagamento, a venda não é registrada automaticamente no sistema fiscal. A nota fiscal depende de ação manual. (source: raw/mapeamento-sistemas-atuais.md)
+Vendas via link Stone (Pix, cartão) **não estão sendo registradas** → faturamento subdeclarado → **risco fiscal ativo**. Meta do cliente: 100% das vendas registradas independente do canal. (source: raw/decisions/sistemas-externos.md)
 
 ### Papel no sistema unificado
 
@@ -88,16 +96,16 @@ Operador registra venda → baixa estoque → registra recebimento → emite doc
 
 ---
 
-## Perguntas abertas
+## Confirmações do Q&A (2026-06-02)
 
-As seguintes perguntas do cliente ainda precisam de resposta para decisão de escopo: (source: raw/mapeamento-sistemas-atuais.md)
-
-1. O MarketUp possui API para integração?
-2. A Vlupt possui API para consulta de saldo, recargas e consumo?
-3. A Stone possui webhook para avisar pagamentos aprovados? (**Sim** — confirmado em raw/possivel-integrar.md)
-4. O sistema novo emitirá NF-e/NFC-e diretamente ou continuará usando o MarketUp?
-5. O estoque continuará sendo controlado pelo MarketUp ou pelo novo sistema?
-6. Qual será o banco de dados central da operação?
+| Questão                  | Resposta                                                                          |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| MarketUp fica ou sai?    | Em avaliação — depende da integração própria funcionar                            |
+| Vlupt tem API/webhook?   | Pendente de confirmação com o suporte                                             |
+| Stone tem webhook?       | ✅ Sim — API/webhook abertos (raw/possivel-integrar.md)                           |
+| Quem emite NFC-e/NF-e?   | MarketUp hoje; objetivo: integração automática futura                             |
+| Estoque no novo sistema? | MarketUp no curto prazo; melhoria no médio prazo                                  |
+| BD central?              | Nosso sistema PostgreSQL é o livro-razão; MarketUp como retaguarda fiscal/estoque |
 
 ---
 

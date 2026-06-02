@@ -1,10 +1,10 @@
 # Fluxo Operacional da Cantina
 
-**Summary**: Os quatro fluxos de operação da cantina — crédito de alunos, venda direta, pagamento por link e eventos escolares — e o princípio de que toda entrada de dinheiro deve gerar registro completo.
+**Summary**: Os cinco fluxos de operação da cantina — crédito de alunos, venda direta, pagamento por link, eventos escolares e faturamento Integral — e o princípio de que toda entrada de dinheiro deve gerar registro completo.
 
-**Sources**: raw/fluxo-cantina.md
+**Sources**: raw/fluxo-cantina.md, raw/decisions/eventos-integral.md
 
-**Last updated**: 2026-06-02 (PR #47)
+**Last updated**: 2026-06-02
 
 ---
 
@@ -63,7 +63,21 @@ ESCOLAS → FATURAMENTO ─┘
 3. Sistema registra consumo durante o evento
 4. Evento encerrado → sistema calcula valor total → emite NF-e (DANFE) → gera cobrança → acompanha recebimento
 
-**Status no projeto**: ❌ não implementado; NF-e fora do Phase 1. Pode ser modelado no futuro como venda especial vinculada a uma conta de escola. (source: raw/fluxo-cantina.md)
+Frequência: ≥ 1–2 eventos por mês. Hoje o fluxo é 100% manual (cobrança e NF-e feitas pelo cliente). (source: raw/decisions/eventos-integral.md)
+
+**Status no projeto**: ❌ não implementado. Prioridade P3 no roadmap. Requer tabelas `events` + `event_items`, entidade escola e módulo fiscal. Ver [[eventos]].
+
+---
+
+## Fluxo 5 — Integral (faturamento recorrente)
+
+1. Aluno com `is_full_time = true` é vinculado ao plano Integral no início do ano letivo
+2. Sistema gera 10 parcelas mensais para cobrança da escola
+3. A cada parcela: emite NF-e → cobra escola → registra recebimento
+
+Hoje o fluxo é 100% manual (cliente emite NF-e e cobra manualmente). (source: raw/decisions/eventos-integral.md)
+
+**Status no projeto**: ❌ não implementado. Prioridade P4 no roadmap. Campo `is_full_time` já existe no schema. Ver [[integral]].
 
 ---
 
@@ -113,3 +127,6 @@ Este princípio guia a integração Stone e Vlupt: o sistema deve receber o even
 - [[venda]]
 - [[credito]]
 - [[relatorios]]
+- [[eventos]]
+- [[integral]]
+- [[fiscal]]
