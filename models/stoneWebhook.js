@@ -57,11 +57,18 @@ async function processPayment(payload, systemOperatorId) {
 
   await student.findOneById(studentId);
 
-  return await credit.create(
-    studentId,
-    { amount, type: "stone", stone_payment_id: stonePaymentId },
-    systemOperatorId,
-  );
+  try {
+    return await credit.create(
+      studentId,
+      { amount, type: "stone", stone_payment_id: stonePaymentId },
+      systemOperatorId,
+    );
+  } catch (error) {
+    if (error.cause?.code === "23505") {
+      return await findByStonePaymentId(stonePaymentId);
+    }
+    throw error;
+  }
 }
 
 async function findByStonePaymentId(stonePaymentId) {

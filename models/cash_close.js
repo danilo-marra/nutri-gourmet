@@ -21,7 +21,8 @@ async function create(closedById, { operator_id, date }) {
           COALESCE(SUM(total), 0) AS total_sales,
           COALESCE(SUM(CASE WHEN payment_method = 'credit' THEN total ELSE 0 END), 0) AS total_credit,
           COALESCE(SUM(CASE WHEN payment_method = 'cash'   THEN total ELSE 0 END), 0) AS total_cash,
-          COALESCE(SUM(CASE WHEN payment_method = 'card'   THEN total ELSE 0 END), 0) AS total_card
+          COALESCE(SUM(CASE WHEN payment_method = 'card'   THEN total ELSE 0 END), 0) AS total_card,
+          COALESCE(SUM(CASE WHEN payment_method = 'pix'    THEN total ELSE 0 END), 0) AS total_pix
         FROM
           sales
         WHERE
@@ -31,9 +32,9 @@ async function create(closedById, { operator_id, date }) {
       ),
       inserted AS (
         INSERT INTO
-          cash_closes (operator_id, closed_by_id, date, total_sales, total_credit, total_cash, total_card)
+          cash_closes (operator_id, closed_by_id, date, total_sales, total_credit, total_cash, total_card, total_pix)
         SELECT
-          $1, $2, $3, total_sales, total_credit, total_cash, total_card
+          $1, $2, $3, total_sales, total_credit, total_cash, total_card, total_pix
         FROM
           totals
         RETURNING *
@@ -47,6 +48,7 @@ async function create(closedById, { operator_id, date }) {
         ins.total_credit,
         ins.total_cash,
         ins.total_card,
+        ins.total_pix,
         ins.created_at,
         ins.updated_at,
         u.username AS operator_username
@@ -83,6 +85,7 @@ async function findAll() {
       cc.total_credit,
       cc.total_cash,
       cc.total_card,
+      cc.total_pix,
       cc.created_at,
       cc.updated_at,
       u.username AS operator_username

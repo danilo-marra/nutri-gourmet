@@ -45,10 +45,25 @@ async function postHandler(request, response) {
   return response.status(200).json(transaction);
 }
 
+const MAX_BODY_BYTES = 100 * 1024; // 100 KB
+
 function collectRawBody(request) {
   return new Promise((resolve, reject) => {
     const chunks = [];
-    request.on("data", (chunk) => chunks.push(chunk));
+    let totalSize = 0;
+    request.on("data", (chunk) => {
+      totalSize += chunk.length;
+      if (totalSize > MAX_BODY_BYTES) {
+        request.destroy();
+        return reject(
+          new ValidationError({
+            message: "Corpo da requisição excede o limite permitido.",
+            action: "Reduza o tamanho do payload e tente novamente.",
+          }),
+        );
+      }
+      chunks.push(chunk);
+    });
     request.on("end", () => resolve(Buffer.concat(chunks)));
     request.on("error", reject);
   });
