@@ -4,11 +4,22 @@ import credit from "models/credit.js";
 import student from "models/student.js";
 import { ValidationError } from "infra/errors.js";
 
-// ⚠️ PENDÊNCIA: confirmar com sandbox Stone:
-//   - Nome do header de assinatura (ex.: "x-stone-signature")
-//   - Formato da assinatura (hex vs base64)
-//   - Algoritmo exato (HMAC-SHA256 é o padrão de mercado — assumido aqui)
-const SIGNATURE_HEADER = "x-stone-signature";
+// ⚠️ PENDÊNCIA (Stone Banking API — docs.openbank.stone.com.br/docs/guias/webhooks/):
+//
+// SEGURANÇA — a Stone Banking API NÃO usa HMAC-SHA256. O webhook chega como:
+//   POST body: { "encrypted_body": "<JWE token>" }
+//   Passo 1: descriptografar o JWE com a CHAVE PRIVADA RSA da aplicação
+//            algoritmo: RSA-OAEP-256 + A256GCM  (lib sugerida: npm install jose)
+//   Passo 2: verificar assinatura JWS resultante com a chave pública da Stone
+//            algoritmo: RS256
+//            endpoint das chaves: https://sandbox-api.openbank.stone.com.br/api/v1/discovery/keys
+//
+// Para implementar: substituir validateSignature() por função que usa jose.compactDecrypt()
+// + jose.compactVerify(). Remover STONE_WEBHOOK_SECRET; adicionar STONE_PRIVATE_KEY (PEM RSA).
+//
+// REQUISITO PRÉVIO: cadastrar aplicação como parceiro Stone Banking API via formulário
+// em docs.openbank.stone.com.br (requer aprovação da Stone).
+const SIGNATURE_HEADER = "x-stone-webhook-event-id"; // header de idempotência (não de assinatura)
 
 function validateSignature(rawBody, signatureHeader, secret) {
   if (!signatureHeader || !secret) return false;
@@ -28,20 +39,27 @@ function validateSignature(rawBody, signatureHeader, secret) {
   }
 }
 
-// ⚠️ PENDÊNCIA: confirmar com sandbox Stone os nomes exatos dos campos do payload:
-//   - ID da transação (aqui assumido: payload.id)
-//   - Valor em reais (aqui assumido: payload.amount, número decimal)
-//   - Identificador do aluno (aqui assumido: payload.metadata.student_id — UUID interno)
-//   - Método de pagamento (aqui assumido: payload.payment_type — "pix" | "credit_card")
+// ⚠️ PENDÊNCIA — campos confirmados via docs Stone Banking API (lp_order_paid.json):
+//   - event_type: "order_paid"  (filtrar — ignorar outros eventos como order_created)
+//   - target_data.id: order ID  (ex.: "or_5OA7n7os6SbanXl4") → stone_payment_id
+//   - target_data.amount: valor em CENTAVOS (ex.: 1000 = R$ 10,00) → dividir por 100
+//   - header x-stone-webhook-event-id: UUID do evento (idempotência adicional)
 //
-// Quando o formato real estiver disponível, substituir apenas as linhas de extração
+// IDENTIFICAÇÃO DO ALUNO — NÃO existe student_id nativo no payload Stone.
+//   Opção A: ao criar o link, gravar na tabela stone_payment_links (link_id, student_id).
+//            No webhook, extrair link_id de target_detail_uri e fazer join.
+//   Opção B: ao criar o link, colocar o UUID do aluno em items[0].description.
+//            No webhook, ler target_data.items[0].description como student_id.
+//   Decidir antes de implementar.
+//
+// Quando credenciais Stone estiverem disponíveis, substituir as linhas de extração
 // abaixo sem alterar a lógica de idempotência ou a chamada ao credit.create().
 async function processPayment(payload, systemOperatorId) {
   const stonePaymentId = payload?.id;
   const amount = payload?.amount;
 
-  // ⚠️ PENDÊNCIA: como o student_id do aluno é embutido no link de pagamento Stone?
-  //   Assumindo que a cantina inclui o UUID do aluno em payload.metadata.student_id.
+  // ⚠️ PENDÊNCIA: student_id não existe no payload — ver opções A/B acima.
+  //   Após definir a estratégia, substituir esta linha pelo campo correto.
   const studentId = payload?.metadata?.student_id;
 
   if (!stonePaymentId || !amount || !studentId) {

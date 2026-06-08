@@ -3,8 +3,17 @@ import controller from "infra/controller.js";
 import stoneWebhook from "models/stoneWebhook.js";
 import { UnauthorizedError, ValidationError } from "infra/errors.js";
 
-// Desabilita o body parser padrão do Next.js para ter acesso ao raw body,
-// necessário para calcular e verificar a assinatura HMAC da Stone.
+// ⚠️ PENDÊNCIA — antes de ir a produção, substituir toda a lógica de segurança:
+//   1. Remover HMAC; implementar JWE decrypt + JWS verify (ver models/stoneWebhook.js)
+//   2. O body real da Stone é: { "encrypted_body": "<JWE token>" }
+//   3. Adicionar filtro: só processar se payload.event_type === "order_paid"
+//   4. Variáveis de ambiente:
+//      - Remover STONE_WEBHOOK_SECRET
+//      - Adicionar STONE_PRIVATE_KEY (chave privada RSA em PEM, para descriptografar JWE)
+//
+// Requisito prévio: aplicação cadastrada como parceiro Stone Banking API.
+//
+// raw body ainda necessário para parse manual do encrypted_body.
 export const config = {
   api: { bodyParser: false },
 };
@@ -18,7 +27,7 @@ export default router.handler(controller.errorHandlers);
 async function postHandler(request, response) {
   const rawBody = await collectRawBody(request);
 
-  // ⚠️ PENDÊNCIA: confirmar o nome exato do header com a Stone
+  // ⚠️ PENDÊNCIA: substituir por JWE decrypt + JWS verify (ver models/stoneWebhook.js)
   const signatureHeader = request.headers[stoneWebhook.SIGNATURE_HEADER];
   const secret = process.env.STONE_WEBHOOK_SECRET;
 
@@ -38,6 +47,10 @@ async function postHandler(request, response) {
       action: "Verifique o formato do corpo da requisição.",
     });
   }
+
+  // ⚠️ PENDÊNCIA: filtrar event_type — ignorar eventos que não sejam "order_paid"
+  // if (payload?.event_type !== "order_paid") return response.status(200).end();
+
   const operatorId = process.env.STONE_OPERATOR_ID;
 
   const transaction = await stoneWebhook.processPayment(payload, operatorId);
