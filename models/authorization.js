@@ -43,6 +43,9 @@ const SUPERVISOR_FEATURES = [
   // Relatórios
   "read:report:operational",
   "read:report:financial",
+  // Pagamentos Stone/Pagar.me pendentes
+  "read:stone_payment",
+  "update:stone_payment",
   // Visibilidade de outros usuários
   "read:user",
   // Gestão de contas de operador
@@ -125,6 +128,10 @@ const availableFeatures = [
   // Relatórios
   "read:report:operational",
   "read:report:financial",
+
+  // Pagamentos Stone/Pagar.me pendentes
+  "read:stone_payment",
+  "update:stone_payment",
 ];
 
 function getEffectiveFeatures(user) {

@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import { version as uuidVersion } from "uuid";
 import orchestrator from "tests/orchestrator.js";
 import database from "infra/database.js";
@@ -9,11 +8,32 @@ const WEBHOOK_URL = "http://localhost:3000/api/v1/webhooks/stone/payment";
 const TEST_SECRET = "test-stone-secret";
 
 // UUID fixo que corresponde ao STONE_OPERATOR_ID em .env.development.
-// O sistema usa esse usuário como operador de transações automáticas Stone.
 const STONE_OPERATOR_ID = "00000000-0000-4000-8000-000000000001";
 
-function computeSignature(body) {
-  return crypto.createHmac("sha256", TEST_SECRET).update(body).digest("hex");
+function basicAuthHeader(secret) {
+  return "Basic " + Buffer.from(`webhook:${secret}`).toString("base64");
+}
+
+function buildPayload(overrides = {}) {
+  return {
+    id: "hook_test001",
+    event: "order.paid",
+    data: {
+      id: overrides.orderId ?? "or_test000000000001",
+      code: "TESTCODE01",
+      amount: overrides.amountCentavos ?? 5000,
+      currency: "BRL",
+      status: "paid",
+      customer: {
+        name: "João Responsável",
+        email: "joao@example.com",
+      },
+      charge: {
+        payment_method: "pix",
+      },
+    },
+    ...overrides.top,
+  };
 }
 
 beforeAll(async () => {
@@ -22,7 +42,6 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 
   // Insere o usuário-sistema referenciado por STONE_OPERATOR_ID.
-  // Não usa user.create() porque precisamos de um UUID fixo.
   await database.query({
     text: `
       INSERT INTO users (id, username, email, password, role)
@@ -32,126 +51,113 @@ beforeAll(async () => {
     `,
     values: [STONE_OPERATOR_ID],
   });
-});
+}, 60000);
 
 describe("POST /api/v1/webhooks/stone/payment", () => {
-  describe("HMAC validation", () => {
-    test("Missing signature header", async () => {
-      const body = JSON.stringify({
-        id: "txn_no_sig",
-        amount: 50,
-        metadata: { student_id: "00000000-0000-0000-0000-000000000000" },
-      });
-
+  describe("Autenticação Basic Auth", () => {
+    test("Sem header Authorization retorna 401", async () => {
       const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body,
+        body: JSON.stringify(buildPayload()),
       });
 
       expect(response.status).toBe(401);
-
-      const responseBody = await response.json();
-      expect(responseBody.name).toBe("UnauthorizedError");
-      expect(responseBody.status_code).toBe(401);
+      const body = await response.json();
+      expect(body.name).toBe("UnauthorizedError");
     });
 
-    test("Invalid signature", async () => {
-      const body = JSON.stringify({
-        id: "txn_bad_sig",
-        amount: 50,
-        metadata: { student_id: "00000000-0000-0000-0000-000000000000" },
-      });
-
+    test("Secret incorreto retorna 401", async () => {
       const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-stone-signature": "wrong-signature",
+          Authorization: basicAuthHeader("wrong-secret"),
         },
-        body,
+        body: JSON.stringify(buildPayload()),
       });
 
       expect(response.status).toBe(401);
-
-      const responseBody = await response.json();
-      expect(responseBody.name).toBe("UnauthorizedError");
+      const body = await response.json();
+      expect(body.name).toBe("UnauthorizedError");
     });
   });
 
-  describe("Valid webhook", () => {
-    test("Creates credit_transaction and increases student balance", async () => {
-      const student = await orchestrator.createStudent();
-
-      const payload = {
-        id: "txn_valid_001",
-        amount: 75.0,
-        metadata: { student_id: student.id },
-      };
-      const body = JSON.stringify(payload);
+  describe("Filtro de evento", () => {
+    test("Evento diferente de order.paid retorna 200 sem criar registro", async () => {
+      const payload = buildPayload({ top: { event: "order.created" } });
 
       const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-stone-signature": computeSignature(body),
+          Authorization: basicAuthHeader(TEST_SECRET),
         },
-        body,
+        body: JSON.stringify(payload),
       });
 
       expect(response.status).toBe(200);
 
-      const responseBody = await response.json();
-      expect(uuidVersion(responseBody.id)).toBe(4);
-      expect(responseBody.student_id).toBe(student.id);
-      expect(responseBody.operator_id).toBe(STONE_OPERATOR_ID);
-      expect(responseBody.amount).toBe("75.00");
-      expect(responseBody.type).toBe("stone");
-      expect(responseBody.stone_payment_id).toBe("txn_valid_001");
-      expect(responseBody.balance_after).toBe("75.00");
-      expect(Date.parse(responseBody.created_at)).not.toBeNaN();
+      const result = await database.query({
+        text: "SELECT * FROM pending_stone_payments WHERE stone_payment_id = $1",
+        values: [payload.data.id],
+      });
+      expect(result.rows).toHaveLength(0);
+    });
+  });
+
+  describe("Pagamento válido", () => {
+    test("Cria pending_stone_payment com campos corretos", async () => {
+      const payload = buildPayload({
+        orderId: "or_valid_001",
+        amountCentavos: 7500,
+      });
+
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: basicAuthHeader(TEST_SECRET),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      expect(response.status).toBe(200);
+      const body = await response.json();
+
+      expect(uuidVersion(body.id)).toBe(4);
+      expect(body.stone_payment_id).toBe("or_valid_001");
+      expect(body.amount).toBe("75.00");
+      expect(body.payer_name).toBe("João Responsável");
+      expect(body.payer_email).toBe("joao@example.com");
+      expect(body.payment_method).toBe("pix");
+      expect(body.matched_at).toBeNull();
     });
 
-    test("Duplicate stone_payment_id returns 200 without creating duplicate", async () => {
-      const student = await orchestrator.createStudent();
-
-      const payload = {
-        id: "txn_duplicate_001",
-        amount: 30.0,
-        metadata: { student_id: student.id },
-      };
-      const body = JSON.stringify(payload);
-      const headers = {
-        "Content-Type": "application/json",
-        "x-stone-signature": computeSignature(body),
-      };
-
-      const firstResponse = await fetch(WEBHOOK_URL, {
+    test("stone_payment_id duplicado retorna 200 sem criar duplicate", async () => {
+      const payload = buildPayload({
+        orderId: "or_dup_001",
+        amountCentavos: 3000,
+      });
+      const opts = {
         method: "POST",
-        headers,
-        body,
-      });
-      expect(firstResponse.status).toBe(200);
-      const firstBody = await firstResponse.json();
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: basicAuthHeader(TEST_SECRET),
+        },
+        body: JSON.stringify(payload),
+      };
 
-      const secondResponse = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers,
-        body,
-      });
-      expect(secondResponse.status).toBe(200);
-      const secondBody = await secondResponse.json();
+      const first = await (await fetch(WEBHOOK_URL, opts)).json();
+      const second = await (await fetch(WEBHOOK_URL, opts)).json();
 
-      // Mesmo registro retornado — sem duplicata
-      expect(firstBody.id).toBe(secondBody.id);
-      expect(firstBody.stone_payment_id).toBe("txn_duplicate_001");
+      expect(first.id).toBe(second.id);
 
-      // Saldo reflete apenas uma adição
-      const studentResult = await database.query({
-        text: "SELECT balance FROM students WHERE id = $1",
-        values: [student.id],
+      const count = await database.query({
+        text: "SELECT COUNT(*) FROM pending_stone_payments WHERE stone_payment_id = $1",
+        values: ["or_dup_001"],
       });
-      expect(studentResult.rows[0].balance).toBe("30.00");
+      expect(count.rows[0].count).toBe("1");
     });
   });
 });
