@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node infra/scripts/kill-port.js 3000 && npm run services:up && npm run services:wait:database && npm run migrations:up && next dev -p 3000",
-    "test": "npm run services:up && npm run services:wait:database && npm run migrations:up && node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && concurrently -n next,jest --hide next -k -s command-jest \"cross-env NODE_ENV=development next dev\" \"cross-env NODE_ENV=test jest --runInBand --verbose --forceExit\"",
+    "test": "node infra/scripts/kill-port.js 3000 && npm run services:up && npm run services:wait:database && npm run migrations:up && node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && concurrently -n next,jest --hide next -k -s command-jest \"cross-env NODE_ENV=development next dev -p 3000\" \"cross-env NODE_ENV=test jest --runInBand --verbose --forceExit\"",
     "posttest": "npm run services:stop",
     "test:watch": "jest --watchAll --runInBand --verbose",
     "services:up": "docker compose -f infra/compose.yaml up -d",
