@@ -94,6 +94,7 @@ describe("POST /api/v1/cash_closes", () => {
         total_credit: "0.00",
         total_cash: "0.00",
         total_card: "0.00",
+        total_pix: "0.00",
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -123,6 +124,9 @@ describe("POST /api/v1/cash_closes", () => {
       await orchestrator.createSale(student.id, operador.id, {
         payment_method: "credit",
       });
+      await orchestrator.createSale(student.id, operador.id, {
+        payment_method: "pix",
+      });
 
       const response = await fetch("http://localhost:3000/api/v1/cash_closes", {
         method: "POST",
@@ -139,11 +143,13 @@ describe("POST /api/v1/cash_closes", () => {
       const totalSales =
         parseFloat(responseBody.total_cash) +
         parseFloat(responseBody.total_card) +
-        parseFloat(responseBody.total_credit);
+        parseFloat(responseBody.total_credit) +
+        parseFloat(responseBody.total_pix);
       expect(parseFloat(responseBody.total_sales)).toBeCloseTo(totalSales, 2);
       expect(parseFloat(responseBody.total_cash)).toBeGreaterThan(0);
       expect(parseFloat(responseBody.total_card)).toBeGreaterThan(0);
       expect(parseFloat(responseBody.total_credit)).toBeGreaterThan(0);
+      expect(parseFloat(responseBody.total_pix)).toBeGreaterThan(0);
     });
 
     test("Provided operator_id is overridden with own id", async () => {

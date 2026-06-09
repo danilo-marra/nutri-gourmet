@@ -20,27 +20,53 @@ async function create(studentId, values, operatorId) {
   if (!values?.type) {
     throw new ValidationError({
       message: "O campo 'type' é obrigatório.",
-      action: "Informe o tipo do crédito ('manual' ou 'package').",
+      action: "Informe o tipo do crédito ('manual', 'package' ou 'stone').",
     });
   }
 
-  if (!["manual", "package"].includes(values.type)) {
+  if (!["manual", "package", "stone"].includes(values.type)) {
     throw new ValidationError({
-      message: "O campo 'type' deve ser 'manual' ou 'package'.",
+      message: "O campo 'type' deve ser 'manual', 'package' ou 'stone'.",
       action: "Informe um tipo válido para o crédito.",
+    });
+  }
+
+  if (values.type === "stone" && !values.stone_payment_id) {
+    throw new ValidationError({
+      message:
+        "O campo 'stone_payment_id' é obrigatório para créditos do tipo 'stone'.",
+      action: "Informe o Id do link de pagamento Stone.",
     });
   }
 
   const expiresAt =
     values.type === "package" ? (values.expires_at ?? null) : null;
 
-  const newTransaction = await runInsertQuery({
-    studentId,
-    operatorId,
-    amount,
-    type: values.type,
-    expiresAt,
-  });
+  const stonePaymentId =
+    values.type === "stone" ? (values.stone_payment_id ?? null) : null;
+
+  let newTransaction;
+  try {
+    newTransaction = await runInsertQuery({
+      studentId,
+      operatorId,
+      amount,
+      type: values.type,
+      expiresAt,
+      stonePaymentId,
+    });
+  } catch (err) {
+    if (
+      err.cause?.code === "23505" &&
+      err.cause?.constraint?.includes("stone_payment_id")
+    ) {
+      throw new ValidationError({
+        message: "Este Id de pagamento Stone já foi registrado.",
+        action: "Verifique o Id do link e tente novamente.",
+      });
+    }
+    throw err;
+  }
   return newTransaction;
 
   async function runInsertQuery({
@@ -49,6 +75,7 @@ async function create(studentId, values, operatorId) {
     amount,
     type,
     expiresAt,
+    stonePaymentId,
   }) {
     const results = await database.query({
       text: `
@@ -63,15 +90,15 @@ async function create(studentId, values, operatorId) {
           balance
       )
       INSERT INTO
-        credit_transactions (student_id, operator_id, amount, type, expires_at, balance_after)
+        credit_transactions (student_id, operator_id, amount, type, expires_at, balance_after, stone_payment_id)
       SELECT
-        $2, $3, $1, $4, $5, updated.balance
+        $2, $3, $1, $4, $5, updated.balance, $6
       FROM
         updated
       RETURNING
         *
       ;`,
-      values: [amount, studentId, operatorId, type, expiresAt],
+      values: [amount, studentId, operatorId, type, expiresAt, stonePaymentId],
     });
 
     return results.rows[0];

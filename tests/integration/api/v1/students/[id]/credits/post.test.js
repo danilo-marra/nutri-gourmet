@@ -90,6 +90,7 @@ describe("POST /api/v1/students/:id/credits", () => {
         type: "manual",
         balance_after: "15.50",
         expires_at: null,
+        stone_payment_id: null,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -200,8 +201,37 @@ describe("POST /api/v1/students/:id/credits", () => {
       const responseBody = await response.json();
       expect(responseBody).toEqual({
         name: "ValidationError",
-        message: "O campo 'type' deve ser 'manual' ou 'package'.",
+        message: "O campo 'type' deve ser 'manual', 'package' ou 'stone'.",
         action: "Informe um tipo válido para o crédito.",
+        status_code: 400,
+      });
+    });
+
+    test("Stone credit without stone_payment_id returns 400", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+      const student = await orchestrator.createStudent();
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/students/${student.id}/credits`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ amount: 50, type: "stone" }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message:
+          "O campo 'stone_payment_id' é obrigatório para créditos do tipo 'stone'.",
+        action: "Informe o Id do link de pagamento Stone.",
         status_code: 400,
       });
     });
@@ -240,6 +270,7 @@ describe("POST /api/v1/students/:id/credits", () => {
         type: "package",
         balance_after: "100.00",
         expires_at: expiresAt,
+        stone_payment_id: null,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });

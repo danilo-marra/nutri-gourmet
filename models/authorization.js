@@ -43,6 +43,9 @@ const SUPERVISOR_FEATURES = [
   // Relatórios
   "read:report:operational",
   "read:report:financial",
+  // Pagamentos Stone/Pagar.me pendentes
+  "read:stone_payment",
+  "update:stone_payment",
   // Visibilidade de outros usuários
   "read:user",
   // Gestão de contas de operador
@@ -125,6 +128,10 @@ const availableFeatures = [
   // Relatórios
   "read:report:operational",
   "read:report:financial",
+
+  // Pagamentos Stone/Pagar.me pendentes
+  "read:stone_payment",
+  "update:stone_payment",
 ];
 
 function getEffectiveFeatures(user) {
@@ -298,6 +305,7 @@ function filterOutput(user, feature, resource) {
       type: resource.type,
       balance_after: resource.balance_after,
       expires_at: resource.expires_at,
+      stone_payment_id: resource.stone_payment_id,
       created_at: resource.created_at,
       updated_at: resource.updated_at,
     };
@@ -328,8 +336,24 @@ function filterOutput(user, feature, resource) {
       total_credit: resource.total_credit,
       total_cash: resource.total_cash,
       total_card: resource.total_card,
+      total_pix: resource.total_pix,
       created_at: resource.created_at,
       updated_at: resource.updated_at,
+    };
+  }
+
+  if (feature === "read:stone_payment") {
+    return {
+      id: resource.id,
+      stone_payment_id: resource.stone_payment_id,
+      amount: resource.amount,
+      payer_name: resource.payer_name,
+      payer_email: resource.payer_email,
+      payment_method: resource.payment_method,
+      matched_at: resource.matched_at,
+      matched_by_id: resource.matched_by_id,
+      credit_transaction_id: resource.credit_transaction_id,
+      created_at: resource.created_at,
     };
   }
 
