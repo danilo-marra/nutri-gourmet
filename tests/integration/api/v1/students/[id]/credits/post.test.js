@@ -207,6 +207,35 @@ describe("POST /api/v1/students/:id/credits", () => {
       });
     });
 
+    test("Stone credit without stone_payment_id returns 400", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+      const student = await orchestrator.createStudent();
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/students/${student.id}/credits`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ amount: 50, type: "stone" }),
+        },
+      );
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message:
+          "O campo 'stone_payment_id' é obrigatório para créditos do tipo 'stone'.",
+        action: "Informe o Id do link de pagamento Stone.",
+        status_code: 400,
+      });
+    });
+
     test("With valid package and expires_at", async () => {
       const supervisor = await orchestrator.createUser({ role: "supervisor" });
       const supervisorSession = await orchestrator.createSession(supervisor.id);

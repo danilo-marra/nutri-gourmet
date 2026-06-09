@@ -31,6 +31,14 @@ async function create(studentId, values, operatorId) {
     });
   }
 
+  if (values.type === "stone" && !values.stone_payment_id) {
+    throw new ValidationError({
+      message:
+        "O campo 'stone_payment_id' é obrigatório para créditos do tipo 'stone'.",
+      action: "Informe o Id do link de pagamento Stone.",
+    });
+  }
+
   const expiresAt =
     values.type === "package" ? (values.expires_at ?? null) : null;
 
@@ -48,7 +56,10 @@ async function create(studentId, values, operatorId) {
       stonePaymentId,
     });
   } catch (err) {
-    if (err.code === "23505" && err.constraint?.includes("stone_payment_id")) {
+    if (
+      err.cause?.code === "23505" &&
+      err.cause?.constraint?.includes("stone_payment_id")
+    ) {
       throw new ValidationError({
         message: "Este Id de pagamento Stone já foi registrado.",
         action: "Verifique o Id do link e tente novamente.",

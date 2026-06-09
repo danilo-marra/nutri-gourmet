@@ -4,6 +4,8 @@ import credit from "models/credit.js";
 import student from "models/student.js";
 import { NotFoundError, ValidationError } from "infra/errors.js";
 
+const SAFE_COLUMNS = `id, stone_payment_id, amount, payer_name, payer_email, payment_method, matched_at, matched_by_id, credit_transaction_id, created_at, updated_at`;
+
 // Pagar.me envia Authorization: Basic base64(webhook:STONE_WEBHOOK_SECRET)
 // A URL do webhook deve ser configurada como https://webhook:SECRET@dominio/...
 // Validamos apenas a senha (parte após o primeiro ":") com timing-safe compare.
@@ -16,7 +18,7 @@ function validateBasicAuth(authHeader, secret) {
     const colonIndex = decoded.indexOf(":");
     if (colonIndex === -1) return false;
     const password = decoded.slice(colonIndex + 1);
-    if (password.length !== secret.length) return false;
+    if (Buffer.byteLength(password) !== Buffer.byteLength(secret)) return false;
     return crypto.timingSafeEqual(Buffer.from(password), Buffer.from(secret));
   } catch {
     return false;
@@ -44,7 +46,8 @@ async function createPendingPayment(payload) {
       INSERT INTO pending_stone_payments
         (stone_payment_id, amount, payer_name, payer_email, payment_method, raw_payload)
       VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING *
+      ON CONFLICT (stone_payment_id) DO NOTHING
+      RETURNING ${SAFE_COLUMNS}
     `,
     values: [
       stonePaymentId,
@@ -56,12 +59,12 @@ async function createPendingPayment(payload) {
     ],
   });
 
-  return result.rows[0];
+  return result.rows[0] ?? (await findPendingByStonePaymentId(stonePaymentId));
 }
 
 async function findPendingByStonePaymentId(stonePaymentId) {
   const result = await database.query({
-    text: `SELECT * FROM pending_stone_payments WHERE stone_payment_id = $1`,
+    text: `SELECT ${SAFE_COLUMNS} FROM pending_stone_payments WHERE stone_payment_id = $1`,
     values: [stonePaymentId],
   });
   return result.rows[0] ?? null;
@@ -78,7 +81,7 @@ async function findMatchedCreditByStonePaymentId(stonePaymentId) {
 async function listPending() {
   const result = await database.query({
     text: `
-      SELECT * FROM pending_stone_payments
+      SELECT ${SAFE_COLUMNS} FROM pending_stone_payments
       WHERE matched_at IS NULL
       ORDER BY created_at DESC
     `,
@@ -88,7 +91,7 @@ async function listPending() {
 
 async function findPendingById(id) {
   const result = await database.query({
-    text: `SELECT * FROM pending_stone_payments WHERE id = $1`,
+    text: `SELECT ${SAFE_COLUMNS} FROM pending_stone_payments WHERE id = $1`,
     values: [id],
   });
   return result.rows[0] ?? null;

@@ -16,6 +16,13 @@ async function postHandler(request, response) {
   const { id } = request.query;
   const { student_id } = request.body;
 
+  if (!id || !UUID_REGEX.test(id)) {
+    throw new ValidationError({
+      message: "O parâmetro 'id' deve ser um UUID válido.",
+      action: "Verifique o ID do pagamento pendente e tente novamente.",
+    });
+  }
+
   if (!student_id || !UUID_REGEX.test(student_id)) {
     throw new ValidationError({
       message: "O campo 'student_id' é obrigatório e deve ser um UUID válido.",

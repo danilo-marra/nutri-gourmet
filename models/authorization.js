@@ -342,6 +342,22 @@ function filterOutput(user, feature, resource) {
     };
   }
 
+  if (feature === "read:stone_payment") {
+    return {
+      id: resource.id,
+      stone_payment_id: resource.stone_payment_id,
+      amount: resource.amount,
+      payer_name: resource.payer_name,
+      payer_email: resource.payer_email,
+      payment_method: resource.payment_method,
+      matched_at: resource.matched_at,
+      matched_by_id: resource.matched_by_id,
+      credit_transaction_id: resource.credit_transaction_id,
+      created_at: resource.created_at,
+      updated_at: resource.updated_at,
+    };
+  }
+
   if (
     feature === "read:report:financial" ||
     feature === "read:report:operational"
