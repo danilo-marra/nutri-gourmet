@@ -7,7 +7,7 @@ beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.clearDatabase();
   await orchestrator.runPendingMigrations();
-});
+}, 60000);
 
 describe("PATCH /api/v1/[username]", () => {
   describe("Anonymous user", () => {

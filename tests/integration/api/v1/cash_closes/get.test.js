@@ -82,6 +82,7 @@ describe("GET /api/v1/cash_closes", () => {
         total_credit: "0.00",
         total_cash: "0.00",
         total_card: "0.00",
+        total_pix: "0.00",
         created_at: close.created_at,
         updated_at: close.updated_at,
       });

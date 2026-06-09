@@ -336,6 +336,7 @@ function filterOutput(user, feature, resource) {
       total_credit: resource.total_credit,
       total_cash: resource.total_cash,
       total_card: resource.total_card,
+      total_pix: resource.total_pix,
       created_at: resource.created_at,
       updated_at: resource.updated_at,
     };
