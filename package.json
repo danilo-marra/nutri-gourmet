@@ -25,6 +25,14 @@
     "check-secrets": "secretlint \"**/*\"",
     "seed:admin": "node infra/scripts/seed-admin.js"
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint"
+    ],
+    "*.{json,md,css,yml,yaml}": "prettier --write",
+    "*": "secretlint"
+  },
   "author": "Danilo Marra",
   "license": "MIT",
   "dependencies": {
@@ -71,6 +79,7 @@
     "eslint-plugin-jest": "28.8.0",
     "husky": "9.1.5",
     "jest": "29.7.0",
+    "lint-staged": "^16.4.0",
     "prettier": "3.3.3",
     "secretlint": "8.2.4",
     "set-cookie-parser": "2.7.1",
