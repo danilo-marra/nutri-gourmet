@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/supervisor.md
 
-**Last updated**: 2026-05-29
+**Last updated**: 2026-06-09
 
 ---
 
@@ -32,6 +32,7 @@ Isso se traduz diretamente no RBAC já implementado via `users.role` e `authoriz
 | Criar/editar contas de Operador      | ❌           | ✅             | ✅                |
 | Criar/editar contas de Supervisor    | ❌           | ❌             | ✅                |
 | Cadastros globais (alunos, produtos) | ❌           | ✅             | ✅                |
+| Ver/reconciliar pagamentos Stone     | ❌           | ✅             | ✅                |
 
 (source: raw/decisions/supervisor.md)
 

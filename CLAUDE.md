@@ -40,7 +40,7 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 - `pages/app/**` — área autenticada; cada página exporta `getLayout = (page) => <AppShell>{page}</AppShell>`.
 - `hooks/useUser.js` — SWR sobre `GET /api/v1/user`; retorna `{ user, isLoading }`; redireciona para `/login` se não autenticado.
 - `components/AppShell.js` — shell autenticado (sidebar com nav filtrado por `user.features` + topbar com título e badge de role).
-- `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `passwordReset`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`).
+- `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `passwordReset`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`, `stoneWebhook`).
 - `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`, `scripts/seed-admin.js`, `scripts/kill-port.js`.
 - `tests/integration/api/v1/**` mirrors `pages/api/v1/**` path-for-path. Additional subdirectories: `_use-cases/` (end-to-end flows), `infra/` (infra tests e.g. email), `unit/` (unit tests for models e.g. `authorization`).
 - Shared setup lives in `tests/orchestrator.js` (use `waitForAllServices`, `clearDatabase`, `runPendingMigrations`, `createUser({ role? })`, `createSession`, `deleteAllEmails`, `getLastEmail`, `extractUUID`, `activateUser`, `addFeaturesToUser`, `createStudent`, `createProduct`, `createCreditTransaction(studentId, operatorId, overrides?)`, `createSale(studentId, operatorId, overrides?)`, `createCashClose(operatorId, closedById, overrides?)`).
