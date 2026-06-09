@@ -37,6 +37,15 @@ export interface ActivationToken {
   updated_at: Date;
 }
 
+export interface PasswordResetToken {
+  id: string;
+  user_id: string;
+  expires_at: Date;
+  used_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface Student {
   id: string;
   name: string;

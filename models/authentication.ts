@@ -1,8 +1,12 @@
 import user from "models/user.js";
 import password from "models/password.js";
 import { NotFoundError, UnauthorizedError } from "infra/errors.js";
+import type { User } from "@/types/index";
 
-async function getAuthenticatedUser(providedEmail, providedPassword) {
+async function getAuthenticatedUser(
+  providedEmail: string,
+  providedPassword: string,
+): Promise<User> {
   try {
     const storedUser = await findUserByEmail(providedEmail);
     await validatedPassword(providedPassword, storedUser.password);
@@ -19,7 +23,7 @@ async function getAuthenticatedUser(providedEmail, providedPassword) {
     throw error;
   }
 
-  async function findUserByEmail(providedEmail) {
+  async function findUserByEmail(providedEmail: string): Promise<User> {
     let storedUser;
 
     try {
@@ -37,7 +41,10 @@ async function getAuthenticatedUser(providedEmail, providedPassword) {
     return storedUser;
   }
 
-  async function validatedPassword(providedPassword, storedPassword) {
+  async function validatedPassword(
+    providedPassword: string,
+    storedPassword: string,
+  ): Promise<void> {
     const correctPasswordMatch = await password.compare(
       providedPassword,
       storedPassword,

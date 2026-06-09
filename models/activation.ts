@@ -4,16 +4,17 @@ import webserver from "infra/webserver.js";
 import user from "models/user.js";
 import { ForbiddenError, NotFoundError } from "infra/errors";
 import authorization from "./authorization";
+import type { ActivationToken, User } from "@/types/index";
 
 const EXPIRATION_IN_MILISECONDS = 60 * 15 * 1000; // 15 minutes
 
-async function findOneValidById(tokenId) {
+async function findOneValidById(tokenId: string): Promise<ActivationToken> {
   const activationTokenId = await runSelectQuery(tokenId);
 
   return activationTokenId;
 
-  async function runSelectQuery(tokenId) {
-    const results = await database.query({
+  async function runSelectQuery(tokenId: string): Promise<ActivationToken> {
+    const results = await database.query<ActivationToken>({
       text: `
         SELECT
           *
@@ -41,14 +42,17 @@ async function findOneValidById(tokenId) {
   }
 }
 
-async function create(userId) {
+async function create(userId: string): Promise<ActivationToken> {
   const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
 
   const newToken = await runInsertQuery(userId, expiresAt);
   return newToken;
 
-  async function runInsertQuery(userId, expiresAt) {
-    const results = await database.query({
+  async function runInsertQuery(
+    userId: string,
+    expiresAt: Date,
+  ): Promise<ActivationToken> {
+    const results = await database.query<ActivationToken>({
       text: `
         INSERT INTO
           user_activation_tokens (user_id, expires_at)
@@ -63,7 +67,10 @@ async function create(userId) {
   }
 }
 
-async function sendEmailToUser(user, activationToken) {
+async function sendEmailToUser(
+  user: Pick<User, "username" | "email">,
+  activationToken: Pick<ActivationToken, "id">,
+): Promise<void> {
   const appName = process.env.APP_NAME;
   const appEmail = process.env.APP_EMAIL;
   const activationPath = process.env.ACTIVATION_PATH || "/activate";
@@ -85,12 +92,16 @@ Equipe ${appName}`,
   });
 }
 
-async function markTokenAsUsed(activationTokenId) {
+async function markTokenAsUsed(
+  activationTokenId: string,
+): Promise<ActivationToken> {
   const usedActivationToken = await runUpdateQuery(activationTokenId);
   return usedActivationToken;
 
-  async function runUpdateQuery(activationTokenId) {
-    const results = await database.query({
+  async function runUpdateQuery(
+    activationTokenId: string,
+  ): Promise<ActivationToken> {
+    const results = await database.query<ActivationToken>({
       text: `
         UPDATE
           user_activation_tokens
@@ -109,7 +120,7 @@ async function markTokenAsUsed(activationTokenId) {
   }
 }
 
-async function activateUserByUserId(userId) {
+async function activateUserByUserId(userId: string): Promise<User> {
   const userToActivate = await user.findOneById(userId);
 
   if (!authorization.can(userToActivate, "read:activation_token")) {

@@ -1,14 +1,23 @@
 import database from "infra/database.js";
 import password from "models/password.js";
 import { ValidationError, NotFoundError } from "infra/errors.js";
+import type { User, UserRole } from "@/types/index";
 
-async function findOneByUsername(username) {
+interface UserInputValues {
+  username: string;
+  email: string;
+  password: string;
+  role?: UserRole;
+  features?: string[];
+}
+
+async function findOneByUsername(username: string): Promise<User> {
   const userFound = await runSelectQuery(username);
 
   return userFound;
 
-  async function runSelectQuery(username) {
-    const results = await database.query({
+  async function runSelectQuery(username: string): Promise<User> {
+    const results = await database.query<User>({
       text: `
       SELECT
         *
@@ -33,13 +42,13 @@ async function findOneByUsername(username) {
   }
 }
 
-async function findOneByEmail(email) {
+async function findOneByEmail(email: string): Promise<User> {
   const userFound = await runSelectQuery(email);
 
   return userFound;
 
-  async function runSelectQuery(email) {
-    const results = await database.query({
+  async function runSelectQuery(email: string): Promise<User> {
+    const results = await database.query<User>({
       text: `
       SELECT
         *
@@ -64,13 +73,13 @@ async function findOneByEmail(email) {
   }
 }
 
-async function findOneById(id) {
+async function findOneById(id: string): Promise<User> {
   const userFound = await runSelectQuery(id);
 
   return userFound;
 
-  async function runSelectQuery(id) {
-    const results = await database.query({
+  async function runSelectQuery(id: string): Promise<User> {
+    const results = await database.query<User>({
       text: `
       SELECT
         *
@@ -95,7 +104,7 @@ async function findOneById(id) {
   }
 }
 
-async function create(userInputValues) {
+async function create(userInputValues: UserInputValues): Promise<User> {
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
   await hashPasswordInObject(userInputValues);
@@ -105,8 +114,10 @@ async function create(userInputValues) {
   const newUser = await runInsertQuery(userInputValues);
   return newUser;
 
-  async function runInsertQuery(userInputValues) {
-    const results = await database.query({
+  async function runInsertQuery(
+    userInputValues: UserInputValues,
+  ): Promise<User> {
+    const results = await database.query<User>({
       text: `
       INSERT INTO
         users (username, email, password, role, features)
@@ -127,28 +138,33 @@ async function create(userInputValues) {
     return results.rows[0];
   }
 
-  function injectDefaultRoleInObject(userInputValues) {
+  function injectDefaultRoleInObject(userInputValues: UserInputValues): void {
     userInputValues.role = userInputValues.role ?? "pending";
   }
 
-  function injectDefaultFeaturesInObject(userInputValues) {
+  function injectDefaultFeaturesInObject(
+    userInputValues: UserInputValues,
+  ): void {
     userInputValues.features = ["read:activation_token"];
   }
 }
 
-async function findAll(roles = null) {
+async function findAll(roles: UserRole[] | null = null): Promise<User[]> {
   const results = roles
-    ? await database.query({
+    ? await database.query<User>({
         text: `SELECT * FROM users WHERE role = ANY($1) ORDER BY created_at ASC`,
         values: [roles],
       })
-    : await database.query({
+    : await database.query<User>({
         text: `SELECT * FROM users ORDER BY created_at ASC`,
       });
   return results.rows;
 }
 
-async function update(username, userInputValues) {
+async function update(
+  username: string,
+  userInputValues: Partial<UserInputValues>,
+): Promise<User> {
   const currentUser = await findOneByUsername(username);
 
   if ("username" in userInputValues) {
@@ -171,8 +187,8 @@ async function update(username, userInputValues) {
   const updatedUser = await runUpdateQuery(userWithNewValues);
   return updatedUser;
 
-  async function runUpdateQuery(userWithNewValues) {
-    const results = await database.query({
+  async function runUpdateQuery(userWithNewValues: User): Promise<User> {
+    const results = await database.query<User>({
       text: `
       UPDATE
         users
@@ -200,7 +216,9 @@ async function update(username, userInputValues) {
   }
 }
 
-async function validateUniqueUsername(username) {
+async function validateUniqueUsername(
+  username: string | undefined,
+): Promise<void> {
   const results = await database.query({
     text: `
     SELECT
@@ -213,7 +231,7 @@ async function validateUniqueUsername(username) {
     values: [username],
   });
 
-  if (results.rowCount > 0) {
+  if ((results.rowCount ?? 0) > 0) {
     throw new ValidationError({
       message: "O username informado já está sendo utilizado.",
       action: "Utilize outro username para realizar esta operação.",
@@ -221,7 +239,7 @@ async function validateUniqueUsername(username) {
   }
 }
 
-async function validateUniqueEmail(email) {
+async function validateUniqueEmail(email: string | undefined): Promise<void> {
   const results = await database.query({
     text: `
     SELECT
@@ -234,7 +252,7 @@ async function validateUniqueEmail(email) {
     values: [email],
   });
 
-  if (results.rowCount > 0) {
+  if ((results.rowCount ?? 0) > 0) {
     throw new ValidationError({
       message: "O email informado já está sendo utilizado.",
       action: "Utilize outro email para realizar esta operação.",
@@ -242,17 +260,22 @@ async function validateUniqueEmail(email) {
   }
 }
 
-async function hashPasswordInObject(userInputValues) {
-  const hashedPassword = await password.hash(userInputValues.password);
+async function hashPasswordInObject(
+  userInputValues: Partial<UserInputValues>,
+): Promise<void> {
+  const hashedPassword = await password.hash(userInputValues.password!);
   userInputValues.password = hashedPassword;
 }
 
-async function setFeatures(userId, features) {
+async function setFeatures(userId: string, features: string[]): Promise<User> {
   const updatedUser = await runUpdateQuery(userId, features);
   return updatedUser;
 
-  async function runUpdateQuery(userId, features) {
-    const results = await database.query({
+  async function runUpdateQuery(
+    userId: string,
+    features: string[],
+  ): Promise<User> {
+    const results = await database.query<User>({
       text: `
       UPDATE
         users
@@ -271,8 +294,8 @@ async function setFeatures(userId, features) {
   }
 }
 
-async function activate(userId, role) {
-  const results = await database.query({
+async function activate(userId: string, role: UserRole): Promise<User> {
+  const results = await database.query<User>({
     text: `
     UPDATE
       users
@@ -291,12 +314,15 @@ async function activate(userId, role) {
   return results.rows[0];
 }
 
-async function addFeatures(userId, features) {
+async function addFeatures(userId: string, features: string[]): Promise<User> {
   const updatedUser = await runUpdateQuery(userId, features);
   return updatedUser;
 
-  async function runUpdateQuery(userId, features) {
-    const results = await database.query({
+  async function runUpdateQuery(
+    userId: string,
+    features: string[],
+  ): Promise<User> {
+    const results = await database.query<User>({
       text: `
       UPDATE
         users

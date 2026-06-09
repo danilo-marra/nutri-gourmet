@@ -3,17 +3,21 @@ import database from "infra/database.js";
 import webserver from "infra/webserver.js";
 import { NotFoundError } from "infra/errors.js";
 import password from "models/password.js";
+import type { PasswordResetToken, User } from "@/types/index";
 
 const EXPIRATION_IN_MILISECONDS = 30 * 60 * 1000;
 
-async function create(userId) {
+async function create(userId: string): Promise<PasswordResetToken> {
   const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
 
   const newToken = await runInsertQuery(userId, expiresAt);
   return newToken;
 
-  async function runInsertQuery(userId, expiresAt) {
-    const results = await database.query({
+  async function runInsertQuery(
+    userId: string,
+    expiresAt: Date,
+  ): Promise<PasswordResetToken> {
+    const results = await database.query<PasswordResetToken>({
       text: `
         INSERT INTO
           password_reset_tokens (user_id, expires_at)
@@ -28,12 +32,12 @@ async function create(userId) {
   }
 }
 
-async function findOneValidById(tokenId) {
+async function findOneValidById(tokenId: string): Promise<PasswordResetToken> {
   const token = await runSelectQuery(tokenId);
   return token;
 
-  async function runSelectQuery(tokenId) {
-    const results = await database.query({
+  async function runSelectQuery(tokenId: string): Promise<PasswordResetToken> {
+    const results = await database.query<PasswordResetToken>({
       text: `
         SELECT
           *
@@ -61,12 +65,12 @@ async function findOneValidById(tokenId) {
   }
 }
 
-async function markTokenAsUsed(tokenId) {
+async function markTokenAsUsed(tokenId: string): Promise<PasswordResetToken> {
   const usedToken = await runUpdateQuery(tokenId);
   return usedToken;
 
-  async function runUpdateQuery(tokenId) {
-    const results = await database.query({
+  async function runUpdateQuery(tokenId: string): Promise<PasswordResetToken> {
+    const results = await database.query<PasswordResetToken>({
       text: `
         UPDATE
           password_reset_tokens
@@ -95,7 +99,10 @@ async function markTokenAsUsed(tokenId) {
   }
 }
 
-async function sendEmailToUser(user, resetToken) {
+async function sendEmailToUser(
+  user: Pick<User, "username" | "email">,
+  resetToken: Pick<PasswordResetToken, "id">,
+): Promise<void> {
   const appName = process.env.APP_NAME;
   const appEmail = process.env.APP_EMAIL;
   const recoveryPath = process.env.PASSWORD_RECOVERY_PATH || "/recovery";
@@ -119,7 +126,10 @@ Equipe ${appName}`,
   });
 }
 
-async function resetPassword(userId, newPassword) {
+async function resetPassword(
+  userId: string,
+  newPassword: string,
+): Promise<void> {
   const hashedPassword = await password.hash(newPassword);
 
   await database.query({
