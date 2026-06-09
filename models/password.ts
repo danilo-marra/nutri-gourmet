@@ -1,15 +1,18 @@
 import bcryptjs from "bcryptjs";
 
-async function hash(password) {
+async function hash(password: string): Promise<string> {
   const rounds = getNumberOfRounds();
   return await bcryptjs.hash(password, rounds);
 }
 
-function getNumberOfRounds() {
+function getNumberOfRounds(): number {
   return process.env.NODE_ENV === "production" ? 14 : 1;
 }
 
-async function compare(providedPassword, storedPassword) {
+async function compare(
+  providedPassword: string,
+  storedPassword: string,
+): Promise<boolean> {
   return await bcryptjs.compare(providedPassword, storedPassword);
 }
 

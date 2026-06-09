@@ -1,7 +1,14 @@
 import database from "infra/database.js";
 import { ValidationError, NotFoundError } from "infra/errors.js";
+import type { Student } from "@/types/index";
 
-async function create(values) {
+interface StudentInputValues {
+  name?: string;
+  class?: string;
+  is_full_time?: boolean;
+}
+
+async function create(values: StudentInputValues): Promise<Student> {
   if (!values?.name) {
     throw new ValidationError({
       message: "O campo 'name' é obrigatório.",
@@ -19,8 +26,8 @@ async function create(values) {
   const newStudent = await runInsertQuery(values);
   return newStudent;
 
-  async function runInsertQuery(values) {
-    const results = await database.query({
+  async function runInsertQuery(values: StudentInputValues): Promise<Student> {
+    const results = await database.query<Student>({
       text: `
       INSERT INTO
         students (name, class, is_full_time)
@@ -36,12 +43,12 @@ async function create(values) {
   }
 }
 
-async function findAll() {
+async function findAll(): Promise<Student[]> {
   const students = await runSelectQuery();
   return students;
 
-  async function runSelectQuery() {
-    const results = await database.query({
+  async function runSelectQuery(): Promise<Student[]> {
+    const results = await database.query<Student>({
       text: `
       SELECT
         *
@@ -56,12 +63,12 @@ async function findAll() {
   }
 }
 
-async function findOneById(id) {
+async function findOneById(id: string): Promise<Student> {
   const studentFound = await runSelectQuery(id);
   return studentFound;
 
-  async function runSelectQuery(id) {
-    const results = await database.query({
+  async function runSelectQuery(id: string): Promise<Student> {
+    const results = await database.query<Student>({
       text: `
       SELECT
         *
@@ -86,7 +93,10 @@ async function findOneById(id) {
   }
 }
 
-async function update(id, values) {
+async function update(
+  id: string,
+  values: StudentInputValues,
+): Promise<Student> {
   const currentStudent = await findOneById(id);
 
   if ("name" in values && !values.name) {
@@ -96,7 +106,7 @@ async function update(id, values) {
     });
   }
 
-  const studentWithNewValues = {
+  const studentWithNewValues: Student = {
     ...currentStudent,
     name: values.name ?? currentStudent.name,
     class: values.class ?? currentStudent.class,
@@ -106,8 +116,8 @@ async function update(id, values) {
   const updatedStudent = await runUpdateQuery(studentWithNewValues);
   return updatedStudent;
 
-  async function runUpdateQuery(studentWithNewValues) {
-    const results = await database.query({
+  async function runUpdateQuery(studentWithNewValues: Student) {
+    const results = await database.query<Student>({
       text: `
       UPDATE
         students
@@ -133,14 +143,14 @@ async function update(id, values) {
   }
 }
 
-async function remove(id) {
+async function remove(id: string): Promise<Student> {
   await findOneById(id);
 
   const removedStudent = await runDeleteQuery(id);
   return removedStudent;
 
-  async function runDeleteQuery(id) {
-    const results = await database.query({
+  async function runDeleteQuery(id: string): Promise<Student> {
+    const results = await database.query<Student>({
       text: `
       DELETE FROM
         students
