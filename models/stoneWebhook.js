@@ -4,7 +4,7 @@ import credit from "models/credit.js";
 import student from "models/student.js";
 import { NotFoundError, ValidationError } from "infra/errors.js";
 
-const SAFE_COLUMNS = `id, stone_payment_id, amount, payer_name, payer_email, payment_method, matched_at, matched_by_id, credit_transaction_id, created_at, updated_at`;
+const SAFE_COLUMNS = `id, stone_payment_id, amount, payer_name, payer_email, payment_method, matched_at, matched_by_id, credit_transaction_id, created_at`;
 
 // Pagar.me envia Authorization: Basic base64(webhook:STONE_WEBHOOK_SECRET)
 // A URL do webhook deve ser configurada como https://webhook:SECRET@dominio/...

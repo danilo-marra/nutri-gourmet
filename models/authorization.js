@@ -354,7 +354,6 @@ function filterOutput(user, feature, resource) {
       matched_by_id: resource.matched_by_id,
       credit_transaction_id: resource.credit_transaction_id,
       created_at: resource.created_at,
-      updated_at: resource.updated_at,
     };
   }
 
