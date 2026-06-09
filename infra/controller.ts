@@ -1,7 +1,10 @@
 import * as cookie from "cookie";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextHandler } from "next-connect";
 import session from "models/session.js";
 import user from "models/user.js";
 import authorization from "models/authorization.js";
+import type { User } from "@/types/index.js";
 
 import {
   InternalServerError,
@@ -10,14 +13,18 @@ import {
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
-} from "infra/errors";
+} from "infra/errors.js";
 
-function onNoMatchHandler(request, response) {
+function onNoMatchHandler(request: NextApiRequest, response: NextApiResponse) {
   const publicErrorObject = new MethodNotAllowedError();
   response.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
-function onErrorHandler(error, request, response) {
+function onErrorHandler(
+  error: unknown,
+  request: NextApiRequest,
+  response: NextApiResponse,
+) {
   if (
     error instanceof ValidationError ||
     error instanceof NotFoundError ||
@@ -40,7 +47,10 @@ function onErrorHandler(error, request, response) {
   response.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
-async function setSessionCookie(sessionToken, response) {
+async function setSessionCookie(
+  sessionToken: string,
+  response: NextApiResponse,
+): Promise<void> {
   const setCookie = cookie.serialize("session_id", sessionToken, {
     path: "/",
     maxAge: session.EXPIRATION_IN_MILISECONDS / 1000,
@@ -51,7 +61,7 @@ async function setSessionCookie(sessionToken, response) {
   response.setHeader("Set-Cookie", setCookie);
 }
 
-async function clearSessionCookie(response) {
+async function clearSessionCookie(response: NextApiResponse): Promise<void> {
   const setCookie = cookie.serialize("session_id", "invalid", {
     path: "/",
     maxAge: -1,
@@ -62,7 +72,11 @@ async function clearSessionCookie(response) {
   response.setHeader("Set-Cookie", setCookie);
 }
 
-async function injectAnonymousOrUser(request, response, next) {
+async function injectAnonymousOrUser(
+  request: NextApiRequest,
+  response: NextApiResponse,
+  next: NextHandler,
+) {
   if (request.cookies?.session_id) {
     try {
       await injectAuthenticatedUser(request);
@@ -87,30 +101,30 @@ async function injectAnonymousOrUser(request, response, next) {
   return next();
 }
 
-async function injectAuthenticatedUser(request) {
-  const sessionToken = request.cookies.session_id;
+async function injectAuthenticatedUser(request: NextApiRequest): Promise<void> {
+  const sessionToken = request.cookies.session_id!;
   const sessionObject = await session.findOneValidByToken(sessionToken);
-  const userObject = await user.findOneById(sessionObject.user_id);
+  const userObject = (await user.findOneById(
+    sessionObject.user_id,
+  )) as unknown as User;
 
+  request.context = { user: userObject };
+}
+
+function injectAnonymousUser(request: NextApiRequest): void {
   request.context = {
-    ...request.context,
-    user: userObject,
+    user: {
+      features: ["read:activation_token", "create:session", "create:user"],
+    },
   };
 }
 
-function injectAnonymousUser(request) {
-  const anonymousUserObject = {
-    features: ["read:activation_token", "create:session", "create:user"],
-  };
-
-  request.context = {
-    ...request.context,
-    user: anonymousUserObject,
-  };
-}
-
-function canRequest(feature) {
-  return function canRequestMiddleware(request, response, next) {
+function canRequest(feature: string) {
+  return function canRequestMiddleware(
+    request: NextApiRequest,
+    response: NextApiResponse,
+    next: NextHandler,
+  ) {
     const userTryingToRequest = request.context.user;
 
     if (authorization.can(userTryingToRequest, feature)) {
