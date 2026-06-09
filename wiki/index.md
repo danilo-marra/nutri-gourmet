@@ -34,6 +34,7 @@
 - [Fluxo Operacional](domain/fluxo-operacional.md) — os 5 fluxos da cantina (crédito, venda direta, Stone, eventos, Integral) e os 12 relatórios desejados pelo cliente
 - [Sistemas Externos](domain/sistemas-externos.md) — MarketUp, Vlupt e Stone: papéis, problemas atuais e como deveriam se integrar ao sistema central
 - [Integração](domain/integracao.md) — estratégia técnica e prioridade de integração com cada sistema externo
+- [Stone Webhook](domain/stone-webhook.md) — webhook Pagar.me + fila `pending_stone_payments` + reconciliação manual pelo supervisor (PR #56)
 - [Gap Analysis](domain/gap-analysis.md) — consolidado: o que está entregue, o que precisa de ajuste e o que está fora do Phase 1
 
 ### Entidades

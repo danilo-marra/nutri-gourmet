@@ -4,6 +4,32 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-09 — PR #56: webhook Stone/Pagar.me + reconciliação de crédito
+
+**CLAUDE.md atualizado:**
+
+- `models/*` — adicionado `stoneWebhook`
+
+**Páginas wiki criadas (1):**
+
+- `wiki/domain/stone-webhook.md` — fluxo completo: webhook `POST /webhooks/stone/payment`, fila `pending_stone_payments`, reconciliação `POST /stone-payments/[id]/match`, autenticação Basic Auth, RBAC e limitações
+
+**Páginas wiki atualizadas (6):**
+
+- `wiki/domain/venda.md` — `pix` adicionado à lista de `payment_method`
+- `wiki/domain/credito.md` — tipo `stone` adicionado ao enum de `credit_transactions`; fluxo de reconciliação Stone documentado; link para `[[stone-webhook]]`
+- `wiki/rules/seguranca.md` — nova linha na tabela de permissões: "Ver/reconciliar pagamentos Stone" (supervisor/admin)
+- `wiki/domain/gap-analysis.md` — Stone movido de ❌ para ✅; "Relatório: recebimentos Stone" atualizado para ⚠️ Parcial; decisão pendente de `payment_method` marcada como resolvida; 🗑️ e ♻️ atualizados
+- `wiki/domain/integracao.md` — seção Stone reescrita: estratégia futura substituída pelo que foi implementado; tabela de prioridade atualizada; decisão de idempotência marcada como resolvida
+- `wiki/index.md` — entrada para `stone-webhook.md` adicionada
+
+**Não alterado (justificado):**
+
+- `wiki/domain/fluxo-operacional.md` — tabela dos 12 relatórios não mudou; Stone ainda não tem relatório dedicado
+- `wiki/rules/relatorios.md` — nenhum novo endpoint de relatório entregue no PR #56
+
+---
+
 ## 2026-06-02 — Q&A com o cliente: sistemas externos, fiscal, eventos e módulo Integral
 
 **Fontes**: respostas diretas do cliente (dono da cantina) em sessão de Q&A.

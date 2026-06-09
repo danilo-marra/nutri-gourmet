@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/venda.md
 
-**Last updated**: 2026-05-27 (atualizado após implementação do módulo)
+**Last updated**: 2026-06-09
 
 ---
 
@@ -33,6 +33,7 @@ Campo `payment_method` no cabeçalho da venda (não por item):
 - `credit` — débito do saldo do [[aluno]]
 - `cash` — dinheiro em espécie
 - `card` — cartão
+- `pix` — pagamento Pix (adicionado em PR #56 para cobrir pagamentos via Stone/Pagar.me)
 
 (source: raw/decisions/venda.md)
 

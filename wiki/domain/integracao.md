@@ -4,32 +4,32 @@
 
 **Sources**: raw/possivel-integrar.md, raw/mapeamento-sistemas-atuais.md, raw/decisions/sistemas-externos.md
 
-**Last updated**: 2026-06-02
+**Last updated**: 2026-06-09
 
 ---
 
-## Stone — Integração mais simples (urgência fiscal elevada)
+## Stone — ✅ Implementado (PR #56)
 
-**Disponibilidade**: Stone possui documentação aberta para desenvolvedores, APIs e webhooks. (source: raw/possivel-integrar.md)
+**Urgência confirmada**: vendas via link Stone não estavam sendo registradas → faturamento subdeclarado → **risco fiscal ativo**. Meta do cliente: 100% das vendas registradas independente do canal. (source: raw/decisions/sistemas-externos.md)
 
-**Urgência confirmada**: vendas via link Stone não estão sendo registradas → faturamento subdeclarado → **risco fiscal ativo**. Meta do cliente: 100% das vendas registradas independente do canal. NF-e automática é pré-requisito downstream do módulo fiscal. (source: raw/decisions/sistemas-externos.md)
+**O que foi implementado (PR #56)**:
 
-**Estratégia técnica**:
+- `POST /api/v1/webhooks/stone/payment` — recebe notificação `order.paid` do Pagar.me; valida via Basic Auth (`STONE_WEBHOOK_SECRET`); cria registro em `pending_stone_payments` de forma idempotente (ON CONFLICT DO NOTHING)
+- `GET /api/v1/stone-payments` — lista pagamentos pendentes não reconciliados; requer `read:stone_payment`
+- `POST /api/v1/stone-payments/[id]/match` — supervisor vincula o pagamento a um aluno, criando `credit_transaction` do tipo `stone`; requer `update:stone_payment`
+- `pix` adicionado ao enum `payment_method` em `sales` (migration); `cash_closes` também atualizado
 
-- Criar endpoint `POST /api/v1/webhooks/stone/payment` que recebe a notificação de pagamento confirmado
-- Validar assinatura do webhook (chave secreta compartilhada ou HMAC)
-- Mapear o método de pagamento informado pela Stone para o enum interno e registrar a venda via `models/sale`
+**Decisões resolvidas no PR #56**:
 
-**⚠️ Decisão de schema necessária antes de implementar**: links Stone podem ser pagos via cartão, Pix ou outros meios. O enum atual de `payment_method` em `sales` aceita apenas `credit`, `cash` e `card`. Registrar um pagamento Pix como `card` corromperia os relatórios de fechamento de caixa e os totais por forma de pagamento. Duas opções:
+- Schema: `pix` adicionado ao enum de `payment_method`; `stone` adicionado ao enum de `type` em `credit_transactions`; coluna `stone_payment_id` em `credit_transactions` garante idempotência
+- Idempotência: ON CONFLICT (stone_payment_id) DO NOTHING em `pending_stone_payments`; match verifica `matched_at` antes de criar nova transação
 
-| Opção                                                 | O que exige                                            | Impacto                                        |
-| ----------------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------- |
-| Adicionar `pix` ao enum (+ outros meios futuros)      | Migration de schema; atualizar fechamento e relatórios | Correto e extensível; mais trabalho            |
-| Restringir integração Stone a links card-only por ora | Nenhum; usar `payment_method: 'card'` diretamente      | Simples, mas limita os meios aceitos via Stone |
+**Pendências restantes**:
 
-Definir essa opção antes de iniciar a implementação.
+- Emissão de NF-e automática — depende de P5 (provider fiscal); Stone cobre o registro da venda, mas não a nota fiscal
+- Relatório dedicado de recebimentos Stone — `pending_stone_payments` já existe; falta definir o formato desejado
 
-**Perguntas abertas**: formato exato do payload do webhook Stone, chave de validação, idempotência (como evitar dupla criação se o webhook chegar duas vezes).
+Ver [[stone-webhook]] para documentação completa do modelo e endpoints.
 
 ---
 
@@ -76,11 +76,11 @@ Definir essa opção antes de iniciar a implementação.
 
 ## Resumo de prioridade
 
-| Sistema      | Facilidade                                        | Impacto                                                           | Prioridade |
-| ------------ | ------------------------------------------------- | ----------------------------------------------------------------- | ---------- |
-| **Stone**    | Alta (webhook aberto, sem confirmação necessária) | Alto — **risco fiscal ativo** (vendas não registradas)            | 🟢 Alta    |
-| **Vlupt**    | Média (confirmar API com suporte)                 | Alto (recarga automática; app/site confirmados pelo cliente)      | 🟡 Média   |
-| **MarketUp** | Baixa (API limitada/fechada)                      | Médio (fiscal e estoque; decisão de substituição ainda em aberto) | 🔴 Baixa   |
+| Sistema      | Status          | Impacto                                                           | Prioridade |
+| ------------ | --------------- | ----------------------------------------------------------------- | ---------- |
+| **Stone**    | ✅ Implementado | Alto — risco fiscal parcialmente mitigado (registro via webhook)  | — PR #56   |
+| **Vlupt**    | ⏳ Pendente     | Alto (recarga automática; app/site confirmados pelo cliente)      | 🟡 P2      |
+| **MarketUp** | ⏳ Pendente     | Médio (fiscal e estoque; decisão de substituição ainda em aberto) | 🔴 P7      |
 
 ---
 
@@ -90,8 +90,9 @@ Antes de iniciar qualquer integração, definir:
 
 1. **MarketUp fica ou sai?** — define se build estoque+fiscal próprio ou apenas envia dados para MarketUp
 2. **Vlupt tem API/webhook?** — confirmação com suporte; sem isso, usar importação manual
-3. **Idempotência Stone** — como tratar webhooks duplicados (header de idempotency key?)
-4. **Separação de responsabilidade fiscal** — quem emite NFC-e: MarketUp, nosso sistema ou sistema fiscal terceiro?
+3. **Separação de responsabilidade fiscal** — quem emite NFC-e: MarketUp, nosso sistema ou sistema fiscal terceiro?
+
+**Resolvidas no PR #56**: idempotência Stone via ON CONFLICT (stone_payment_id); `pix` adicionado ao enum de `payment_method`.
 
 ---
 
@@ -102,3 +103,4 @@ Antes de iniciar qualquer integração, definir:
 - [[gap-analysis]]
 - [[venda]]
 - [[credito]]
+- [[stone-webhook]]

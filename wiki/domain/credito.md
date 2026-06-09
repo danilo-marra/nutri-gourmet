@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/credito-pacote.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-06-09
 
 ---
 
@@ -22,7 +22,9 @@ Nenhuma operação normal deixa o saldo negativo: adição de crédito sempre so
 
 ### Adição de crédito
 
-Implementado via `POST /api/v1/students/:id/credits`. A tabela `credit_transactions` registra cada evento com `type` (`manual` ou `package`), `amount`, `balance_after` e `operator_id` para auditoria. (source: raw/decisions/credito-pacote.md)
+Implementado via `POST /api/v1/students/:id/credits`. A tabela `credit_transactions` registra cada evento com `type` (`manual`, `package` ou `stone`), `amount`, `balance_after` e `operator_id` para auditoria. (source: raw/decisions/credito-pacote.md)
+
+Transações do tipo `stone` são geradas pelo fluxo de reconciliação Stone/Pagar.me: o webhook cria um registro em `pending_stone_payments`, e o supervisor vincula o pagamento a um aluno via `POST /api/v1/stone-payments/[id]/match`. A coluna `stone_payment_id` em `credit_transactions` garante idempotência. Ver [[stone-webhook]].
 
 ## Related pages
 
@@ -30,3 +32,4 @@ Implementado via `POST /api/v1/students/:id/credits`. A tabela `credit_transacti
 - [[pacote]]
 - [[venda]]
 - [[operador]]
+- [[stone-webhook]]
