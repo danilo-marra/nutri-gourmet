@@ -99,6 +99,7 @@ describe("GET /api/v1/students/:id/credits", () => {
         type: "manual",
         balance_after: "35.00",
         expires_at: null,
+        stone_payment_id: null,
         created_at: first.created_at,
         updated_at: first.updated_at,
       });

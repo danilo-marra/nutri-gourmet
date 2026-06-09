@@ -37,14 +37,25 @@ async function create(studentId, values, operatorId) {
   const stonePaymentId =
     values.type === "stone" ? (values.stone_payment_id ?? null) : null;
 
-  const newTransaction = await runInsertQuery({
-    studentId,
-    operatorId,
-    amount,
-    type: values.type,
-    expiresAt,
-    stonePaymentId,
-  });
+  let newTransaction;
+  try {
+    newTransaction = await runInsertQuery({
+      studentId,
+      operatorId,
+      amount,
+      type: values.type,
+      expiresAt,
+      stonePaymentId,
+    });
+  } catch (err) {
+    if (err.code === "23505" && err.constraint?.includes("stone_payment_id")) {
+      throw new ValidationError({
+        message: "Este Id de pagamento Stone já foi registrado.",
+        action: "Verifique o Id do link e tente novamente.",
+      });
+    }
+    throw err;
+  }
   return newTransaction;
 
   async function runInsertQuery({

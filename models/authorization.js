@@ -305,6 +305,7 @@ function filterOutput(user, feature, resource) {
       type: resource.type,
       balance_after: resource.balance_after,
       expires_at: resource.expires_at,
+      stone_payment_id: resource.stone_payment_id,
       created_at: resource.created_at,
       updated_at: resource.updated_at,
     };

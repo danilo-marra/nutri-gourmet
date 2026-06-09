@@ -90,6 +90,7 @@ describe("POST /api/v1/students/:id/credits", () => {
         type: "manual",
         balance_after: "15.50",
         expires_at: null,
+        stone_payment_id: null,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -240,6 +241,7 @@ describe("POST /api/v1/students/:id/credits", () => {
         type: "package",
         balance_after: "100.00",
         expires_at: expiresAt,
+        stone_payment_id: null,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
