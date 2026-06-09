@@ -1,6 +1,8 @@
+import type { Feature } from "models/authorization";
+
 export type UserRole = "pending" | "operador" | "supervisor" | "admin";
 
-export type Feature = string;
+export type { Feature };
 
 export interface User {
   id: string;

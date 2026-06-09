@@ -1,14 +1,14 @@
 import database from "infra/database.js";
 import password from "models/password.js";
 import { ValidationError, NotFoundError } from "infra/errors.js";
-import type { User, UserRole } from "@/types/index";
+import type { Feature, User, UserRole } from "@/types/index";
 
 interface UserInputValues {
   username: string;
   email: string;
   password: string;
   role?: UserRole;
-  features?: string[];
+  features?: Feature[];
 }
 
 async function findOneByUsername(username: string): Promise<User> {
