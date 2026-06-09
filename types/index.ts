@@ -64,7 +64,7 @@ export interface Product {
   updated_at: Date;
 }
 
-export type PaymentMethod = "credit" | "cash" | "card";
+export type PaymentMethod = "credit" | "cash" | "card" | "pix";
 
 export interface SaleItem {
   id: string;
@@ -87,7 +87,7 @@ export interface Sale {
   items?: SaleItem[];
 }
 
-export type CreditType = "credito" | "debito" | "pacote";
+export type CreditType = "manual" | "package" | "stone";
 
 export interface CreditTransaction {
   id: string;
