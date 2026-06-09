@@ -1,5 +1,5 @@
 import nodemailer, { SendMailOptions } from "nodemailer";
-import { ServiceError } from "./errors.js";
+import { ServiceError } from "./errors";
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SMTP_HOST,

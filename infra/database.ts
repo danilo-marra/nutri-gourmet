@@ -1,5 +1,5 @@
 import { Client, Pool, PoolConfig, QueryConfig, QueryResult } from "pg";
-import { ServiceError } from "./errors.js";
+import { ServiceError } from "./errors";
 
 function getConnectionConfig(): PoolConfig {
   if (process.env.DATABASE_URL) {

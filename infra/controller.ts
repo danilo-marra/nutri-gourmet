@@ -4,7 +4,7 @@ import type { NextHandler } from "next-connect";
 import session from "models/session.js";
 import user from "models/user.js";
 import authorization from "models/authorization.js";
-import type { User } from "@/types/index.js";
+import type { User } from "@/types/index";
 
 import {
   InternalServerError,
@@ -13,7 +13,7 @@ import {
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
-} from "infra/errors.js";
+} from "infra/errors";
 
 function onNoMatchHandler(request: NextApiRequest, response: NextApiResponse) {
   const publicErrorObject = new MethodNotAllowedError();
