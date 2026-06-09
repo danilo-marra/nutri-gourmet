@@ -30,7 +30,7 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 - `npm test` waits for DB, runs `migrations:up` on dev DB, clears `.next` cache, then starts Jest + Next dev server via `concurrently`. `posttest` stops services. Use `npm run test:watch` only when services are already up.
 - `npm run migrations:create -- <name>` scaffolds a migration. `migrations:up:dry` previews; `migrations:status` lists pending.
 - Migrations target `.env.development` explicitly (the `--envPath` flag). New env vars must be added to `.env.example` and `.env.development`.
-- `npm run check-secrets` runs Secretlint against the tree; husky `pre-commit` runs `lint:prettier:fix` + `lint:eslint:check` + `check-secrets`, `commit-msg` runs commitlint (Conventional Commits).
+- `npm run check-secrets` runs Secretlint against the whole tree; husky `pre-commit` runs `lint-staged` (prettier + eslint + secretlint on staged files only), `commit-msg` runs commitlint (Conventional Commits).
 - `npm run seed:admin` creates/promotes a user to admin role. Requires `ADMIN_EMAIL` and `ADMIN_PASSWORD` env vars; uses `ENV_PATH` to select the env file (default `.env.development`).
 - Stop services with `npm run services:stop` (preserves volumes) or `services:down` (destroys).
 
