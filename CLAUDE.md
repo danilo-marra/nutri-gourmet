@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Stack
 
-- Next.js 14 (Pages Router) on Node 24
+- Next.js 16 (Pages Router, Turbopack) + React 19 on Node 24
 - PostgreSQL 16, raw SQL via `pg` — **no ORM**, parameterized queries
 - Migrations via `node-pg-migrate` in `infra/migrations/`
 - Session auth (cookie `session_id`, DB-backed) + role-based RBAC (`users.role` derives features; manual feature overrides still supported)
