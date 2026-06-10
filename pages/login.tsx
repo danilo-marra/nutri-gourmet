@@ -1,7 +1,13 @@
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
+
+interface ApiError {
+  message: string;
+  action?: string;
+}
 
 export default function Login() {
   const router = useRouter();
@@ -9,10 +15,10 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<ApiError | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setLoading(true);

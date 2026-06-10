@@ -7,13 +7,20 @@ const STATUS = {
   LOADING: "loading",
   SUCCESS: "success",
   ERROR: "error",
-};
+} as const;
+
+type Status = (typeof STATUS)[keyof typeof STATUS];
+
+interface ApiError {
+  message: string;
+  action?: string;
+}
 
 export default function Activate() {
   const router = useRouter();
   const { token_id } = router.query;
-  const [status, setStatus] = useState(STATUS.LOADING);
-  const [error, setError] = useState(null);
+  const [status, setStatus] = useState<Status>(STATUS.LOADING);
+  const [error, setError] = useState<ApiError | null>(null);
 
   useEffect(() => {
     if (!token_id) return;
