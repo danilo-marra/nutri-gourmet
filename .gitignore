@@ -1,5 +1,6 @@
 .next
 node_modules
+tsconfig.tsbuildinfo
 .env.production
 .env.staging
 .env.local

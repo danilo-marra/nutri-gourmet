@@ -1,13 +1,15 @@
-import { Client, Pool } from "pg";
-import { ServiceError } from "./errors.js";
+import { Client, Pool, PoolConfig, QueryConfig, QueryResult } from "pg";
+import { ServiceError } from "./errors";
 
-function getConnectionConfig() {
+function getConnectionConfig(): PoolConfig {
   if (process.env.DATABASE_URL) {
     return { connectionString: process.env.DATABASE_URL, ssl: getSSLValues() };
   }
   return {
     host: process.env.POSTGRES_HOST,
-    port: process.env.POSTGRES_PORT,
+    port: process.env.POSTGRES_PORT
+      ? parseInt(process.env.POSTGRES_PORT, 10)
+      : undefined,
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
     password: process.env.POSTGRES_PASSWORD,
@@ -17,26 +19,26 @@ function getConnectionConfig() {
 
 const pool = new Pool(getConnectionConfig());
 
-async function query(queryObject) {
+async function query<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(queryObject: QueryConfig | string): Promise<QueryResult<T>> {
   let client;
   try {
     client = await pool.connect();
-    const result = await client.query(queryObject);
+    const result = await client.query<T>(queryObject);
     return result;
   } catch (error) {
-    const serviceErrorObject = new ServiceError({
+    throw new ServiceError({
       message: "Erro na conexão com o Banco ou na Query.",
       cause: error,
     });
-    throw serviceErrorObject;
   } finally {
     client?.release();
   }
 }
 
-async function getNewClient() {
+async function getNewClient(): Promise<Client> {
   const client = new Client(getConnectionConfig());
-
   await client.connect();
   return client;
 }
@@ -48,12 +50,9 @@ const database = {
 
 export default database;
 
-function getSSLValues() {
+function getSSLValues(): PoolConfig["ssl"] {
   if (process.env.POSTGRES_CA) {
-    return {
-      ca: process.env.POSTGRES_CA,
-    };
+    return { ca: process.env.POSTGRES_CA };
   }
-
-  return process.env.NODE_ENV === "production" ? true : false;
+  return process.env.NODE_ENV === "production";
 }
