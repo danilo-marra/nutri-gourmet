@@ -4,7 +4,7 @@
 
 **Sources**: raw/decisions/sistemas-externos.md, raw/mapeamento-sistemas-atuais.md
 
-**Last updated**: 2026-06-09
+**Last updated**: 2026-06-10
 
 ---
 
@@ -56,7 +56,7 @@ Body obrigatório: `{ "student_id": "<uuid>" }`. O endpoint:
 3. Cria `credit_transaction` com `type: 'stone'` e `stone_payment_id` preenchido
 4. Atualiza `pending_stone_payments` com `matched_at`, `matched_by_id` e `credit_transaction_id`
 
-## Modelo `stoneWebhook.js`
+## Modelo `stoneWebhook.ts`
 
 Funções exportadas: `validateBasicAuth`, `createPendingPayment`, `findPendingByStonePaymentId`, `findMatchedCreditByStonePaymentId`, `listPending`, `findPendingById`, `matchPayment`.
 
