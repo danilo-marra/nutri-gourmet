@@ -1,4 +1,11 @@
-import { Client, Pool, PoolConfig, QueryConfig, QueryResult } from "pg";
+import {
+  Client,
+  Pool,
+  PoolConfig,
+  QueryConfig,
+  QueryResult,
+  QueryResultRow,
+} from "pg";
 import { ServiceError } from "./errors";
 
 function getConnectionConfig(): PoolConfig {
@@ -19,9 +26,9 @@ function getConnectionConfig(): PoolConfig {
 
 const pool = new Pool(getConnectionConfig());
 
-async function query<
-  T extends Record<string, unknown> = Record<string, unknown>,
->(queryObject: QueryConfig | string): Promise<QueryResult<T>> {
+async function query<T extends QueryResultRow = QueryResultRow>(
+  queryObject: QueryConfig | string,
+): Promise<QueryResult<T>> {
   let client;
   try {
     client = await pool.connect();

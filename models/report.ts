@@ -1,6 +1,11 @@
 import database from "infra/database.js";
 
-async function salesByPeriod({ startDate, endDate }) {
+interface PeriodParams {
+  startDate: string;
+  endDate: string;
+}
+
+async function salesByPeriod({ startDate, endDate }: PeriodParams) {
   const result = await database.query({
     text: `
       SELECT
@@ -32,7 +37,11 @@ async function salesByPeriod({ startDate, endDate }) {
   };
 }
 
-async function creditsAdded({ startDate, endDate, studentId }) {
+async function creditsAdded({
+  startDate,
+  endDate,
+  studentId,
+}: PeriodParams & { studentId?: string | null }) {
   const result = await database.query({
     text: `
       SELECT
@@ -70,7 +79,15 @@ async function balanceByStudent() {
   return result.rows;
 }
 
-async function cashCloses({ startDate, endDate, operatorId }) {
+async function cashCloses({
+  startDate,
+  endDate,
+  operatorId,
+}: {
+  startDate?: string | null;
+  endDate?: string | null;
+  operatorId?: string | null;
+}) {
   const result = await database.query({
     text: `
       WITH sales_dates AS (
@@ -228,7 +245,7 @@ async function dashboardSummary() {
   return result.rows[0];
 }
 
-async function revenueTrend({ days }) {
+async function revenueTrend({ days }: { days: number }) {
   const result = await database.query({
     text: `
       SELECT
@@ -251,7 +268,11 @@ async function revenueTrend({ days }) {
   return result.rows;
 }
 
-async function topProducts({ startDate, endDate, limit }) {
+async function topProducts({
+  startDate,
+  endDate,
+  limit,
+}: PeriodParams & { limit: number }) {
   const result = await database.query({
     text: `
       SELECT
@@ -275,7 +296,7 @@ async function topProducts({ startDate, endDate, limit }) {
   return result.rows;
 }
 
-async function salesByProduct({ startDate, endDate }) {
+async function salesByProduct({ startDate, endDate }: PeriodParams) {
   const result = await database.query({
     text: `
       SELECT
@@ -298,7 +319,7 @@ async function salesByProduct({ startDate, endDate }) {
   return result.rows;
 }
 
-async function creditsConsumed({ startDate, endDate }) {
+async function creditsConsumed({ startDate, endDate }: PeriodParams) {
   const result = await database.query({
     text: `
       SELECT
@@ -321,7 +342,7 @@ async function creditsConsumed({ startDate, endDate }) {
   return result.rows;
 }
 
-async function studentConsumption({ startDate, endDate }) {
+async function studentConsumption({ startDate, endDate }: PeriodParams) {
   const result = await database.query({
     text: `
       SELECT
@@ -343,7 +364,7 @@ async function studentConsumption({ startDate, endDate }) {
   return result.rows;
 }
 
-async function categoryBreakdown({ startDate, endDate }) {
+async function categoryBreakdown({ startDate, endDate }: PeriodParams) {
   const result = await database.query({
     text: `
       SELECT
@@ -364,7 +385,7 @@ async function categoryBreakdown({ startDate, endDate }) {
   return result.rows;
 }
 
-async function operatorSummary({ startDate, endDate }) {
+async function operatorSummary({ startDate, endDate }: PeriodParams) {
   const result = await database.query({
     text: `
       SELECT
@@ -385,7 +406,7 @@ async function operatorSummary({ startDate, endDate }) {
   return result.rows;
 }
 
-async function myShiftSummary({ operatorId }) {
+async function myShiftSummary({ operatorId }: { operatorId: string }) {
   const [salesResult, closeResult, studentsResult] = await Promise.all([
     database.query({
       text: `

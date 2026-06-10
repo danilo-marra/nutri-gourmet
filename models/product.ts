@@ -1,7 +1,8 @@
 import database from "infra/database.js";
 import { ValidationError, NotFoundError } from "infra/errors.js";
+import type { Product, ProductCategory } from "@/types/index";
 
-const VALID_CATEGORIES = [
+const VALID_CATEGORIES: readonly ProductCategory[] = [
   "lanche",
   "bebida",
   "vitamina",
@@ -9,7 +10,18 @@ const VALID_CATEGORIES = [
   "sobremesa",
 ];
 
-async function create(values) {
+interface ProductInputValues {
+  name?: string;
+  price?: number | string | null;
+  category?: string;
+  active?: boolean;
+}
+
+function isValidCategory(category: unknown): category is ProductCategory {
+  return (VALID_CATEGORIES as readonly unknown[]).includes(category);
+}
+
+async function create(values: ProductInputValues): Promise<Product> {
   if (!values?.name) {
     throw new ValidationError({
       message: "O campo 'name' é obrigatório.",
@@ -31,7 +43,7 @@ async function create(values) {
     });
   }
 
-  if (!VALID_CATEGORIES.includes(values.category)) {
+  if (!isValidCategory(values.category)) {
     throw new ValidationError({
       message: `A categoria '${values.category}' é inválida.`,
       action: `Utilize uma das categorias válidas: ${VALID_CATEGORIES.join(", ")}.`,
@@ -41,10 +53,10 @@ async function create(values) {
   const newProduct = await runInsertQuery(values);
   return newProduct;
 
-  async function runInsertQuery(values) {
+  async function runInsertQuery(values: ProductInputValues): Promise<Product> {
     const active = values.active !== undefined ? values.active : true;
 
-    const results = await database.query({
+    const results = await database.query<Product>({
       text: `
       INSERT INTO
         products (name, price, category, active)
@@ -60,14 +72,14 @@ async function create(values) {
   }
 }
 
-async function findAll({ activeOnly = false } = {}) {
+async function findAll({ activeOnly = false } = {}): Promise<Product[]> {
   const products = await runSelectQuery(activeOnly);
   return products;
 
-  async function runSelectQuery(activeOnly) {
+  async function runSelectQuery(activeOnly: boolean): Promise<Product[]> {
     const whereClause = activeOnly ? "WHERE active = true" : "";
 
-    const results = await database.query({
+    const results = await database.query<Product>({
       text: `
       SELECT
         *
@@ -83,12 +95,12 @@ async function findAll({ activeOnly = false } = {}) {
   }
 }
 
-async function findOneById(id) {
+async function findOneById(id: string): Promise<Product> {
   const productFound = await runSelectQuery(id);
   return productFound;
 
-  async function runSelectQuery(id) {
-    const results = await database.query({
+  async function runSelectQuery(id: string): Promise<Product> {
+    const results = await database.query<Product>({
       text: `
       SELECT
         *
@@ -113,7 +125,10 @@ async function findOneById(id) {
   }
 }
 
-async function update(id, values) {
+async function update(
+  id: string,
+  values: ProductInputValues,
+): Promise<Product> {
   const currentProduct = await findOneById(id);
 
   if ("name" in values && !values.name) {
@@ -133,7 +148,7 @@ async function update(id, values) {
     });
   }
 
-  if ("category" in values && !VALID_CATEGORIES.includes(values.category)) {
+  if ("category" in values && !isValidCategory(values.category)) {
     throw new ValidationError({
       message: `A categoria '${values.category}' é inválida.`,
       action: `Utilize uma das categorias válidas: ${VALID_CATEGORIES.join(", ")}.`,
@@ -143,13 +158,13 @@ async function update(id, values) {
   const productWithNewValues = {
     ...currentProduct,
     ...values,
-  };
+  } as Product;
 
   const updatedProduct = await runUpdateQuery(productWithNewValues);
   return updatedProduct;
 
-  async function runUpdateQuery(productWithNewValues) {
-    const results = await database.query({
+  async function runUpdateQuery(productWithNewValues: Product) {
+    const results = await database.query<Product>({
       text: `
       UPDATE
         products
@@ -177,14 +192,14 @@ async function update(id, values) {
   }
 }
 
-async function deactivate(id) {
+async function deactivate(id: string): Promise<Product> {
   await findOneById(id);
 
   const deactivatedProduct = await runUpdateQuery(id);
   return deactivatedProduct;
 
-  async function runUpdateQuery(id) {
-    const results = await database.query({
+  async function runUpdateQuery(id: string): Promise<Product> {
+    const results = await database.query<Product>({
       text: `
       UPDATE
         products

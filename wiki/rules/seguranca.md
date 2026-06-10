@@ -38,7 +38,7 @@ Isso se traduz diretamente no RBAC já implementado via `users.role` e `authoriz
 
 ## Implementação
 
-- Controle via `authorization.can()` e `authorization.filterOutput()` em `models/authorization.js`
+- Controle via `authorization.can()` e `authorization.filterOutput()` em `models/authorization.ts`
 - Atribuição de `role` centralizada em `authorization.canAssignRole()` — só admin atribui supervisor/admin; demais ficam limitados a operador|pending
 - Nunca incluir lógica de permissão inline nos handlers
 

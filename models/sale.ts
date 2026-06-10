@@ -2,10 +2,31 @@ import database from "infra/database.js";
 import product from "models/product.js";
 import student from "models/student.js";
 import { NotFoundError, ValidationError } from "infra/errors.js";
+import type { Sale, SaleItem } from "@/types/index";
 
-const PAYMENT_METHODS = ["credit", "cash", "card", "pix"];
+const PAYMENT_METHODS: readonly string[] = ["credit", "cash", "card", "pix"];
 
-async function create(operatorId, values) {
+interface SaleItemInput {
+  product_id?: string;
+  qty?: number | string;
+}
+
+interface SaleInputValues {
+  student_id?: string | null;
+  payment_method?: string;
+  items?: SaleItemInput[];
+}
+
+interface ResolvedItem {
+  product_id: string;
+  qty: number;
+  unit_price: number;
+}
+
+async function create(
+  operatorId: string,
+  values: SaleInputValues,
+): Promise<Sale> {
   const { student_id, payment_method, items } = values;
 
   if (!payment_method || !PAYMENT_METHODS.includes(payment_method)) {
@@ -46,7 +67,7 @@ async function create(operatorId, values) {
   );
 
   if (payment_method === "credit") {
-    const foundStudent = await student.findOneById(student_id);
+    const foundStudent = await student.findOneById(student_id!);
     if (parseFloat(foundStudent.balance) < total) {
       throw new ValidationError({
         message: "Saldo insuficiente para realizar a venda.",
@@ -64,10 +85,12 @@ async function create(operatorId, values) {
     total,
   });
 
-  async function resolveItems(rawItems) {
-    const resolved = [];
+  async function resolveItems(
+    rawItems: SaleItemInput[],
+  ): Promise<ResolvedItem[]> {
+    const resolved: ResolvedItem[] = [];
     for (const item of rawItems) {
-      const foundProduct = await product.findOneById(item.product_id);
+      const foundProduct = await product.findOneById(item.product_id!);
       if (!foundProduct.active) {
         throw new ValidationError({
           message: `Produto '${foundProduct.name}' está inativo e não pode ser vendido.`,
@@ -89,7 +112,13 @@ async function create(operatorId, values) {
     paymentMethod,
     items,
     total,
-  }) {
+  }: {
+    operatorId: string;
+    studentId: string | null;
+    paymentMethod: string;
+    items: ResolvedItem[];
+    total: number;
+  }): Promise<Sale> {
     const client = await database.getNewClient();
     try {
       await client.query("BEGIN");
@@ -108,7 +137,7 @@ async function create(operatorId, values) {
         }
       }
 
-      const saleResult = await client.query({
+      const saleResult = await client.query<Sale>({
         text: `
           INSERT INTO sales (student_id, operator_id, payment_method, total)
           VALUES ($1, $2, $3, $4)
@@ -118,9 +147,9 @@ async function create(operatorId, values) {
       });
       const sale = saleResult.rows[0];
 
-      const saleItems = [];
+      const saleItems: SaleItem[] = [];
       for (const item of items) {
-        const itemResult = await client.query({
+        const itemResult = await client.query<SaleItem>({
           text: `
             INSERT INTO sale_items (sale_id, product_id, qty, unit_price)
             VALUES ($1, $2, $3, $4)
@@ -142,8 +171,8 @@ async function create(operatorId, values) {
   }
 }
 
-async function findOneById(id) {
-  const saleResult = await database.query({
+async function findOneById(id: string): Promise<Sale> {
+  const saleResult = await database.query<Sale>({
     text: `SELECT * FROM sales WHERE id = $1`,
     values: [id],
   });
@@ -157,7 +186,7 @@ async function findOneById(id) {
 
   const sale = saleResult.rows[0];
 
-  const itemsResult = await database.query({
+  const itemsResult = await database.query<SaleItem>({
     text: `SELECT * FROM sale_items WHERE sale_id = $1 ORDER BY created_at ASC`,
     values: [id],
   });
@@ -165,8 +194,10 @@ async function findOneById(id) {
   return { ...sale, items: itemsResult.rows };
 }
 
-async function findAll({ operatorId } = {}) {
-  const result = await database.query({
+async function findAll({
+  operatorId,
+}: { operatorId?: string | null } = {}): Promise<Sale[]> {
+  const result = await database.query<Sale>({
     text: `
       SELECT
         s.*,
@@ -195,12 +226,12 @@ async function findAll({ operatorId } = {}) {
   return result.rows;
 }
 
-async function reverse(saleId, reversedBy) {
+async function reverse(saleId: string, reversedBy: string): Promise<Sale> {
   const client = await database.getNewClient();
   try {
     await client.query("BEGIN");
 
-    const result = await client.query({
+    const result = await client.query<Sale>({
       text: `
         UPDATE sales
         SET reversed_at = timezone('utc', now()),
@@ -229,7 +260,7 @@ async function reverse(saleId, reversedBy) {
 
     await client.query("COMMIT");
 
-    const itemsResult = await client.query({
+    const itemsResult = await client.query<SaleItem>({
       text: `SELECT * FROM sale_items WHERE sale_id = $1 ORDER BY created_at ASC`,
       values: [saleId],
     });

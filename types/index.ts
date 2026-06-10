@@ -1,6 +1,8 @@
+import type { Feature } from "models/authorization";
+
 export type UserRole = "pending" | "operador" | "supervisor" | "admin";
 
-export type Feature = string;
+export type { Feature };
 
 export interface User {
   id: string;
@@ -29,6 +31,15 @@ export interface Session {
 }
 
 export interface ActivationToken {
+  id: string;
+  user_id: string;
+  expires_at: Date;
+  used_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface PasswordResetToken {
   id: string;
   user_id: string;
   expires_at: Date;

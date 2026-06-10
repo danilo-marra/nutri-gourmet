@@ -1,22 +1,23 @@
 import crypto from "node:crypto";
 import database from "infra/database.js";
 import { UnauthorizedError } from "infra/errors";
+import type { Session } from "@/types/index";
 
 const EXPIRATION_IN_MILISECONDS = 60 * 60 * 24 * 30 * 1000; // 30 days
 
-async function findOneValidByToken(sessionToken) {
+async function findOneValidByToken(sessionToken: string): Promise<Session> {
   const sessionFound = await runSelectQuery(sessionToken);
 
   return sessionFound;
 
-  async function runSelectQuery(sessionToken) {
-    const results = await database.query({
+  async function runSelectQuery(sessionToken: string): Promise<Session> {
+    const results = await database.query<Session>({
       text: `
-        SELECT 
+        SELECT
           *
-        FROM 
+        FROM
           sessions
-        WHERE 
+        WHERE
           token = $1
           AND expires_at > NOW()
         LIMIT 1
@@ -35,21 +36,25 @@ async function findOneValidByToken(sessionToken) {
   }
 }
 
-async function create(userId) {
+async function create(userId: string): Promise<Session> {
   const token = crypto.randomBytes(48).toString("hex");
   const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
 
   const newSession = await runInsertQuery(token, userId, expiresAt);
   return newSession;
 
-  async function runInsertQuery(token, userId, expiresAt) {
-    const results = await database.query({
+  async function runInsertQuery(
+    token: string,
+    userId: string,
+    expiresAt: Date,
+  ): Promise<Session> {
+    const results = await database.query<Session>({
       text: `
-        INSERT INTO 
+        INSERT INTO
           sessions (token, user_id, expires_at)
-        VALUES 
+        VALUES
           ($1, $2, $3)
-        RETURNING 
+        RETURNING
         *
       ;`,
       values: [token, userId, expiresAt],
@@ -59,23 +64,26 @@ async function create(userId) {
   }
 }
 
-async function renew(sessionId) {
+async function renew(sessionId: string): Promise<Session> {
   const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
 
   const renewedSessionObject = await runUpdateQuery(sessionId, expiresAt);
   return renewedSessionObject;
 
-  async function runUpdateQuery(sessionId, expiresAt) {
-    const results = await database.query({
+  async function runUpdateQuery(
+    sessionId: string,
+    expiresAt: Date,
+  ): Promise<Session> {
+    const results = await database.query<Session>({
       text: `
-        UPDATE 
+        UPDATE
           sessions
-        SET 
-          expires_at = $2, 
+        SET
+          expires_at = $2,
           updated_at = NOW()
-        WHERE 
+        WHERE
           id = $1
-        RETURNING 
+        RETURNING
           *
       ;`,
       values: [sessionId, expiresAt],
@@ -85,21 +93,21 @@ async function renew(sessionId) {
   }
 }
 
-async function expireById(sessionId) {
-  const expiredSessionObject = runUpdateQuery(sessionId);
+async function expireById(sessionId: string): Promise<Session> {
+  const expiredSessionObject = await runUpdateQuery(sessionId);
   return expiredSessionObject;
 
-  async function runUpdateQuery(sessionId) {
-    const results = await database.query({
+  async function runUpdateQuery(sessionId: string): Promise<Session> {
+    const results = await database.query<Session>({
       text: `
-        UPDATE 
+        UPDATE
           sessions
-        SET 
+        SET
           expires_at = expires_at - INTERVAL '1 year',
           updated_at = NOW()
-        WHERE 
+        WHERE
           id = $1
-        RETURNING 
+        RETURNING
           *
       ;`,
       values: [sessionId],

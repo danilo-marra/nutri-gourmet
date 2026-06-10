@@ -3,13 +3,26 @@ import database from "infra/database.js";
 import credit from "models/credit.js";
 import student from "models/student.js";
 import { NotFoundError, ValidationError } from "infra/errors.js";
+import type { CreditTransaction, StonePayment } from "@/types/index";
 
 const SAFE_COLUMNS = `id, stone_payment_id, amount, payer_name, payer_email, payment_method, matched_at, matched_by_id, credit_transaction_id, created_at`;
+
+export interface StoneWebhookPayload {
+  data?: {
+    id?: string;
+    amount?: number;
+    customer?: { name?: string | null; email?: string | null } | null;
+    charge?: { payment_method?: string | null } | null;
+  } | null;
+}
 
 // Pagar.me envia Authorization: Basic base64(webhook:STONE_WEBHOOK_SECRET)
 // A URL do webhook deve ser configurada como https://webhook:SECRET@dominio/...
 // Validamos apenas a senha (parte após o primeiro ":") com timing-safe compare.
-function validateBasicAuth(authHeader, secret) {
+function validateBasicAuth(
+  authHeader: string | undefined,
+  secret: string | undefined,
+): boolean {
   if (!authHeader || !secret) return false;
   if (!authHeader.startsWith("Basic ")) return false;
 
@@ -25,7 +38,9 @@ function validateBasicAuth(authHeader, secret) {
   }
 }
 
-async function createPendingPayment(payload) {
+async function createPendingPayment(
+  payload: StoneWebhookPayload,
+): Promise<StonePayment | null> {
   const stonePaymentId = payload?.data?.id;
   const amountCentavos = payload?.data?.amount;
   const payerName = payload?.data?.customer?.name ?? null;
@@ -41,7 +56,7 @@ async function createPendingPayment(payload) {
 
   const amount = amountCentavos / 100;
 
-  const result = await database.query({
+  const result = await database.query<StonePayment>({
     text: `
       INSERT INTO pending_stone_payments
         (stone_payment_id, amount, payer_name, payer_email, payment_method, raw_payload)
@@ -62,24 +77,28 @@ async function createPendingPayment(payload) {
   return result.rows[0] ?? (await findPendingByStonePaymentId(stonePaymentId));
 }
 
-async function findPendingByStonePaymentId(stonePaymentId) {
-  const result = await database.query({
+async function findPendingByStonePaymentId(
+  stonePaymentId: string,
+): Promise<StonePayment | null> {
+  const result = await database.query<StonePayment>({
     text: `SELECT ${SAFE_COLUMNS} FROM pending_stone_payments WHERE stone_payment_id = $1`,
     values: [stonePaymentId],
   });
   return result.rows[0] ?? null;
 }
 
-async function findMatchedCreditByStonePaymentId(stonePaymentId) {
-  const result = await database.query({
+async function findMatchedCreditByStonePaymentId(
+  stonePaymentId: string,
+): Promise<CreditTransaction | null> {
+  const result = await database.query<CreditTransaction>({
     text: `SELECT * FROM credit_transactions WHERE stone_payment_id = $1`,
     values: [stonePaymentId],
   });
   return result.rows[0] ?? null;
 }
 
-async function listPending() {
-  const result = await database.query({
+async function listPending(): Promise<StonePayment[]> {
+  const result = await database.query<StonePayment>({
     text: `
       SELECT ${SAFE_COLUMNS} FROM pending_stone_payments
       WHERE matched_at IS NULL
@@ -89,15 +108,19 @@ async function listPending() {
   return result.rows;
 }
 
-async function findPendingById(id) {
-  const result = await database.query({
+async function findPendingById(id: string): Promise<StonePayment | null> {
+  const result = await database.query<StonePayment>({
     text: `SELECT ${SAFE_COLUMNS} FROM pending_stone_payments WHERE id = $1`,
     values: [id],
   });
   return result.rows[0] ?? null;
 }
 
-async function matchPayment(pendingId, studentId, operatorId) {
+async function matchPayment(
+  pendingId: string,
+  studentId: string,
+  operatorId: string,
+): Promise<CreditTransaction> {
   const pending = await findPendingById(pendingId);
 
   if (!pending) {
@@ -108,7 +131,7 @@ async function matchPayment(pendingId, studentId, operatorId) {
   }
 
   if (pending.matched_at) {
-    const existing = await database.query({
+    const existing = await database.query<CreditTransaction>({
       text: `SELECT * FROM credit_transactions WHERE id = $1`,
       values: [pending.credit_transaction_id],
     });

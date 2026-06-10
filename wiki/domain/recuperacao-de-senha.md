@@ -2,9 +2,9 @@
 
 **Summary**: Fluxo self-service de redefinição de senha via email com token de uso único e expiração de 30 minutos.
 
-**Sources**: infra/migrations/, models/passwordReset.js, pages/api/v1/password/recovery/
+**Sources**: infra/migrations/, models/passwordReset.ts, pages/api/v1/password/recovery/
 
-**Last updated**: 2026-05-28
+**Last updated**: 2026-06-09
 
 ---
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node infra/scripts/kill-port.js 3000 && npm run services:up && npm run services:wait:database && npm run migrations:up && next dev -p 3000",
-    "test": "npm run services:up && npm run services:wait:database && npm run migrations:up && node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && concurrently -n next,jest --hide next -k -s command-jest \"cross-env NODE_ENV=development next dev\" \"cross-env NODE_ENV=test jest --runInBand --verbose --forceExit\"",
+    "test": "node infra/scripts/kill-port.js 3000 && npm run services:up && npm run services:wait:database && npm run migrations:up && node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && concurrently -n next,jest --hide next -k -s command-jest \"cross-env NODE_ENV=development next dev -p 3000\" \"cross-env NODE_ENV=test jest --runInBand --verbose --forceExit\"",
     "posttest": "npm run services:stop",
     "test:watch": "jest --watchAll --runInBand --verbose",
     "services:up": "docker compose -f infra/compose.yaml up -d",
@@ -24,6 +24,14 @@
     "type-check": "tsc --noEmit",
     "check-secrets": "secretlint \"**/*\"",
     "seed:admin": "node infra/scripts/seed-admin.js"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint"
+    ],
+    "*.{json,md,css,yml,yaml}": "prettier --write",
+    "*": "secretlint"
   },
   "author": "Danilo Marra",
   "license": "MIT",
@@ -71,6 +79,7 @@
     "eslint-plugin-jest": "28.8.0",
     "husky": "9.1.5",
     "jest": "29.7.0",
+    "lint-staged": "^16.4.0",
     "prettier": "3.3.3",
     "secretlint": "8.2.4",
     "set-cookie-parser": "2.7.1",

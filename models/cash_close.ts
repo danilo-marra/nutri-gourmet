@@ -1,7 +1,11 @@
 import database from "infra/database.js";
 import { ValidationError } from "infra/errors.js";
+import type { CashClose } from "@/types/index";
 
-async function create(closedById, { operator_id, date }) {
+async function create(
+  closedById: string,
+  { operator_id, date }: { operator_id?: string; date?: string },
+): Promise<CashClose> {
   if (
     !date ||
     !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
@@ -14,7 +18,7 @@ async function create(closedById, { operator_id, date }) {
   }
 
   try {
-    const results = await database.query({
+    const results = await database.query<CashClose>({
       text: `
       WITH totals AS (
         SELECT
@@ -61,7 +65,11 @@ async function create(closedById, { operator_id, date }) {
     });
     return results.rows[0];
   } catch (error) {
-    if (error.cause?.code === "23505") {
+    const cause =
+      error instanceof Error
+        ? (error.cause as { code?: string } | undefined)
+        : undefined;
+    if (cause?.code === "23505") {
       throw new ValidationError({
         message:
           "Já existe um fechamento de caixa para este operador nesta data.",
@@ -73,8 +81,8 @@ async function create(closedById, { operator_id, date }) {
   }
 }
 
-async function findAll() {
-  const results = await database.query({
+async function findAll(): Promise<CashClose[]> {
+  const results = await database.query<CashClose>({
     text: `
     SELECT
       cc.id,

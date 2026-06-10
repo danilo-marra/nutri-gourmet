@@ -4,7 +4,7 @@ import type { NextHandler } from "next-connect";
 import session from "models/session.js";
 import user from "models/user.js";
 import authorization from "models/authorization.js";
-import type { User } from "@/types/index";
+import type { Feature } from "@/types/index";
 
 import {
   InternalServerError,
@@ -104,9 +104,7 @@ async function injectAnonymousOrUser(
 async function injectAuthenticatedUser(request: NextApiRequest): Promise<void> {
   const sessionToken = request.cookies.session_id!;
   const sessionObject = await session.findOneValidByToken(sessionToken);
-  const userObject = (await user.findOneById(
-    sessionObject.user_id,
-  )) as unknown as User;
+  const userObject = await user.findOneById(sessionObject.user_id);
 
   request.context = { user: userObject };
 }
@@ -119,7 +117,7 @@ function injectAnonymousUser(request: NextApiRequest): void {
   };
 }
 
-function canRequest(feature: string) {
+function canRequest(feature: Feature) {
   return function canRequestMiddleware(
     request: NextApiRequest,
     response: NextApiResponse,

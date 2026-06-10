@@ -1,7 +1,19 @@
 import database from "infra/database.js";
 import { ValidationError } from "infra/errors.js";
+import type { CreditTransaction } from "@/types/index";
 
-async function create(studentId, values, operatorId) {
+interface CreditInputValues {
+  amount?: number | string | null;
+  type?: string;
+  expires_at?: string | Date | null;
+  stone_payment_id?: string | null;
+}
+
+async function create(
+  studentId: string,
+  values: CreditInputValues,
+  operatorId: string,
+): Promise<CreditTransaction> {
   if (values?.amount == null) {
     throw new ValidationError({
       message: "O campo 'amount' é obrigatório.",
@@ -56,9 +68,13 @@ async function create(studentId, values, operatorId) {
       stonePaymentId,
     });
   } catch (err) {
+    const cause =
+      err instanceof Error
+        ? (err.cause as { code?: string; constraint?: string } | undefined)
+        : undefined;
     if (
-      err.cause?.code === "23505" &&
-      err.cause?.constraint?.includes("stone_payment_id")
+      cause?.code === "23505" &&
+      cause?.constraint?.includes("stone_payment_id")
     ) {
       throw new ValidationError({
         message: "Este Id de pagamento Stone já foi registrado.",
@@ -76,8 +92,15 @@ async function create(studentId, values, operatorId) {
     type,
     expiresAt,
     stonePaymentId,
-  }) {
-    const results = await database.query({
+  }: {
+    studentId: string;
+    operatorId: string;
+    amount: number;
+    type: string;
+    expiresAt: string | Date | null;
+    stonePaymentId: string | null;
+  }): Promise<CreditTransaction> {
+    const results = await database.query<CreditTransaction>({
       text: `
       WITH updated AS (
         UPDATE
@@ -105,12 +128,16 @@ async function create(studentId, values, operatorId) {
   }
 }
 
-async function findAllByStudentId(studentId) {
+async function findAllByStudentId(
+  studentId: string,
+): Promise<CreditTransaction[]> {
   const transactions = await runSelectQuery(studentId);
   return transactions;
 
-  async function runSelectQuery(studentId) {
-    const results = await database.query({
+  async function runSelectQuery(
+    studentId: string,
+  ): Promise<CreditTransaction[]> {
+    const results = await database.query<CreditTransaction>({
       text: `
       SELECT
         *
@@ -128,8 +155,10 @@ async function findAllByStudentId(studentId) {
   }
 }
 
-async function findPackagesByStudentId(studentId) {
-  const results = await database.query({
+async function findPackagesByStudentId(
+  studentId: string,
+): Promise<CreditTransaction[]> {
+  const results = await database.query<CreditTransaction>({
     text: `
     SELECT
       *
