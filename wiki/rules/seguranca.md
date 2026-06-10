@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/supervisor.md
 
-**Last updated**: 2026-06-09
+**Last updated**: 2026-06-10
 
 ---
 
@@ -51,7 +51,7 @@ Auditoria OWASP Top 10 pontual sobre o repo. Detalhes em `.claude/skills/securit
 **Dívidas conhecidas (🟡, adiadas conscientemente):**
 
 - **Sem rate limiting no login** (`POST /api/v1/sessions`) — sem proteção a brute-force. Aceitável no contexto single-tenant; reavaliar antes de exposição pública. Rastreado na issue #30.
-- **Resíduo de role inline** — os caps de atribuição de role foram centralizados em `authorization.canAssignRole()` (PR #29). Resta um único check inline em `pages/api/v1/users/index.js:18` (`getHandler`), que decide quais roles o supervisor enxerga na listagem de usuários. É filtro de leitura, não de permissão de escrita; centralizar é opcional e de baixa prioridade.
+- **Resíduo de role inline** — os caps de atribuição de role foram centralizados em `authorization.canAssignRole()` (PR #29). Resta um único check inline em `pages/api/v1/users/index.ts:19` (`getHandler`), que decide quais roles o supervisor enxerga na listagem de usuários. É filtro de leitura, não de permissão de escrita; centralizar é opcional e de baixa prioridade.
 
 ## Related pages
 

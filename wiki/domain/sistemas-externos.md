@@ -4,7 +4,7 @@
 
 **Sources**: raw/mapeamento-sistemas-atuais.md, raw/decisions/sistemas-externos.md
 
-**Last updated**: 2026-06-02
+**Last updated**: 2026-06-10
 
 ---
 
@@ -76,7 +76,7 @@ Vendas via link Stone (Pix, cartão) **não estão sendo registradas** → fatur
 
 ### Papel no sistema unificado
 
-Canal de pagamento externo. Ao confirmar um pagamento, envia webhook → sistema cria venda com `payment_method: 'card'` via infraestrutura já existente. Não há necessidade de módulo Stone dedicado — o webhook chama o modelo de sale existente. Ver [[integracao]].
+Canal de pagamento externo. Implementado no PR #56: o webhook `order.paid` cria um registro em `pending_stone_payments`; o supervisor reconcilia manualmente, gerando uma `credit_transaction` tipo `stone` (crédito no saldo do aluno, não uma venda). Ver [[stone-webhook]] e [[integracao]].
 
 ---
 

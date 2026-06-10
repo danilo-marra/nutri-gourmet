@@ -4,6 +4,27 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-10 — PR #64: migração TypeScript das rotas de API (pages/api/v1/)
+
+**Branch**: 59-ts-pr3-api
+**PR**: #64
+
+**What changed**: As 35 rotas de `pages/api/v1/**` foram convertidas de `.js` para `.ts` (PR3 da issue #59). Apenas tipos — handlers tipados com `NextApiRequest`/`NextApiResponse`, casts em params dinâmicos e `validateDate` como assertion function. Zero mudança de comportamento, contrato da API v1 intacto.
+
+Wiki pages updated:
+
+- `rules/seguranca.md` — ref do check inline de role: `pages/api/v1/users/index.js:18` → `index.ts:19`
+- `domain/stone-webhook.md` — heading "Modelo `stoneWebhook.js`" → `.ts` (resíduo do PR2 detectado no lint)
+
+Lint fixes (achados não relacionados ao PR #64):
+
+- `index.md` — descrição de Venda atualizada: `credit/cash/card` → `credit/cash/card/pix` (pix existe desde o PR #56; índice estava defasado)
+- `domain/sistemas-externos.md` — seção "Papel no sistema unificado" da Stone reescrita: dizia que o webhook criaria uma _venda_ (`payment_method: 'card'`), contradizendo `stone-webhook.md`/`integracao.md` — o implementado é fila `pending_stone_payments` + reconciliação manual → `credit_transaction` tipo `stone`
+
+**Não alterado (justificado):** referências a `pages/app/*.js`, `hooks/useUser.js`, `components/AppShell.js` e `pages/_app.js` continuam corretas — frontend só migra no PR4; entradas históricas deste log mantêm os nomes `.js` da época.
+
+---
+
 ## 2026-06-09 — PRs #60/#62: migração TypeScript (tooling + infra/ + models/)
 
 **CLAUDE.md atualizado:**
