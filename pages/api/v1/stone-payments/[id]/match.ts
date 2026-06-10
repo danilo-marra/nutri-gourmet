@@ -1,9 +1,11 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import stoneWebhook from "models/stoneWebhook.js";
 import { ValidationError } from "infra/errors.js";
+import type { User } from "@/types/index";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.post(controller.canRequest("update:stone_payment"), postHandler);
 
@@ -12,8 +14,8 @@ export default router.handler(controller.errorHandlers);
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-async function postHandler(request, response) {
-  const { id } = request.query;
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
+  const id = request.query.id as string;
   const { student_id } = request.body;
 
   if (!id || !UUID_REGEX.test(id)) {
@@ -30,7 +32,7 @@ async function postHandler(request, response) {
     });
   }
 
-  const operatorId = request.context.user.id;
+  const operatorId = (request.context.user as User).id;
 
   const transaction = await stoneWebhook.matchPayment(
     id,

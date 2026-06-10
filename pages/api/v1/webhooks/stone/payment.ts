@@ -1,15 +1,16 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import stoneWebhook from "models/stoneWebhook.js";
 import { UnauthorizedError } from "infra/errors.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.post(postHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function postHandler(request, response) {
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
   const secret = process.env.STONE_WEBHOOK_SECRET;
 
   if (!stoneWebhook.validateBasicAuth(request.headers.authorization, secret)) {
