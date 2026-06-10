@@ -14,13 +14,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Constitution authority
 
-`.specify/memory/constitution.md` is normative for this repo. Before non-trivial changes — especially to `pages/api/v1/**`, `models/session.js`, `models/authorization.js`, `models/activation.js`, `infra/controller.js`, or any migration — re-read it and flag conflicts. The five principles in short:
+`.specify/memory/constitution.md` is normative for this repo. Before non-trivial changes — especially to `pages/api/v1/**`, `models/session.ts`, `models/authorization.ts`, `models/activation.ts`, `infra/controller.ts`, or any migration — re-read it and flag conflicts. The five principles in short:
 
 1. **API v1 contract** — additive only; error shape `{ name, message, action, status_code }` is stable; breaking change ⇒ new version.
 2. **Sessão + RBAC** — `httpOnly` cookie, `expires_at > NOW()` validation, `authorization.can(user, feature, resource?)` + `authorization.filterOutput` (never inline permission logic).
 3. **Testes de integração como gate** — bug fixes in critical flows need a failing-then-passing test; PRs touching critical paths must run `npm test` green.
 4. **Migrations seguras** — explicit `exports.down` or documented justification; idempotent; zero-downtime when possible; `timestamptz` UTC.
-5. **Erros tipados + segredos** — domain errors from `infra/errors.js`; wrap unknown as `InternalServerError`; never log password/session token/SMTP secret/`DATABASE_URL`/raw cookie.
+5. **Erros tipados + segredos** — domain errors from `infra/errors.ts`; wrap unknown as `InternalServerError`; never log password/session token/SMTP secret/`DATABASE_URL`/raw cookie.
 
 Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → tasks → implement` for anything bigger than a small fix.
 
@@ -36,12 +36,12 @@ Spec Kit drives feature work: prefer `speckit.specify → clarify → plan → t
 
 ## Repo layout (load-bearing)
 
-- `pages/api/v1/**` — handlers built with `next-connect` + `controller.errorHandlers`. Always go through `infra/controller.js` middlewares.
+- `pages/api/v1/**` — handlers built with `next-connect` + `controller.errorHandlers`. Always go through `infra/controller.ts` middlewares.
 - `pages/app/**` — área autenticada; cada página exporta `getLayout = (page) => <AppShell>{page}</AppShell>`.
 - `hooks/useUser.js` — SWR sobre `GET /api/v1/user`; retorna `{ user, isLoading }`; redireciona para `/login` se não autenticado.
 - `components/AppShell.js` — shell autenticado (sidebar com nav filtrado por `user.features` + topbar com título e badge de role).
 - `models/*` — domain logic (`user`, `session`, `authentication`, `authorization`, `activation`, `password`, `passwordReset`, `migrator`, `student`, `product`, `credit`, `sale`, `cash_close`, `report`, `stoneWebhook`).
-- `infra/` — `database.js`, `controller.js`, `email.js`, `errors.js`, `webserver.js`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`, `scripts/seed-admin.js`, `scripts/kill-port.js`.
+- `infra/` — `database.ts`, `controller.ts`, `email.ts`, `errors.ts`, `webserver.ts`, `compose.yaml`, `migrations/`, `scripts/wait-for-postgres.js`, `scripts/seed-admin.js`, `scripts/kill-port.js`.
 - `tests/integration/api/v1/**` mirrors `pages/api/v1/**` path-for-path. Additional subdirectories: `_use-cases/` (end-to-end flows), `infra/` (infra tests e.g. email), `unit/` (unit tests for models e.g. `authorization`).
 - Shared setup lives in `tests/orchestrator.js` (use `waitForAllServices`, `clearDatabase`, `runPendingMigrations`, `createUser({ role? })`, `createSession`, `deleteAllEmails`, `getLastEmail`, `extractUUID`, `activateUser`, `addFeaturesToUser`, `createStudent`, `createProduct`, `createCreditTransaction(studentId, operatorId, overrides?)`, `createSale(studentId, operatorId, overrides?)`, `createCashClose(operatorId, closedById, overrides?)`).
 

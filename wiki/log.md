@@ -4,6 +4,27 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-09 — PRs #60/#62: migração TypeScript (tooling + infra/ + models/)
+
+**CLAUDE.md atualizado:**
+
+- Referências de arquivos convertidos `.js` → `.ts`: `models/{session,authorization,activation}`, `infra/{controller,errors,database,email,webserver}` (seções Constitution authority e Repo layout)
+- Linha do pre-commit já refletia lint-staged (commit anterior na branch)
+
+**Páginas wiki atualizadas (5):**
+
+- `wiki/domain/gap-analysis.md` — refs `models/credit.js`, `models/authorization.js`, `models/stoneWebhook.js` → `.ts`
+- `wiki/rules/seguranca.md` — ref `models/authorization.js` → `.ts`
+- `wiki/domain/operador.md` — ref `models/activation.js` → `.ts`
+- `wiki/domain/supervisor.md` — refs `models/activation.js` e `models/authorization.js` → `.ts`
+- `wiki/domain/recuperacao-de-senha.md` — Sources: `models/passwordReset.js` → `.ts`
+
+**Páginas wiki criadas:** Nenhuma — refactor sem mudança de domínio.
+
+**Não alterado (justificado):** entradas históricas deste log mantêm os nomes `.js` da época; `raw/` é imutável.
+
+---
+
 ## 2026-06-09 — PR #56: webhook Stone/Pagar.me + reconciliação de crédito
 
 **CLAUDE.md atualizado:**
