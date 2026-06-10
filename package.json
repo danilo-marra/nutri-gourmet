@@ -21,7 +21,7 @@
     "lint:eslint:check": "eslint .",
     "prepare": "husky",
     "commit": "cz",
-    "type-check": "tsc --noEmit",
+    "type-check": "next typegen && tsc --noEmit",
     "check-secrets": "secretlint \"**/*\"",
     "seed:admin": "node infra/scripts/seed-admin.js"
   },
