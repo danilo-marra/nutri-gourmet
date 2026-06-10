@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, design bundle Nutrigourmet (Tailwind v4 + tokens)
 
-**Last updated**: 2026-06-02
+**Last updated**: 2026-06-10
 
 ---
 
@@ -14,7 +14,8 @@ O PRD define estilo corporativo moderno com foco em valor percebido. A implement
 
 - **Framework CSS**: Tailwind CSS v4 via `@tailwindcss/postcss`
 - **Tokens**: definidos em `styles/globals.css` com `@theme` (cores, fontes, radii, sombras)
-- **Fontes**: carregadas via `next/font/google` em `pages/_app.js`
+- **Fontes**: carregadas via `next/font/google` em `pages/_app.tsx`
+- **Linguagem**: TypeScript em todo o frontend desde o PR #66 (`.tsx`/`.ts`); padrão `NextPageWithLayout` exportado por `pages/_app.tsx`
 
 ## Superfícies
 
@@ -32,16 +33,16 @@ Todas as rotas sob `/app` usam o componente `AppShell` via padrão `getLayout`:
 | ----------------- | ---------------- | ------------------------- |
 | `/app`            | Dashboard        | Implementado (dados mock) |
 | `/app/vendas`     | Vendas           | Placeholder               |
-| `/app/creditos`   | Créditos         | Placeholder               |
+| `/app/creditos`   | Créditos         | Implementado              |
 | `/app/fechamento` | Fechamento Caixa | Placeholder               |
-| `/app/relatorios` | Relatórios       | Placeholder               |
+| `/app/relatorios` | Relatórios       | Implementado              |
 | `/app/alunos`     | Alunos           | Placeholder               |
 | `/app/produtos`   | Produtos         | Placeholder               |
 | `/app/usuarios`   | Usuários         | Placeholder               |
 
-**AppShell** (`components/AppShell.js`): sidebar fixa (logo, nav filtrado por `user.features`, user card + logout) + topbar (título da página + badge de role). Usa `useUser` hook internamente — exibe spinner durante carregamento, retorna `null` se não autenticado (redirect gerenciado pelo hook).
+**AppShell** (`components/AppShell.tsx`): sidebar fixa (logo, nav filtrado por `user.features`, user card + logout) + topbar (título da página + badge de role). Usa `useUser` hook internamente — exibe spinner durante carregamento, retorna `null` se não autenticado (redirect gerenciado pelo hook).
 
-**Proteção de rotas**: `hooks/useUser.js` — SWR sobre `GET /api/v1/user`; redireciona para `/login` automaticamente se sessão inválida ou expirada.
+**Proteção de rotas**: `hooks/useUser.ts` — SWR sobre `GET /api/v1/user` (tipado como `SessionUser`, formato wire do `filterOutput`); redireciona para `/login` automaticamente se sessão inválida ou expirada.
 
 ## Paleta de cores
 
@@ -83,7 +84,7 @@ A **landing page** (`/`) usa paleta quente (gradiente creme→laranja→verde cl
 
 O **app interno** deve transmitir confiabilidade e profissionalismo para a Gestora ([[administrador]]), ao mesmo tempo que é ágil e direta para o [[operador]] no fluxo de vendas diárias.
 
-Imagens da landing page são placeholders (`picsum.photos`) — substituir por fotografia real de alimentos quando disponível.
+Imagens da landing page usam fotografia real da cantina em `public/cantina/` (bandejas, cozinha, lanches).
 
 ## Related pages
 

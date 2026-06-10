@@ -4,41 +4,41 @@
 
 **Sources**: raw/fluxo-cantina.md, raw/mapeamento-sistemas-atuais.md, raw/possivel-integrar.md, raw/decisions/sistemas-externos.md, raw/decisions/eventos-integral.md
 
-**Last updated**: 2026-06-09
+**Last updated**: 2026-06-10
 
 ---
 
 ## ✅ Entregável hoje (já implementado)
 
-| Funcionalidade                                                                | Onde no sistema                                                       |
-| ----------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Venda direta no caixa (cash/card)                                             | `POST /api/v1/sales` + `pages/app/vendas.js`                          |
-| Crédito manual de aluno (operador)                                            | `POST /api/v1/students/[id]/credits`                                  |
-| Pacotes de crédito (supervisor/admin)                                         | `models/credit.ts` + rotas de pacotes                                 |
-| Fechamento de caixa por turno                                                 | `POST /api/v1/cash_closes`                                            |
-| Gestão de alunos, produtos, usuários                                          | CRUD completo                                                         |
-| RBAC Operador / Supervisor / Admin                                            | `models/authorization.ts` com `can()` e `filterOutput()`              |
-| Relatório de vendas por período                                               | `GET /api/v1/reports/sales`                                           |
-| Relatório de créditos adicionados                                             | `GET /api/v1/reports/credits`                                         |
-| Relatório de saldo por aluno                                                  | `GET /api/v1/reports/balances`                                        |
-| Relatório de fechamentos de caixa                                             | `GET /api/v1/reports/cash-closes`                                     |
-| Relatório de pacotes vigentes                                                 | `GET /api/v1/reports/packages`                                        |
-| Dashboard: summary, revenue trend, top products, category, operator, my-shift | `GET /api/v1/reports/dashboard/*` (6 endpoints)                       |
-| Auth completa (sessão, ativação, reset de senha)                              | `models/session`, `models/activation`, `models/passwordReset`         |
-| Relatório de vendas por produto                                               | `GET /api/v1/reports/sales-by-product` + `pages/app/relatorios.js`    |
-| Relatório de créditos consumidos                                              | `GET /api/v1/reports/credits-consumed` + `pages/app/relatorios.js`    |
-| Relatório de consumo por aluno                                                | `GET /api/v1/reports/student-consumption` + `pages/app/relatorios.js` |
-| Faturamento diário/mensal — exposição na UI                                   | `pages/app/relatorios.js` (seções Faturamento Diário/Mensal)          |
-| **Integração Stone** (webhook + reconciliação)                                | `POST /api/v1/webhooks/stone/payment` + `models/stoneWebhook.ts`      |
-| Crédito via Link Stone (reconciliação manual pelo supervisor)                 | `POST /api/v1/stone-payments/[id]/match` + `pages/app/creditos.js`    |
+| Funcionalidade                                                                | Onde no sistema                                                        |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Venda direta no caixa (cash/card)                                             | `POST /api/v1/sales` (UI `pages/app/vendas.tsx` ainda stub)            |
+| Crédito manual de aluno (operador)                                            | `POST /api/v1/students/[id]/credits`                                   |
+| Pacotes de crédito (supervisor/admin)                                         | `models/credit.ts` + rotas de pacotes                                  |
+| Fechamento de caixa por turno                                                 | `POST /api/v1/cash_closes`                                             |
+| Gestão de alunos, produtos, usuários                                          | CRUD completo                                                          |
+| RBAC Operador / Supervisor / Admin                                            | `models/authorization.ts` com `can()` e `filterOutput()`               |
+| Relatório de vendas por período                                               | `GET /api/v1/reports/sales`                                            |
+| Relatório de créditos adicionados                                             | `GET /api/v1/reports/credits`                                          |
+| Relatório de saldo por aluno                                                  | `GET /api/v1/reports/balances`                                         |
+| Relatório de fechamentos de caixa                                             | `GET /api/v1/reports/cash-closes`                                      |
+| Relatório de pacotes vigentes                                                 | `GET /api/v1/reports/packages`                                         |
+| Dashboard: summary, revenue trend, top products, category, operator, my-shift | `GET /api/v1/reports/dashboard/*` (6 endpoints)                        |
+| Auth completa (sessão, ativação, reset de senha)                              | `models/session`, `models/activation`, `models/passwordReset`          |
+| Relatório de vendas por produto                                               | `GET /api/v1/reports/sales-by-product` + `pages/app/relatorios.tsx`    |
+| Relatório de créditos consumidos                                              | `GET /api/v1/reports/credits-consumed` + `pages/app/relatorios.tsx`    |
+| Relatório de consumo por aluno                                                | `GET /api/v1/reports/student-consumption` + `pages/app/relatorios.tsx` |
+| Faturamento diário/mensal — exposição na UI                                   | `pages/app/relatorios.tsx` (seções Faturamento Diário/Mensal)          |
+| **Integração Stone** (webhook + reconciliação)                                | `POST /api/v1/webhooks/stone/payment` + `models/stoneWebhook.ts`       |
+| Crédito via Link Stone (reconciliação manual pelo supervisor)                 | `POST /api/v1/stone-payments/[id]/match` + `pages/app/creditos.tsx`    |
 
 ---
 
 ## ⚠️ Parcialmente coberto (ajuste ou complemento necessário)
 
-| Funcionalidade                | Status atual                                    | O que falta                                                                     |
-| ----------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------- |
-| **Dashboard com dados reais** | `pages/app/index.js` usa mocks (TODO no código) | Substituir mocks por chamadas reais aos endpoints de dashboard já implementados |
+| Funcionalidade                | Status atual                                     | O que falta                                                                     |
+| ----------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| **Dashboard com dados reais** | `pages/app/index.tsx` usa mocks (TODO no código) | Substituir mocks por chamadas reais aos endpoints de dashboard já implementados |
 
 ---
 
