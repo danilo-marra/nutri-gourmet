@@ -21,6 +21,18 @@ export interface AnonymousUser {
 
 export type RequestUser = User | AnonymousUser;
 
+// Wire format of GET /api/v1/user (filterOutput "read:user:self"):
+// password is stripped and timestamps arrive as ISO strings over JSON.
+export interface SessionUser {
+  id: string;
+  username: string;
+  email: string;
+  role: UserRole;
+  features: Feature[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Session {
   id: string;
   token: string;

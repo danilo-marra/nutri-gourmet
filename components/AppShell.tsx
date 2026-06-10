@@ -1,9 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import type { ReactNode } from "react";
 import { useUser } from "@/hooks/useUser";
+import type { Feature, UserRole } from "@/types/index";
 
-const NAV_ITEMS = [
+interface NavItem {
+  label: string;
+  href: string;
+  feature?: Feature;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/app" },
   { label: "Vendas", href: "/app/vendas" },
   { label: "Créditos", href: "/app/creditos" },
@@ -18,7 +26,7 @@ const NAV_ITEMS = [
   { label: "Usuários", href: "/app/usuarios", feature: "create:user" },
 ];
 
-const PAGE_TITLES = {
+const PAGE_TITLES: Record<string, string> = {
   "/app": "Dashboard",
   "/app/vendas": "Vendas",
   "/app/creditos": "Créditos",
@@ -29,7 +37,12 @@ const PAGE_TITLES = {
   "/app/usuarios": "Usuários",
 };
 
-const ROLE_CONFIG = {
+interface RoleConfig {
+  label: string;
+  badge: string;
+}
+
+const ROLE_CONFIG: Partial<Record<UserRole, RoleConfig>> = {
   operador: {
     label: "Operador",
     badge: "bg-brand-teal-subtle text-brand-teal",
@@ -44,7 +57,7 @@ const ROLE_CONFIG = {
   },
 };
 
-export default function AppShell({ children }) {
+export default function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { user, isLoading } = useUser();
 
