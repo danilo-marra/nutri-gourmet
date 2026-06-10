@@ -1,21 +1,26 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import sale from "models/sale.js";
 import authorization from "models/authorization.js";
 import { ForbiddenError } from "infra/errors.js";
+import type { User } from "@/types/index";
 
 const CANCEL_WINDOW_MS = 5 * 60 * 1000;
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:sale:self"), getOneHandler);
 router.delete(controller.canRequest("delete:sale:self"), deleteHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function getOneHandler(request, response) {
-  const user = request.context.user;
-  const { id } = request.query;
+async function getOneHandler(
+  request: NextApiRequest,
+  response: NextApiResponse,
+) {
+  const user = request.context.user as User;
+  const id = request.query.id as string;
   const foundSale = await sale.findOneById(id);
 
   if (
@@ -32,9 +37,12 @@ async function getOneHandler(request, response) {
   return response.status(200).json(output);
 }
 
-async function deleteHandler(request, response) {
-  const user = request.context.user;
-  const { id } = request.query;
+async function deleteHandler(
+  request: NextApiRequest,
+  response: NextApiResponse,
+) {
+  const user = request.context.user as User;
+  const id = request.query.id as string;
   const foundSale = await sale.findOneById(id);
 
   if (foundSale.reversed_at) {

@@ -1,20 +1,22 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import credit from "models/credit.js";
 import student from "models/student.js";
 import authorization from "models/authorization.js";
 import { ForbiddenError } from "infra/errors.js";
+import type { User } from "@/types/index";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:credit"), getHandler);
 router.post(controller.canRequest("create:credit"), postHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function getHandler(request, response) {
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
   const userTryingToGet = request.context.user;
-  const { id } = request.query;
+  const id = request.query.id as string;
   await student.findOneById(id);
   const transactions = await credit.findAllByStudentId(id);
   const output = transactions.map((tx) =>
@@ -23,9 +25,9 @@ async function getHandler(request, response) {
   return response.status(200).json(output);
 }
 
-async function postHandler(request, response) {
-  const userTryingToPost = request.context.user;
-  const { id } = request.query;
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
+  const userTryingToPost = request.context.user as User;
+  const id = request.query.id as string;
   const { amount, type, expires_at } = request.body;
 
   if (

@@ -1,16 +1,17 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import product from "models/product.js";
 import authorization from "models/authorization.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:product"), getHandler);
 router.post(controller.canRequest("create:product"), postHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function getHandler(request, response) {
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
   const user = request.context.user;
   const activeOnly = !authorization.can(user, "update:product");
   const products = await product.findAll({ activeOnly });
@@ -20,7 +21,7 @@ async function getHandler(request, response) {
   return response.status(200).json(output);
 }
 
-async function postHandler(request, response) {
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
   const user = request.context.user;
   const inputValues = request.body;
   const newProduct = await product.create(inputValues);
