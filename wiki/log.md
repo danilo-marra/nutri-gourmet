@@ -4,6 +4,31 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-10 — PR #66: migração TypeScript do frontend (PR4, encerra issue #59)
+
+**Branch**: 59-ts-pr4-frontend
+**PR**: #66
+
+**What changed**: Os 14 arquivos do frontend foram convertidos para `.tsx`/`.ts` (PR4, última fase da issue #59): `hooks/useUser.ts`, `components/AppShell.tsx`, `pages/_app.tsx` (padrão `NextPageWithLayout`), páginas públicas e as 8 páginas de `pages/app/`. Novidades de tipos: `SessionUser` em `types/index.ts` (formato wire de `GET /api/v1/user`) e `types/css.d.ts` (exigência do TS 6 para imports de CSS). Zero mudança de runtime; `allowJs` permanece no tsconfig porque o Next 14 o re-adiciona enquanto tests/scripts/migrations ficam em JS.
+
+Wiki pages updated:
+
+- `rules/relatorios.md` — 5 refs `pages/app/relatorios.js` → `.tsx`
+- `rules/ui-ux.md` — refs `_app`, `AppShell`, `useUser` → `.tsx`/`.ts`; nota sobre TypeScript no frontend e tipo `SessionUser`
+- `domain/fluxo-operacional.md` — 2 refs `relatorios.js` → `.tsx`
+- `domain/gap-analysis.md` — refs `vendas`, `creditos`, `relatorios` (×4) e `index` → `.tsx`
+
+Lint fixes (achados não relacionados ao PR #66):
+
+- `rules/ui-ux.md` — tabela de superfícies: `/app/creditos` e `/app/relatorios` estavam como "Placeholder", mas são páginas implementadas (PRs #47/#56); nota de imagens placeholder (`picsum.photos`) atualizada — a landing usa fotos reais de `public/cantina/`
+- `domain/gap-analysis.md` — linha "Venda direta no caixa" citava `pages/app/vendas` como entregue, contradizendo `ui-ux.md` (a UI é stub); corrigido para apontar só a API
+- `domain/fluxo-operacional.md` — Fluxo 3 (Stone) dizia "passo 5 depende de integração Stone", mas o webhook + fila existem desde o PR #56; status atualizado para parcial com link para [[stone-webhook]]
+- `rules/relatorios.md` — formas de pagamento do relatório de vendas: `credit/cash/card` → inclui `pix` (existe desde o PR #56; mesmo desvio corrigido no índice pelo lint do PR #64)
+
+**Não alterado (justificado):** entradas históricas deste log mantêm os nomes `.js` da época; `raw/` é imutável. Com isso, a migração TypeScript (#59) está 100% refletida na wiki.
+
+---
+
 ## 2026-06-10 — PR #64: migração TypeScript das rotas de API (pages/api/v1/)
 
 **Branch**: 59-ts-pr3-api

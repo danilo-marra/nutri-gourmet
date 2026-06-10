@@ -4,7 +4,7 @@
 
 **Sources**: raw/fluxo-cantina.md, raw/decisions/eventos-integral.md
 
-**Last updated**: 2026-06-02
+**Last updated**: 2026-06-10
 
 ---
 
@@ -52,7 +52,7 @@ ESCOLAS → FATURAMENTO ─┘
 4. Stone confirma o pagamento
 5. Sistema Central recebe confirmação (webhook) → registra receita → identifica cliente → atualiza financeiro → emite nota fiscal
 
-**Status no projeto**: passo 5 depende de integração Stone; emissão fiscal fora do Phase 1. (source: raw/fluxo-cantina.md)
+**Status no projeto**: ⚠️ parcial desde o PR #56 — passo 5 implementado como webhook + fila `pending_stone_payments`; a identificação do cliente é manual (reconciliação pelo supervisor, ver [[stone-webhook]]); emissão fiscal fora do Phase 1. (source: raw/fluxo-cantina.md)
 
 ---
 
@@ -100,8 +100,8 @@ Hoje o fluxo é 100% manual (cliente emite NF-e e cobra manualmente). (source: r
 | 4   | Consumo por aluno      | ✅ `GET /api/v1/reports/student-consumption`    |
 | 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                |
 | 6   | Créditos consumidos    | ✅ `GET /api/v1/reports/credits-consumed`       |
-| 7   | Faturamento diário     | ✅ `revenueTrend` + `pages/app/relatorios.js`   |
-| 8   | Faturamento mensal     | ✅ `salesByPeriod` + `pages/app/relatorios.js`  |
+| 7   | Faturamento diário     | ✅ `revenueTrend` + `pages/app/relatorios.tsx`  |
+| 8   | Faturamento mensal     | ✅ `salesByPeriod` + `pages/app/relatorios.tsx` |
 | 9   | Recebimentos Stone     | ❌ requer integração Stone                      |
 | 10  | Eventos realizados     | ❌ requer módulo de eventos                     |
 | 11  | Estoque atual          | ❌ requer controle de estoque                   |
