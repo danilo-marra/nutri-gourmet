@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import type { FormEvent, ReactElement, ReactNode } from "react";
 import { useRouter } from "next/router";
 import AppShell from "@/components/AppShell";
 import { useUser } from "@/hooks/useUser";
+import type { PaymentMethod, ProductCategory } from "@/types/index";
 
-const CATEGORY_LABELS = {
+const CATEGORY_LABELS: Record<ProductCategory, string> = {
   lanche: "Lanche",
   bebida: "Bebida",
   vitamina: "Vitamina",
@@ -11,20 +13,53 @@ const CATEGORY_LABELS = {
   sobremesa: "Sobremesa",
 };
 
-const PAYMENT_LABELS = {
+const PAYMENT_LABELS: Partial<Record<PaymentMethod, string>> = {
   credit: "Crédito",
   cash: "Dinheiro",
   card: "Cartão",
 };
 
-function fmt(n) {
+// Wire formats (JSON): agregados DECIMAL chegam como string
+interface RevenueTrendRow {
+  date: string;
+  total: string;
+}
+
+interface SalesByPaymentRow {
+  payment_method: PaymentMethod;
+  sale_count: number;
+  total_amount: string;
+}
+
+interface SalesReport {
+  by_payment_method: SalesByPaymentRow[];
+  grand_total: string;
+}
+
+interface SalesByProductRow {
+  product_id: string;
+  product_name: string;
+  category: ProductCategory;
+  qty_sold: number;
+  revenue: string;
+}
+
+interface ConsumptionRow {
+  student_id: string;
+  student_name: string;
+  class: string;
+  sale_count: number;
+  total_consumed: string;
+}
+
+function fmt(n: number | string | null | undefined) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-  }).format(n ?? 0);
+  }).format(Number(n ?? 0));
 }
 
-function fmtDate(isoDate) {
+function fmtDate(isoDate: string) {
   if (!isoDate) return "";
   const [year, month, day] = isoDate.split("-");
   return `${day}/${month}/${year}`;
@@ -38,7 +73,13 @@ function firstOfMonth() {
   return today().slice(0, 8) + "01";
 }
 
-function SectionCard({ title, children }) {
+function SectionCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <div className="bg-bg-card rounded-lg border border-border shadow-sm overflow-hidden">
       <div className="px-4 py-3 border-b border-border">
@@ -54,7 +95,15 @@ function SectionCard({ title, children }) {
   );
 }
 
-function DateInput({ label, value, onChange }) {
+function DateInput({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
   return (
     <div className="flex flex-col gap-1">
       <label className="text-xs text-fg-3 font-medium">{label}</label>
@@ -69,7 +118,7 @@ function DateInput({ label, value, onChange }) {
   );
 }
 
-function SubmitButton({ loading }) {
+function SubmitButton({ loading }: { loading: boolean }) {
   return (
     <button
       type="submit"
@@ -107,33 +156,37 @@ function HintState() {
   );
 }
 
-function ErrorState({ message }) {
+function ErrorState({ message }: { message: string }) {
   return <p className="text-sm text-red-500 text-center py-6">{message}</p>;
 }
 
-async function fetchJson(url) {
+async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
   const body = await res.json();
   if (!res.ok) throw new Error(body.message || "Erro ao buscar dados.");
   return body;
 }
 
+function errorMessage(e: unknown) {
+  return e instanceof Error ? e.message : "Erro ao buscar dados.";
+}
+
 function FaturamentoDiario() {
   const [days, setDays] = useState("30");
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<RevenueTrendRow[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
     setError(null);
     try {
-      const rows = await fetchJson(
+      const rows = await fetchJson<RevenueTrendRow[]>(
         `/api/v1/reports/dashboard/revenue-trend?days=${days}`,
       );
       setData(rows);
     } catch (e) {
-      setError(e.message);
+      setError(errorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -212,9 +265,9 @@ function FaturamentoMensal() {
   const now = new Date();
   const defaultMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   const [month, setMonth] = useState(defaultMonth);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<SalesReport | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -224,12 +277,12 @@ function FaturamentoMensal() {
       const startDate = `${year}-${m}-01`;
       const lastDay = new Date(parseInt(year), parseInt(m), 0).getDate();
       const endDate = `${year}-${m}-${String(lastDay).padStart(2, "0")}`;
-      const result = await fetchJson(
+      const result = await fetchJson<SalesReport>(
         `/api/v1/reports/sales?start_date=${startDate}&end_date=${endDate}`,
       );
       setData(result);
     } catch (e) {
-      setError(e.message);
+      setError(errorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -326,21 +379,21 @@ function FaturamentoMensal() {
 function VendasPorProduto() {
   const [startDate, setStartDate] = useState(firstOfMonth());
   const [endDate, setEndDate] = useState(today());
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<SalesByProductRow[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      const rows = await fetchJson(
+      const rows = await fetchJson<SalesByProductRow[]>(
         `/api/v1/reports/sales-by-product?start_date=${startDate}&end_date=${endDate}`,
       );
       setData(rows);
     } catch (err) {
-      setError(err.message);
+      setError(errorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -417,21 +470,21 @@ function VendasPorProduto() {
 function CreditosConsumidos() {
   const [startDate, setStartDate] = useState(firstOfMonth());
   const [endDate, setEndDate] = useState(today());
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<ConsumptionRow[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      const rows = await fetchJson(
+      const rows = await fetchJson<ConsumptionRow[]>(
         `/api/v1/reports/credits-consumed?start_date=${startDate}&end_date=${endDate}`,
       );
       setData(rows);
     } catch (err) {
-      setError(err.message);
+      setError(errorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -506,21 +559,21 @@ function CreditosConsumidos() {
 function ConsumoPorAluno() {
   const [startDate, setStartDate] = useState(firstOfMonth());
   const [endDate, setEndDate] = useState(today());
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<ConsumptionRow[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      const rows = await fetchJson(
+      const rows = await fetchJson<ConsumptionRow[]>(
         `/api/v1/reports/student-consumption?start_date=${startDate}&end_date=${endDate}`,
       );
       setData(rows);
     } catch (err) {
-      setError(err.message);
+      setError(errorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -615,4 +668,4 @@ export default function RelatoriosPage() {
   );
 }
 
-RelatoriosPage.getLayout = (page) => <AppShell>{page}</AppShell>;
+RelatoriosPage.getLayout = (page: ReactElement) => <AppShell>{page}</AppShell>;

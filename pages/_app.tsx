@@ -3,6 +3,9 @@ import "nprogress/nprogress.css";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import NProgress from "nprogress";
+import type { NextPage } from "next";
+import type { AppProps } from "next/app";
+import type { ReactElement, ReactNode } from "react";
 import {
   Poppins,
   Figtree,
@@ -11,6 +14,14 @@ import {
   Dancing_Script,
   Inter,
 } from "next/font/google";
+
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -56,7 +67,7 @@ const inter = Inter({
 
 NProgress.configure({ showSpinner: false });
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
   const getLayout = Component.getLayout ?? ((page) => page);
 

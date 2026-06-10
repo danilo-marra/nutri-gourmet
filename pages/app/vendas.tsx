@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import AppShell from "@/components/AppShell";
 
 export default function VendasPage() {
@@ -8,4 +9,4 @@ export default function VendasPage() {
   );
 }
 
-VendasPage.getLayout = (page) => <AppShell>{page}</AppShell>;
+VendasPage.getLayout = (page: ReactElement) => <AppShell>{page}</AppShell>;
