@@ -1,10 +1,11 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import user from "models/user.js";
 import authorization from "models/authorization.js";
 import { ForbiddenError } from "infra/errors.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.use(controller.injectAnonymousOrUser);
 router.get(getHandler);
@@ -12,9 +13,9 @@ router.patch(controller.canRequest("update:user"), patchHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function getHandler(request, response) {
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
   const userTryingToGet = request.context.user;
-  const username = request.query.username;
+  const username = request.query.username as string;
   const userFound = await user.findOneByUsername(username);
 
   const secureOutputValues = authorization.filterOutput(
@@ -26,8 +27,11 @@ async function getHandler(request, response) {
   return response.status(200).json(secureOutputValues);
 }
 
-async function patchHandler(request, response) {
-  const username = request.query.username;
+async function patchHandler(
+  request: NextApiRequest,
+  response: NextApiResponse,
+) {
+  const username = request.query.username as string;
   const userInputValues = request.body;
 
   // user, feature, resource

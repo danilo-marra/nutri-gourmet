@@ -1,20 +1,22 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import user from "models/user.js";
 import activation from "models/activation.js";
 import authorization from "models/authorization";
 import { ForbiddenError } from "infra/errors.js";
+import type { User, UserRole } from "@/types/index";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:user"), getHandler);
 router.post(controller.canRequest("create:user"), postHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function getHandler(request, response) {
-  const userTryingToGet = request.context.user;
-  const roles =
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
+  const userTryingToGet = request.context.user as User;
+  const roles: UserRole[] | null =
     userTryingToGet.role === "supervisor" ? ["operador", "pending"] : null;
   const users = await user.findAll(roles);
   const secureOutputValues = users.map((u) =>
@@ -23,7 +25,7 @@ async function getHandler(request, response) {
   return response.status(200).json(secureOutputValues);
 }
 
-async function postHandler(request, response) {
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
   const userTryingToPost = request.context.user;
   const userInputValues = request.body;
 

@@ -1,17 +1,18 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import user from "models/user.js";
 import passwordReset from "models/passwordReset.js";
 import { NotFoundError } from "infra/errors.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.use(controller.injectAnonymousOrUser);
 router.post(postHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function postHandler(request, response) {
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
   const { email } = request.body || {};
 
   try {

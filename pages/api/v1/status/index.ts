@@ -1,16 +1,17 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import database from "infra/database";
 import controller from "infra/controller.js";
 import authorization from "models/authorization.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.use(controller.injectAnonymousOrUser);
 router.get(getHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function getHandler(request, response) {
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
   const userTryingToGet = request.context.user;
   const updatedAt = new Date().toISOString();
 

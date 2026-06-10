@@ -1,11 +1,12 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import authentication from "models/authentication.js";
 import authorization from "models/authorization.js";
 import session from "models/session.js";
 import { ForbiddenError } from "infra/errors";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.use(controller.injectAnonymousOrUser);
 router.post(controller.canRequest("create:session"), postHandler);
@@ -13,7 +14,7 @@ router.delete(deleteHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function postHandler(request, response) {
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
   const userInputValues = request.body;
 
   const authenticatedUser = await authentication.getAuthenticatedUser(
@@ -41,9 +42,12 @@ async function postHandler(request, response) {
   return response.status(201).json(secureOutputValues);
 }
 
-async function deleteHandler(request, response) {
+async function deleteHandler(
+  request: NextApiRequest,
+  response: NextApiResponse,
+) {
   const userTryingToDelete = request.context.user;
-  const sessionToken = request.cookies.session_id;
+  const sessionToken = request.cookies.session_id as string;
 
   const sessionObject = await session.findOneValidByToken(sessionToken);
   const expiredSession = await session.expireById(sessionObject.id);

@@ -1,9 +1,10 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import migrator from "models/migrator.js";
 import authorization from "models/authorization.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:migration"), getHandler);
@@ -11,7 +12,7 @@ router.post(controller.canRequest("create:migration"), postHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function getHandler(request, response) {
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
   const userTryingToGet = request.context.user;
   const pendingMigrations = await migrator.listPendingMigrations();
 
@@ -24,7 +25,7 @@ async function getHandler(request, response) {
   return response.status(200).json(secureOutputValues);
 }
 
-async function postHandler(request, response) {
+async function postHandler(request: NextApiRequest, response: NextApiResponse) {
   const userTryingToPost = request.context.user;
   const migratedMigrations = await migrator.runPendingMigrations();
 
