@@ -1,9 +1,10 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import report from "models/report.js";
 import { ValidationError } from "infra/errors.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:report:financial"), getHandler);
 
@@ -11,7 +12,10 @@ export default router.handler(controller.errorHandlers);
 
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-function validateDate(value, name) {
+function validateDate(
+  value: string | undefined,
+  name: string,
+): asserts value is string {
   const d = new Date((value ?? "") + "T00:00:00Z");
   if (
     !value ||
@@ -26,8 +30,9 @@ function validateDate(value, name) {
   }
 }
 
-async function getHandler(request, response) {
-  const { start_date, end_date } = request.query;
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
+  const start_date = request.query.start_date as string | undefined;
+  const end_date = request.query.end_date as string | undefined;
 
   validateDate(start_date, "start_date");
   validateDate(end_date, "end_date");

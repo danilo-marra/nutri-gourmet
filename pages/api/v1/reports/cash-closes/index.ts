@@ -1,9 +1,10 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import report from "models/report.js";
 import { ValidationError } from "infra/errors.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:report:operational"), getHandler);
 
@@ -13,8 +14,10 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-async function getHandler(request, response) {
-  const { start_date, end_date, operator_id } = request.query;
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
+  const start_date = request.query.start_date as string | undefined;
+  const end_date = request.query.end_date as string | undefined;
+  const operator_id = request.query.operator_id as string | undefined;
 
   if (
     start_date !== undefined &&

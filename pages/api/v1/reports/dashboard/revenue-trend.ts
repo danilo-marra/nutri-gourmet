@@ -1,9 +1,10 @@
 import { createRouter } from "next-connect";
+import type { NextApiRequest, NextApiResponse } from "next";
 import controller from "infra/controller.js";
 import report from "models/report.js";
 import { ValidationError } from "infra/errors.js";
 
-const router = createRouter();
+const router = createRouter<NextApiRequest, NextApiResponse>();
 router.use(controller.injectAnonymousOrUser);
 router.get(controller.canRequest("read:report:financial"), getHandler);
 
@@ -12,8 +13,8 @@ export default router.handler(controller.errorHandlers);
 const DEFAULT_DAYS = 30;
 const MAX_DAYS = 365;
 
-async function getHandler(request, response) {
-  const { days: daysParam } = request.query;
+async function getHandler(request: NextApiRequest, response: NextApiResponse) {
+  const daysParam = request.query.days as string | undefined;
 
   let days = DEFAULT_DAYS;
   if (daysParam !== undefined) {
