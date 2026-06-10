@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { ReactElement, ReactNode } from "react";
 import {
   BarChart,
   Bar,
@@ -10,6 +11,7 @@ import {
 } from "recharts";
 import AppShell from "@/components/AppShell";
 import { useUser } from "@/hooks/useUser";
+import type { SessionUser } from "@/types/index";
 
 // TODO: substituir por chamadas reais a /api/v1/reports/dashboard/*
 const MOCK_SUMMARY = {
@@ -67,14 +69,26 @@ const CATEGORY_COLORS = [
   "bg-[#ec4899]",
 ];
 
-function fmt(n) {
+function fmt(n: number) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
   }).format(n);
 }
 
-function KpiCard({ label, value, sub, valueClass = "text-fg-1" }) {
+interface KpiCardProps {
+  label: string;
+  value: string;
+  sub?: string;
+  valueClass?: string;
+}
+
+function KpiCard({
+  label,
+  value,
+  sub,
+  valueClass = "text-fg-1",
+}: KpiCardProps) {
   return (
     <div className="bg-bg-card rounded-lg border border-border shadow-sm p-4">
       <p className="text-xs font-medium text-fg-3 mb-1">{label}</p>
@@ -89,7 +103,13 @@ function KpiCard({ label, value, sub, valueClass = "text-fg-1" }) {
   );
 }
 
-function SectionCard({ title, children, className = "" }) {
+interface SectionCardProps {
+  title: string;
+  children: ReactNode;
+  className?: string;
+}
+
+function SectionCard({ title, children, className = "" }: SectionCardProps) {
   return (
     <div
       className={`bg-bg-card rounded-lg border border-border shadow-sm overflow-hidden ${className}`}
@@ -107,7 +127,7 @@ function SectionCard({ title, children, className = "" }) {
   );
 }
 
-function SupervisorDashboard({ mounted }) {
+function SupervisorDashboard({ mounted }: { mounted: boolean }) {
   return (
     <div className="space-y-4">
       {/* KPI cards */}
@@ -162,7 +182,7 @@ function SupervisorDashboard({ mounted }) {
                   width={48}
                 />
                 <Tooltip
-                  formatter={(v) => [fmt(v), "Receita"]}
+                  formatter={(v) => [fmt(Number(v)), "Receita"]}
                   contentStyle={{
                     fontSize: 12,
                     borderRadius: 8,
@@ -289,7 +309,7 @@ function SupervisorDashboard({ mounted }) {
   );
 }
 
-function OperadorDashboard({ user }) {
+function OperadorDashboard({ user }: { user: SessionUser }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-fg-2">
@@ -333,4 +353,4 @@ export default function DashboardPage() {
   );
 }
 
-DashboardPage.getLayout = (page) => <AppShell>{page}</AppShell>;
+DashboardPage.getLayout = (page: ReactElement) => <AppShell>{page}</AppShell>;

@@ -1,6 +1,7 @@
+import type { ReactElement } from "react";
 import AppShell from "@/components/AppShell";
 
-export default function UsuariosPage() {
+export default function AlunosPage() {
   return (
     <div className="flex items-center justify-center h-64">
       <p className="text-fg-3 text-sm">Em construção</p>
@@ -8,4 +9,4 @@ export default function UsuariosPage() {
   );
 }
 
-UsuariosPage.getLayout = (page) => <AppShell>{page}</AppShell>;
+AlunosPage.getLayout = (page: ReactElement) => <AppShell>{page}</AppShell>;

@@ -1,27 +1,47 @@
 import { useState, useEffect } from "react";
+import type { FormEvent, ReactElement, ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import { useUser } from "@/hooks/useUser";
+import type { CreditType } from "@/types/index";
 
-const TYPE_LABELS = {
+const TYPE_LABELS: Record<CreditType, string> = {
   manual: "Manual",
   stone: "Link Stone",
   package: "Pacote",
 };
 
-const TYPE_BADGE = {
+const TYPE_BADGE: Record<CreditType, string> = {
   stone: "bg-brand-orange-subtle text-brand-orange",
   package: "bg-brand-teal-subtle text-brand-teal",
   manual: "bg-gray-bg text-fg-3",
 };
 
-function fmt(n) {
+// Wire formats (JSON): DECIMALs and timestamps chegam como string
+interface StudentRow {
+  id: string;
+  name: string;
+  class: string;
+  is_full_time: boolean;
+  balance: string;
+}
+
+interface CreditRow {
+  id: string;
+  type: CreditType;
+  amount: string;
+  balance_after: string;
+  stone_payment_id: string | null;
+  created_at: string;
+}
+
+function fmt(n: number | string | null | undefined) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-  }).format(n ?? 0);
+  }).format(Number(n ?? 0));
 }
 
-function fmtDate(iso) {
+function fmtDate(iso: string | null | undefined) {
   if (!iso) return "";
   return new Date(iso).toLocaleString("pt-BR", {
     day: "2-digit",
@@ -32,7 +52,13 @@ function fmtDate(iso) {
   });
 }
 
-function SectionCard({ title, children }) {
+function SectionCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <div className="bg-bg-card rounded-lg border border-border shadow-sm overflow-hidden">
       <div className="px-4 py-3 border-b border-border">
@@ -48,14 +74,21 @@ function SectionCard({ title, children }) {
   );
 }
 
-async function fetchJson(url) {
+async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
   const body = await res.json();
   if (!res.ok) throw new Error(body.message || "Erro ao buscar dados.");
   return body;
 }
 
-const EMPTY_FORM = {
+interface CreditForm {
+  amount: string;
+  type: CreditType;
+  stone_payment_id: string;
+  expires_at: string;
+}
+
+const EMPTY_FORM: CreditForm = {
   amount: "",
   type: "manual",
   stone_payment_id: "",
@@ -64,22 +97,26 @@ const EMPTY_FORM = {
 
 export default function CreditosPage() {
   const { user } = useUser();
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState<StudentRow[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState("");
-  const [credits, setCredits] = useState([]);
+  const [credits, setCredits] = useState<CreditRow[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(true);
   const [loadingCredits, setLoadingCredits] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState<CreditForm>(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const canCreatePackage = user?.features?.includes("create:package");
   const selectedStudent =
     students.find((s) => s.id === selectedStudentId) ?? null;
 
+  const typeOptions: CreditType[] = canCreatePackage
+    ? ["manual", "stone", "package"]
+    : ["manual", "stone"];
+
   useEffect(() => {
-    fetchJson("/api/v1/students")
+    fetchJson<StudentRow[]>("/api/v1/students")
       .then(setStudents)
       .catch(() => {})
       .finally(() => setLoadingStudents(false));
@@ -91,7 +128,7 @@ export default function CreditosPage() {
       return;
     }
     setLoadingCredits(true);
-    fetchJson(`/api/v1/students/${selectedStudentId}/credits`)
+    fetchJson<CreditRow[]>(`/api/v1/students/${selectedStudentId}/credits`)
       .then(setCredits)
       .catch(() => setCredits([]))
       .finally(() => setLoadingCredits(false));
@@ -99,14 +136,14 @@ export default function CreditosPage() {
 
   async function refreshStudents() {
     try {
-      const data = await fetchJson("/api/v1/students");
+      const data = await fetchJson<StudentRow[]>("/api/v1/students");
       setStudents(data);
-    } catch (_err) {
+    } catch {
       // refresh is best-effort; stale balance is acceptable
     }
   }
 
-  function handleTypeChange(type) {
+  function handleTypeChange(type: CreditType) {
     setForm((f) => ({ ...f, type, stone_payment_id: "", expires_at: "" }));
     setError(null);
   }
@@ -117,7 +154,7 @@ export default function CreditosPage() {
     setError(null);
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!selectedStudentId) return;
 
@@ -129,7 +166,12 @@ export default function CreditosPage() {
     setSubmitting(true);
     setError(null);
 
-    const body = { amount: Number(form.amount), type: form.type };
+    const body: {
+      amount: number;
+      type: CreditType;
+      stone_payment_id?: string;
+      expires_at?: string;
+    } = { amount: Number(form.amount), type: form.type };
     if (form.type === "stone")
       body.stone_payment_id = form.stone_payment_id.trim();
     if (form.type === "package" && form.expires_at)
@@ -243,24 +285,22 @@ export default function CreditosPage() {
                       Tipo
                     </label>
                     <div className="flex flex-wrap gap-3 pt-1">
-                      {["manual", "stone", canCreatePackage && "package"]
-                        .filter(Boolean)
-                        .map((t) => (
-                          <label
-                            key={t}
-                            className="flex items-center gap-1.5 text-sm text-fg-2 cursor-pointer"
-                          >
-                            <input
-                              type="radio"
-                              name="type"
-                              value={t}
-                              checked={form.type === t}
-                              onChange={() => handleTypeChange(t)}
-                              className="accent-brand-teal"
-                            />
-                            {TYPE_LABELS[t]}
-                          </label>
-                        ))}
+                      {typeOptions.map((t) => (
+                        <label
+                          key={t}
+                          className="flex items-center gap-1.5 text-sm text-fg-2 cursor-pointer"
+                        >
+                          <input
+                            type="radio"
+                            name="type"
+                            value={t}
+                            checked={form.type === t}
+                            onChange={() => handleTypeChange(t)}
+                            className="accent-brand-teal"
+                          />
+                          {TYPE_LABELS[t]}
+                        </label>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -409,4 +449,4 @@ export default function CreditosPage() {
   );
 }
 
-CreditosPage.getLayout = (page) => <AppShell>{page}</AppShell>;
+CreditosPage.getLayout = (page: ReactElement) => <AppShell>{page}</AppShell>;

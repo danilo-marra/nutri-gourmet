@@ -1,6 +1,7 @@
+import type { ReactElement } from "react";
 import AppShell from "@/components/AppShell";
 
-export default function AlunosPage() {
+export default function FechamentoPage() {
   return (
     <div className="flex items-center justify-center h-64">
       <p className="text-fg-3 text-sm">Em construção</p>
@@ -8,4 +9,4 @@ export default function AlunosPage() {
   );
 }
 
-AlunosPage.getLayout = (page) => <AppShell>{page}</AppShell>;
+FechamentoPage.getLayout = (page: ReactElement) => <AppShell>{page}</AppShell>;
