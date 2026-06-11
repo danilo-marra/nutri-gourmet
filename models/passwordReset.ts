@@ -99,6 +99,15 @@ async function markTokenAsUsed(tokenId: string): Promise<PasswordResetToken> {
   }
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
 async function sendEmailToUser(
   user: Pick<User, "username" | "email">,
   resetToken: Pick<PasswordResetToken, "id">,
@@ -108,6 +117,7 @@ async function sendEmailToUser(
   const recoveryPath = process.env.PASSWORD_RECOVERY_PATH || "/recovery";
 
   const resetUrl = `${webserver.origin}${recoveryPath}/${resetToken.id}`;
+  const safeUsername = escapeHtml(user.username);
 
   await email.send({
     from: `${appName} <${appEmail}>`,
@@ -136,7 +146,7 @@ Equipe ${appName}`,
         <tr><td>
           <p style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#1a1a1a">${appName}</p>
           <p style="margin:0 0 24px;font-size:13px;color:#666">Sistema da cantina</p>
-          <p style="margin:0 0 16px;font-size:15px;color:#1a1a1a">Olá, <strong>${user.username}</strong>!</p>
+          <p style="margin:0 0 16px;font-size:15px;color:#1a1a1a">Olá, <strong>${safeUsername}</strong>!</p>
           <p style="margin:0 0 24px;font-size:14px;color:#444;line-height:1.6">
             Recebemos uma solicitação para redefinir a senha da sua conta. Use o botão abaixo para criar uma nova senha.
           </p>
