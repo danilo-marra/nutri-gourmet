@@ -4,6 +4,25 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-11 — PR #80: dashboard com dados reais + seed de demonstração (issue #22 task 5)
+
+**Branch**: feat/seed-demo  
+**PR**: #80
+
+**What changed**: `pages/app/index.tsx` foi reescrito — todos os `MOCK_*` substituídos por 5 hooks SWR chamando os 6 endpoints de `GET /api/v1/reports/dashboard/*`. O supervisor vê KPIs de receita (hoje/semana/mês), badges de alunos negativos e fechamentos pendentes, gráfico de tendência, breakdown por categoria, top produtos e resumo por operador. O operador vê resumo do turno, status do fechamento e tabela de alunos atendidos. Adicionado `infra/scripts/seed-demo.js` (`npm run seed:demo`): seed determinístico com 5 usuários demo, 30 alunos, 15 produtos, ~939 vendas em 30 dias. A limpeza (`--clear-only`) usa `NOT EXISTS` para evitar apagar produtos/alunos reais com nomes iguais aos demo.
+
+Wiki pages updated:
+
+- `domain/gap-analysis.md` — "Dashboard com dados reais" movido de ⚠️ para ✅; seed demo adicionado à tabela de entregáveis
+- `rules/ui-ux.md` — dashboard marcado como "Implementado (dados reais via SWR)" (era "dados mock")
+- `rules/relatorios.md` — Summary atualizado (8 → 14 endpoints); 6 endpoints de dashboard adicionados à tabela de implementação; `[[dashboard]]` adicionado em Related pages
+
+Wiki pages created:
+
+- `domain/dashboard.md` — vistas por perfil, KPI cards, seções do supervisor, endpoints (tabela completa), seed demo e instruções de limpeza
+
+---
+
 ## 2026-06-11 — PR #78: páginas frontend de recuperação de senha (issue #22 tasks 3 & 4)
 
 **Branch**: feat/password-recovery-pages  

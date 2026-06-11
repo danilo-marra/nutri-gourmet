@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, design bundle Nutrigourmet (Tailwind v4 + tokens)
 
-**Last updated**: 2026-06-10
+**Last updated**: 2026-06-11
 
 ---
 
@@ -29,16 +29,16 @@ O PRD define estilo corporativo moderno com foco em valor percebido. A implement
 
 Todas as rotas sob `/app` usam o componente `AppShell` via padrão `getLayout`:
 
-| Rota              | Módulo           | Status                    |
-| ----------------- | ---------------- | ------------------------- |
-| `/app`            | Dashboard        | Implementado (dados mock) |
-| `/app/vendas`     | Vendas           | Placeholder               |
-| `/app/creditos`   | Créditos         | Implementado              |
-| `/app/fechamento` | Fechamento Caixa | Placeholder               |
-| `/app/relatorios` | Relatórios       | Implementado              |
-| `/app/alunos`     | Alunos           | Placeholder               |
-| `/app/produtos`   | Produtos         | Placeholder               |
-| `/app/usuarios`   | Usuários         | Placeholder               |
+| Rota              | Módulo           | Status                             |
+| ----------------- | ---------------- | ---------------------------------- |
+| `/app`            | Dashboard        | Implementado (dados reais via SWR) |
+| `/app/vendas`     | Vendas           | Placeholder                        |
+| `/app/creditos`   | Créditos         | Implementado                       |
+| `/app/fechamento` | Fechamento Caixa | Placeholder                        |
+| `/app/relatorios` | Relatórios       | Implementado                       |
+| `/app/alunos`     | Alunos           | Placeholder                        |
+| `/app/produtos`   | Produtos         | Placeholder                        |
+| `/app/usuarios`   | Usuários         | Placeholder                        |
 
 **AppShell** (`components/AppShell.tsx`): sidebar fixa (logo, nav filtrado por `user.features`, user card + logout) + topbar (título da página + badge de role). Usa `useUser` hook internamente — exibe spinner durante carregamento, retorna `null` se não autenticado (redirect gerenciado pelo hook).
 

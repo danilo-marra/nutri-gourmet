@@ -107,7 +107,7 @@ Hoje o fluxo é 100% manual (cliente emite NF-e e cobra manualmente). (source: r
 | 11  | Estoque atual          | ❌ requer controle de estoque                                                    |
 | 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`                                  |
 
-Ver também [[relatorios]] para os 8 endpoints de relatório disponíveis.
+Ver também [[relatorios]] para os 14 endpoints de relatório disponíveis (inclui 6 de [[dashboard]]).
 
 ---
 
