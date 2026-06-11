@@ -63,7 +63,11 @@ async function recordAndCheck(ip: string): Promise<boolean> {
 
 **Por que +1?** O INSERT e o SELECT compartilham o mesmo snapshot MVCC no PostgreSQL, então a nova linha recém-inserida não é visível ao SELECT. O +1 manual contabiliza a tentativa recém-inserida. Isso resolve a race consigo mesmo (um processo não consegue fazer check-then-insert com gap).
 
-**Limite best-effort, não rígido.** Sob alta concorrência — duas requisições chegando simultaneamente quando já existem 9 tentativas na janela — ambas podem tirar um snapshot antes de qualquer INSERT confirmar, ambas contarão 9 + 1 = 10 e passarão, deixando 11 tentativas no banco. Na prática isso é irrelevante para brute-force (ataques sequenciais não exploram essa janela), mas o limite não é matematicamente rígido. Para um limite rígido seria necessário serialização explícita (advisory lock, counter table com `UPDATE … RETURNING`, ou isolamento `SERIALIZABLE`).
+**Limite best-effort, não rígido.** Sob alta concorrência — duas requisições chegando simultaneamente quando já existem 9 tentativas na janela — ambas podem tirar um snapshot antes de qualquer INSERT confirmar, ambas contarão 9 + 1 = 10 e passarão, deixando 11 tentativas no banco.
+
+Para **brute-force sequencial** (cada tentativa espera a resposta da anterior) essa janela é irrelevante. Para **ataques concorrentes** — como credential-stuffing com múltiplas threads simultâneas — a race condition pode permitir algumas tentativas extras acima do limite antes de o 429 passar a ser retornado consistentemente. O limite continua efetivo como freio, mas não é matematicamente rígido.
+
+Para um limite rígido seria necessário serialização explícita (advisory lock, counter table com `UPDATE … RETURNING`, ou isolamento `SERIALIZABLE`).
 
 ## Resposta HTTP
 
