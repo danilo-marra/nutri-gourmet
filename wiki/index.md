@@ -53,6 +53,7 @@
 
 - [Escopo](rules/escopo.md) — o que está fora desta fase (mobile, fiscal, multi-unidade)
 - [Segurança e Controle de Acesso](rules/seguranca.md) — visibilidade restrita por perfil; tabela de permissões por persona
+- [Rate Limiting](rules/rate-limiting.md) — proteção brute-force no login: sliding window 15 min / 10 tentativas por IP, armazenado em PostgreSQL
 - [UI/UX](rules/ui-ux.md) — design system Nutrigourmet: paleta verde/teal/laranja, 6 fontes, tokens de cor; landing page (`/`) e app interno
 - [Relatórios](rules/relatorios.md) — 8 endpoints de relatório (5 originais + 3 do PR #47); supervisor/admin; tabela paginada; sem exportação nesta fase
 - [Fiscal](rules/fiscal.md) — regras de emissão (NFC-e presencial, NF-e digital/eventos/Integral); 100% cobertura de canal; P5 no roadmap

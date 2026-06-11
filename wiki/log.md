@@ -4,6 +4,23 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-11 — PRs #73 + #74: rate limiting no login (issue #30)
+
+**Branch**: feat/rate-limit-login + fix/rate-limit-atomicity-and-ip
+**PR**: #73, #74
+
+**What changed**: Implementação de proteção brute-force no `POST /api/v1/sessions`. PR #73 criou a tabela `login_attempts`, o model `loginAttempt`, o middleware `rateLimitLogin` no controller e o erro `TooManyRequestsError` (429). PR #74 corrigiu dois achados do code review: (1) substituiu `x-forwarded-for` por `x-real-ip` para evitar spoofing de IP; (2) fundiu `isLimitExceeded + record` em `recordAndCheck`, uma única query CTE que elimina a race condition entre check e insert. A dívida técnica "Sem rate limiting no login" registrada na issue #30 está encerrada.
+
+Wiki pages updated:
+
+- `rules/seguranca.md` — item de dívida "Sem rate limiting" marcado como resolvido (🟡 → ✅) com referência aos PRs e link para [[rate-limiting]]
+
+Wiki pages created:
+
+- `rules/rate-limiting.md` — mecanismo completo: parâmetros, extração de IP (`x-real-ip`), operação atômica via CTE, tabela `login_attempts`, resposta 429, comportamento por design
+
+---
+
 ## 2026-06-11 — PR #69: upgrade Next.js 16 + React 19 (etapa 2 da issue #59)
 
 **Branch**: chore/upgrade-next-16-react-19
