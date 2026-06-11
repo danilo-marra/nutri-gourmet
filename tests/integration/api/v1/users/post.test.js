@@ -270,6 +270,48 @@ describe("POST /api/v1/users", () => {
       const responseBody = await response.json();
       expect(responseBody.name).toBe("ForbiddenError");
     });
+
+    test("Invited account is always pending and cannot log in before activation", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      const createResponse = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${supervisorSession.token}`,
+        },
+        body: JSON.stringify({
+          username: "convidadopendente",
+          email: "convidadopendente@cantina.dev",
+          password: "senha123",
+          role: "operador",
+        }),
+      });
+
+      expect(createResponse.status).toBe(201);
+      const createBody = await createResponse.json();
+      expect(createBody.role).toBe("pending");
+
+      const loginResponse = await fetch(
+        "http://localhost:3000/api/v1/sessions",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: "convidadopendente@cantina.dev",
+            password: "senha123",
+          }),
+        },
+      );
+
+      expect(loginResponse.status).toBe(403);
+      const loginBody = await loginResponse.json();
+      expect(loginBody.name).toBe("ForbiddenError");
+      expect(loginBody.message).toBe(
+        "Você não possui permissão para fazer login.",
+      );
+    });
   });
 
   describe("Feature-privileged user", () => {

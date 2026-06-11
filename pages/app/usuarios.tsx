@@ -143,7 +143,7 @@ export default function UsuariosPage() {
         const res = await fetch("/api/v1/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password, role }),
+          body: JSON.stringify({ username, email, password }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -234,22 +234,6 @@ export default function UsuariosPage() {
                     placeholder="Senha temporária"
                     className="border border-border rounded-md px-3 py-1.5 text-sm text-fg-1 bg-bg-card focus:outline-none focus:ring-2 focus:ring-brand-teal"
                   />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs text-fg-3 font-medium">
-                    Função
-                  </label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value as UserRole)}
-                    className="border border-border rounded-md px-3 py-1.5 text-sm text-fg-1 bg-bg-card focus:outline-none focus:ring-2 focus:ring-brand-teal"
-                  >
-                    {assignableRoles.map((r) => (
-                      <option key={r} value={r}>
-                        {ROLE_LABELS[r]}
-                      </option>
-                    ))}
-                  </select>
                 </div>
               </div>
             )}
