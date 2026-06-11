@@ -44,6 +44,7 @@
 - [Venda](domain/venda.md) — múltiplos itens (sales + sale_items); pagamento: credit/cash/card/pix; crédito insuficiente bloqueia; cancelamento (5 min) pelo operador; estorno sem prazo por supervisor/admin
 - [Crédito](domain/credito.md) — saldo monetário R$; saldo negativo com confirmação do operador; pool único
 - [Pacote](domain/pacote.md) — credita R$ no saldo; validade opcional (expires_at); apenas supervisor/admin registra; múltiplos permitidos
+- [Dashboard](domain/dashboard.md) — KPIs em tempo real (receita, alunos negativos, fechamentos pendentes); vistas diferenciadas por perfil; 6 endpoints de relatório
 - [Fechamento de Caixa](domain/fechamento-de-caixa.md) — não bloqueante; gera resumo básico; supervisor/admin pode fechar em nome do operador
 - [Recuperação de Senha](domain/recuperacao-de-senha.md) — fluxo self-service via email; token de uso único; expiração de 30 minutos; anti-enumeração
 - [Eventos](domain/eventos.md) — módulo de eventos escolares; ciclo: solicitação → consumo → encerramento → NF-e → cobrança; ≥ 1–2/mês
@@ -55,7 +56,7 @@
 - [Segurança e Controle de Acesso](rules/seguranca.md) — visibilidade restrita por perfil; tabela de permissões por persona
 - [Rate Limiting](rules/rate-limiting.md) — proteção brute-force no login: sliding window 15 min / 10 tentativas por IP, armazenado em PostgreSQL
 - [UI/UX](rules/ui-ux.md) — design system Nutrigourmet: paleta verde/teal/laranja, 6 fontes, tokens de cor; landing page (`/`) e app interno
-- [Relatórios](rules/relatorios.md) — 8 endpoints de relatório (5 originais + 3 do PR #47); supervisor/admin; tabela paginada; sem exportação nesta fase
+- [Relatórios](rules/relatorios.md) — 14 endpoints de relatório (5 originais + 3 do PR #47 + 6 de dashboard); supervisor/admin; tabela paginada; sem exportação nesta fase
 - [Fiscal](rules/fiscal.md) — regras de emissão (NFC-e presencial, NF-e digital/eventos/Integral); 100% cobertura de canal; P5 no roadmap
 
 ---

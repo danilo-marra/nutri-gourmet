@@ -1,6 +1,6 @@
 # Relatórios
 
-**Summary**: Oito endpoints de relatório — 5 originais do Phase 1 + 3 adicionados no PR #47 (vendas por produto, créditos consumidos, consumo por aluno). Todos acessíveis por supervisor e admin.
+**Summary**: Catorze endpoints de relatório — 5 originais do Phase 1 + 3 adicionados no PR #47 + 6 de dashboard (summary, revenue-trend, category-breakdown, top-products, operator-summary, my-shift-summary). Todos acessíveis por supervisor/admin; `my-shift-summary` acessível por qualquer role autenticada.
 
 **Sources**: raw/decisions/relatorios.md
 
@@ -51,16 +51,22 @@ Todos os endpoints ficam em `pages/api/v1/reports/`. Permissões divididas em do
 - **`read:report:financial`** — supervisor + admin: vendas, créditos, saldo por aluno
 - **`read:report:operational`** — supervisor + admin: fechamentos de caixa, pacotes vigentes
 
-| Endpoint                                  | Permissão                 | Parâmetros obrigatórios               | Parâmetros opcionais                           |
-| ----------------------------------------- | ------------------------- | ------------------------------------- | ---------------------------------------------- |
-| `GET /api/v1/reports/sales`               | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
-| `GET /api/v1/reports/credits`             | `read:report:financial`   | `start_date`, `end_date`              | `student_id` (UUID)                            |
-| `GET /api/v1/reports/balances`            | `read:report:financial`   | —                                     | —                                              |
-| `GET /api/v1/reports/cash-closes`         | `read:report:operational` | —                                     | `start_date`, `end_date`, `operator_id` (UUID) |
-| `GET /api/v1/reports/packages`            | `read:report:operational` | —                                     | —                                              |
-| `GET /api/v1/reports/sales-by-product`    | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
-| `GET /api/v1/reports/credits-consumed`    | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
-| `GET /api/v1/reports/student-consumption` | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| Endpoint                                           | Permissão                 | Parâmetros obrigatórios               | Parâmetros opcionais                           |
+| -------------------------------------------------- | ------------------------- | ------------------------------------- | ---------------------------------------------- |
+| `GET /api/v1/reports/sales`                        | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/credits`                      | `read:report:financial`   | `start_date`, `end_date`              | `student_id` (UUID)                            |
+| `GET /api/v1/reports/balances`                     | `read:report:financial`   | —                                     | —                                              |
+| `GET /api/v1/reports/cash-closes`                  | `read:report:operational` | —                                     | `start_date`, `end_date`, `operator_id` (UUID) |
+| `GET /api/v1/reports/packages`                     | `read:report:operational` | —                                     | —                                              |
+| `GET /api/v1/reports/sales-by-product`             | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/credits-consumed`             | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/student-consumption`          | `read:report:financial`   | `start_date`, `end_date` (YYYY-MM-DD) | —                                              |
+| `GET /api/v1/reports/dashboard/summary`            | `read:report:financial`   | —                                     | —                                              |
+| `GET /api/v1/reports/dashboard/revenue-trend`      | `read:report:financial`   | —                                     | `days` (int, default 7)                        |
+| `GET /api/v1/reports/dashboard/category-breakdown` | `read:report:financial`   | `start_date`, `end_date`              | —                                              |
+| `GET /api/v1/reports/dashboard/top-products`       | `read:report:financial`   | `start_date`, `end_date`              | `limit` (int, default 5)                       |
+| `GET /api/v1/reports/dashboard/operator-summary`   | `read:report:financial`   | `start_date`, `end_date`              | —                                              |
+| `GET /api/v1/reports/dashboard/my-shift-summary`   | qualquer role autenticada | —                                     | —                                              |
 
 `/reports/sales` retorna `{ by_payment_method: [...], grand_total }`. Os demais retornam arrays. `/reports/cash-closes` inclui dias sem fechamento com `status: "pending"` via CTE. `/reports/sales-by-product` e `/reports/credits-consumed` e `/reports/student-consumption` retornam arrays ordenados por `revenue DESC` / `total_consumed DESC`.
 
@@ -87,6 +93,7 @@ Ver [[fluxo-operacional]] e [[gap-analysis]] para o contexto completo.
 
 ## Related pages
 
+- [[dashboard]]
 - [[supervisor]]
 - [[administrador]]
 - [[venda]]
