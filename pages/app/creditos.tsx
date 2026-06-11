@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import useSWR from "swr";
-import type { FormEvent, ReactElement, ReactNode } from "react";
+import type { SyntheticEvent, ReactElement, ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import { useUser } from "@/hooks/useUser";
 import type { CreditType } from "@/types/index";
@@ -150,7 +150,7 @@ export default function CreditosPage() {
     setError(null);
   }
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!selectedStudentId) return;
 
