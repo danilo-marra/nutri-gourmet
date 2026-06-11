@@ -167,3 +167,28 @@ export class MethodNotAllowedError extends Error {
     };
   }
 }
+
+export class TooManyRequestsError extends Error {
+  action: string;
+  statusCode: number;
+
+  constructor({ cause, message, action }: BaseErrorParams) {
+    super(
+      message ??
+        "Muitas tentativas de acesso. Tente novamente em alguns minutos.",
+      { cause },
+    );
+    this.name = "TooManyRequestsError";
+    this.action = action ?? "Aguarde antes de tentar novamente.";
+    this.statusCode = 429;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}

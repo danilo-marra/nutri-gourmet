@@ -2,6 +2,7 @@ import { version as uuidVersion } from "uuid";
 import setCookieParser from "set-cookie-parser";
 import orchestrator from "tests/orchestrator.js";
 import session from "models/session.js";
+import loginAttempt from "models/loginAttempt.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -151,6 +152,55 @@ describe("POST /api/v1/sessions", () => {
         path: "/",
         httpOnly: true,
       });
+    });
+  });
+
+  describe("Rate limiting", () => {
+    // TEST-NET-3 (RFC 5737) — never used by real traffic, won't collide with
+    // the ::1 socket address used by the other tests above.
+    const RATE_LIMIT_TEST_IP = "203.0.113.42";
+
+    const makeAttempt = () =>
+      fetch("http://localhost:3000/api/v1/sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-forwarded-for": RATE_LIMIT_TEST_IP,
+        },
+        body: JSON.stringify({
+          email: "ratelimit@test.com",
+          password: "wrong-password",
+        }),
+      });
+
+    test("Retorna 429 após MAX_ATTEMPTS tentativas", async () => {
+      for (let i = 0; i < loginAttempt.MAX_ATTEMPTS; i++) {
+        const res = await makeAttempt();
+        expect(res.status).toBe(401);
+      }
+
+      const blocked = await makeAttempt();
+      expect(blocked.status).toBe(429);
+    });
+
+    test("Body do 429 segue contrato de erro", async () => {
+      const res = await makeAttempt();
+      expect(res.status).toBe(429);
+      expect(await res.json()).toEqual({
+        name: "TooManyRequestsError",
+        message:
+          "Muitas tentativas de acesso. Tente novamente em alguns minutos.",
+        action: "Aguarde antes de tentar novamente.",
+        status_code: 429,
+      });
+    });
+
+    test("Resposta 429 inclui header Retry-After", async () => {
+      const res = await makeAttempt();
+      expect(res.status).toBe(429);
+      expect(res.headers.get("retry-after")).toBe(
+        String(loginAttempt.WINDOW_MINUTES * 60),
+      );
     });
   });
 });

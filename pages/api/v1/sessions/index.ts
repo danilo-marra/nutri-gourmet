@@ -9,7 +9,11 @@ import { ForbiddenError } from "infra/errors";
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.use(controller.injectAnonymousOrUser);
-router.post(controller.canRequest("create:session"), postHandler);
+router.post(
+  controller.canRequest("create:session"),
+  controller.rateLimitLogin,
+  postHandler,
+);
 router.delete(deleteHandler);
 
 export default router.handler(controller.errorHandlers);
