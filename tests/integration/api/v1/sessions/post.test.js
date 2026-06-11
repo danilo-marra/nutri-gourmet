@@ -165,7 +165,7 @@ describe("POST /api/v1/sessions", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-forwarded-for": RATE_LIMIT_TEST_IP,
+          "x-real-ip": RATE_LIMIT_TEST_IP,
         },
         body: JSON.stringify({
           email: "ratelimit@test.com",

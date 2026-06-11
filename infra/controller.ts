@@ -121,10 +121,11 @@ function injectAnonymousUser(request: NextApiRequest): void {
 }
 
 function extractIp(request: NextApiRequest): string {
-  const forwarded = request.headers["x-forwarded-for"];
-  if (forwarded) {
-    const raw = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-    return raw.split(",")[0].trim();
+  // x-real-ip is set by Vercel's edge network and cannot be forged by the client.
+  // x-forwarded-for is client-controllable and must not be used for rate limiting.
+  const realIp = request.headers["x-real-ip"];
+  if (realIp && typeof realIp === "string") {
+    return realIp.trim();
   }
   return request.socket?.remoteAddress ?? "unknown";
 }
@@ -135,11 +136,10 @@ async function rateLimitLogin(
   next: NextHandler,
 ): Promise<void> {
   const ip = extractIp(request);
-  if (await loginAttempt.isLimitExceeded(ip)) {
+  if (await loginAttempt.recordAndCheck(ip)) {
     response.setHeader("Retry-After", String(loginAttempt.WINDOW_MINUTES * 60));
     throw new TooManyRequestsError({});
   }
-  await loginAttempt.record(ip);
   return next();
 }
 
