@@ -218,12 +218,9 @@ async function clearDemoData(client) {
   const studentIds = studentRes.rows.map((r) => r.id);
   const productIds = productRes.rows.map((r) => r.id);
 
-  // Delete in FK-safe order
-  if (productIds.length > 0)
-    await client.query(`DELETE FROM sale_items WHERE product_id = ANY($1)`, [
-      productIds,
-    ]);
-
+  // Delete in FK-safe order, scoped exclusively through demo operator sales.
+  // We never delete sale_items by product_id globally — that would corrupt real
+  // sales that happen to reference a same-named product (e.g. "Água Mineral").
   if (userIds.length > 0) {
     await client.query(
       `DELETE FROM sale_items WHERE sale_id IN (SELECT id FROM sales WHERE operator_id = ANY($1))`,
@@ -240,16 +237,26 @@ async function clearDemoData(client) {
       [userIds],
     );
   }
-  // Cover credit_transactions where student is demo but operator is not (edge case)
   if (studentIds.length > 0) {
+    // Cover credit_transactions where student is demo but operator is not
     await client.query(
       `DELETE FROM credit_transactions WHERE student_id = ANY($1)`,
       [studentIds],
     );
-    await client.query(`DELETE FROM students WHERE id = ANY($1)`, [studentIds]);
+    // Guard: skip students that still appear in real (non-demo) sales
+    await client.query(
+      `DELETE FROM students WHERE id = ANY($1)
+         AND NOT EXISTS (SELECT 1 FROM sales WHERE student_id = students.id)`,
+      [studentIds],
+    );
   }
   if (productIds.length > 0)
-    await client.query(`DELETE FROM products WHERE id = ANY($1)`, [productIds]);
+    // Guard: skip products that still have sale_items (real sales referencing them)
+    await client.query(
+      `DELETE FROM products WHERE id = ANY($1)
+         AND NOT EXISTS (SELECT 1 FROM sale_items WHERE product_id = products.id)`,
+      [productIds],
+    );
   if (userIds.length > 0)
     await client.query(`DELETE FROM users WHERE id = ANY($1)`, [userIds]);
 
