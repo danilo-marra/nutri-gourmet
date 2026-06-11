@@ -4,47 +4,56 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
+type PageState = "idle" | "loading" | "error";
+
 interface ApiError {
   message: string;
   action?: string;
 }
 
-export default function Login() {
+export default function ResetPassword() {
   const router = useRouter();
-  const { activated, recovered } = router.query;
+  const { token_id } = router.query;
 
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<ApiError | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [confirm, setConfirm] = useState("");
+  const [matchError, setMatchError] = useState(false);
+  const [state, setState] = useState<PageState>("idle");
+  const [apiError, setApiError] = useState<ApiError | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
+    setMatchError(false);
+    setApiError(null);
+
+    if (password !== confirm) {
+      setMatchError(true);
+      return;
+    }
+
+    setState("loading");
 
     try {
-      const res = await fetch("/api/v1/sessions", {
-        method: "POST",
+      const res = await fetch(`/api/v1/password/recovery/${token_id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ password }),
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
-        setError(data);
+        const data = await res.json();
+        setApiError(data);
+        setState("error");
         return;
       }
 
-      router.push("/app");
+      router.push("/login?recovered=1");
     } catch {
-      setError({
+      setApiError({
         message: "Erro de conexão. Tente novamente.",
         action: "Verifique sua internet e tente novamente.",
       });
-    } finally {
-      setLoading(false);
+      setState("error");
     }
   }
 
@@ -64,65 +73,45 @@ export default function Login() {
 
         <div className="bg-white rounded-xl shadow-md p-8">
           <h2
-            className="text-lg font-semibold text-fg-1 mb-6"
+            className="text-lg font-semibold text-fg-1 mb-2"
             style={{ fontFamily: "var(--font-primary)" }}
           >
-            Entrar
+            Nova senha
           </h2>
+          <p className="text-sm text-fg-3 mb-6">
+            Digite e confirme sua nova senha.
+          </p>
 
-          {activated && (
-            <div className="mb-4 px-4 py-3 rounded-md bg-brand-green-subtle text-sm text-success-dark font-medium">
-              Conta ativada com sucesso! Faça login.
-            </div>
-          )}
-
-          {recovered && (
-            <div className="mb-4 px-4 py-3 rounded-md bg-brand-green-subtle text-sm text-success-dark font-medium">
-              Senha redefinida com sucesso! Faça login.
-            </div>
-          )}
-
-          {error && (
+          {state === "error" && apiError && (
             <div className="mb-4 px-4 py-3 rounded-md bg-danger-bg">
-              <p className="text-sm font-medium text-danger">{error.message}</p>
-              {error.action && (
-                <p className="text-xs text-fg-3 mt-1">{error.action}</p>
+              <p className="text-sm font-medium text-danger">
+                {apiError.message}
+              </p>
+              {apiError.action && (
+                <p className="text-xs text-fg-3 mt-1">{apiError.action}</p>
               )}
+              <Link
+                href="/recovery"
+                className="inline-block text-xs text-brand-teal hover:underline mt-2"
+              >
+                Solicitar novo link
+              </Link>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
-                htmlFor="email"
-                className="block text-xs font-semibold text-fg-2 mb-1.5"
-              >
-                E-mail
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
-                className="w-full border border-border rounded-[10px] px-3 py-2 text-sm text-fg-1 placeholder:text-fg-3 outline-none focus:border-brand-teal transition-colors"
-              />
-            </div>
-
-            <div>
-              <label
                 htmlFor="password"
                 className="block text-xs font-semibold text-fg-2 mb-1.5"
               >
-                Senha
+                Nova senha
               </label>
               <input
                 id="password"
                 type="password"
                 required
-                autoComplete="current-password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -130,22 +119,48 @@ export default function Login() {
               />
             </div>
 
+            <div>
+              <label
+                htmlFor="confirm"
+                className="block text-xs font-semibold text-fg-2 mb-1.5"
+              >
+                Confirmar senha
+              </label>
+              <input
+                id="confirm"
+                type="password"
+                required
+                autoComplete="new-password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                placeholder="••••••••"
+                className={`w-full border rounded-[10px] px-3 py-2 text-sm text-fg-1 placeholder:text-fg-3 outline-none focus:border-brand-teal transition-colors ${
+                  matchError ? "border-danger" : "border-border"
+                }`}
+              />
+              {matchError && (
+                <p className="text-xs text-danger mt-1">
+                  As senhas não coincidem.
+                </p>
+              )}
+            </div>
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={state === "loading"}
               className="w-full bg-brand-green hover:bg-brand-green-hover text-white font-medium text-sm rounded-lg py-2.5 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               style={{ fontFamily: "var(--font-button)" }}
             >
-              {loading ? "Entrando…" : "Entrar"}
+              {state === "loading" ? "Salvando…" : "Redefinir senha"}
             </button>
           </form>
 
           <div className="mt-4 text-center">
             <Link
-              href="/recovery"
+              href="/login"
               className="text-xs text-fg-3 hover:text-brand-teal transition-colors"
             >
-              Esqueci minha senha
+              Voltar ao login
             </Link>
           </div>
         </div>
