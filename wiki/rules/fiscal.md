@@ -4,7 +4,7 @@
 
 **Sources**: raw/decisions/sistemas-externos.md, raw/decisions/eventos-integral.md
 
-**Last updated**: 2026-06-02
+**Last updated**: 2026-06-11
 
 ---
 
@@ -29,13 +29,13 @@
 
 Meta do cliente: **100% das vendas registradas** independente do meio:
 
-| Canal                        | Status atual             | Meta                  |
-| ---------------------------- | ------------------------ | --------------------- |
-| Caixa presencial (cash/card) | ✅ registrado no sistema | ✅ NFC-e via MarketUp |
-| Crédito Vlupt                | ⚠️ manual                | NFC-e automática      |
-| Link Stone (Pix/cartão)      | ❌ não registrado        | NF-e automática       |
-| Eventos escolares            | ❌ manual                | NF-e automática       |
-| Integral (parcelas)          | ❌ manual                | NF-e automática       |
+| Canal                        | Status atual                                              | Meta                  |
+| ---------------------------- | --------------------------------------------------------- | --------------------- |
+| Caixa presencial (cash/card) | ✅ registrado no sistema                                  | ✅ NFC-e via MarketUp |
+| Crédito Vlupt                | ⚠️ manual                                                 | NFC-e automática      |
+| Link Stone (Pix/cartão)      | ⚠️ registrado via webhook + reconciliação manual (PR #56) | NF-e automática       |
+| Eventos escolares            | ❌ manual                                                 | NF-e automática       |
+| Integral (parcelas)          | ❌ manual                                                 | NF-e automática       |
 
 ## Responsável pela emissão
 

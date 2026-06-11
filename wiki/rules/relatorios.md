@@ -4,7 +4,7 @@
 
 **Sources**: raw/decisions/relatorios.md
 
-**Last updated**: 2026-06-10 (PR #66)
+**Last updated**: 2026-06-11
 
 ---
 
@@ -68,20 +68,20 @@ Todos os endpoints ficam em `pages/api/v1/reports/`. Permissões divididas em do
 
 O cliente listou 12 relatórios como necessários para a operação (source: raw/fluxo-cantina.md). Status atualizado após PR #47:
 
-| #   | Relatório desejado     | Status                                                                        |
-| --- | ---------------------- | ----------------------------------------------------------------------------- |
-| 1   | Vendas por escola      | ❌ requer multi-unidade                                                       |
-| 2   | Vendas por unidade     | ❌ requer multi-unidade                                                       |
-| 3   | Vendas por produto     | ✅ `GET /api/v1/reports/sales-by-product` + `pages/app/relatorios.tsx`        |
-| 4   | Consumo por aluno      | ✅ `GET /api/v1/reports/student-consumption` + `pages/app/relatorios.tsx`     |
-| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                                              |
-| 6   | Créditos consumidos    | ✅ `GET /api/v1/reports/credits-consumed` + `pages/app/relatorios.tsx`        |
-| 7   | Faturamento diário     | ✅ `GET /api/v1/reports/dashboard/revenue-trend` + `pages/app/relatorios.tsx` |
-| 8   | Faturamento mensal     | ✅ `GET /api/v1/reports/sales` (filtro por mês) + `pages/app/relatorios.tsx`  |
-| 9   | Recebimentos Stone     | ❌ requer integração Stone                                                    |
-| 10  | Eventos realizados     | ❌ requer módulo de eventos                                                   |
-| 11  | Estoque atual          | ❌ requer controle de estoque (no MarketUp por ora)                           |
-| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`                               |
+| #   | Relatório desejado     | Status                                                                           |
+| --- | ---------------------- | -------------------------------------------------------------------------------- |
+| 1   | Vendas por escola      | ❌ requer multi-unidade                                                          |
+| 2   | Vendas por unidade     | ❌ requer multi-unidade                                                          |
+| 3   | Vendas por produto     | ✅ `GET /api/v1/reports/sales-by-product` + `pages/app/relatorios.tsx`           |
+| 4   | Consumo por aluno      | ✅ `GET /api/v1/reports/student-consumption` + `pages/app/relatorios.tsx`        |
+| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                                                 |
+| 6   | Créditos consumidos    | ✅ `GET /api/v1/reports/credits-consumed` + `pages/app/relatorios.tsx`           |
+| 7   | Faturamento diário     | ✅ `GET /api/v1/reports/dashboard/revenue-trend` + `pages/app/relatorios.tsx`    |
+| 8   | Faturamento mensal     | ✅ `GET /api/v1/reports/sales` (filtro por mês) + `pages/app/relatorios.tsx`     |
+| 9   | Recebimentos Stone     | ⚠️ parcial — dados em `pending_stone_payments` (PR #56); falta endpoint dedicado |
+| 10  | Eventos realizados     | ❌ requer módulo de eventos                                                      |
+| 11  | Estoque atual          | ❌ requer controle de estoque (no MarketUp por ora)                              |
+| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`                                  |
 
 Ver [[fluxo-operacional]] e [[gap-analysis]] para o contexto completo.
 

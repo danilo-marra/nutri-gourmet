@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/operacoes.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-06-11
 
 ---
 
@@ -21,7 +21,7 @@ Recomendado, mas não bloqueante. O sistema não impede novas vendas se o caixa 
 O fechamento gera um resumo básico visível por [[supervisor]] e [[administrador]], contendo:
 
 - Total de vendas do dia
-- Total por forma de pagamento (`credit`, `cash`, `card`)
+- Total por forma de pagamento (`credit`, `cash`, `card`, `pix` — pix adicionado no PR #56)
 - Nome do operador responsável pelo fechamento
 
 (source: raw/decisions/operacoes.md)
@@ -33,7 +33,7 @@ O fechamento gera um resumo básico visível por [[supervisor]] e [[administrado
 ## Implementação
 
 - `POST /api/v1/cash_closes` — cria um fechamento; requer `create:cash_close` (operador+). Agrega totais de vendas não revertidas do dia via `DATE(created_at AT TIME ZONE 'UTC') = $date`. Supervisor/admin pode especificar `operator_id` no body para fechar em nome de outro operador.
-- `GET /api/v1/cash_closes` — lista todos os fechamentos; requer `read:cash_close` (supervisor+). Retorna: `id`, `operator_id`, `closed_by_id`, `date`, `total_sales`, `total_credit`, `total_cash`, `total_card`, `created_at`, `updated_at`.
+- `GET /api/v1/cash_closes` — lista todos os fechamentos; requer `read:cash_close` (supervisor+). Retorna: `id`, `operator_id`, `closed_by_id`, `date`, `total_sales`, `total_credit`, `total_cash`, `total_card`, `total_pix`, `created_at`, `updated_at`.
 - Constraint `UNIQUE (operator_id, date)` impede fechamento duplicado; violação retorna `ValidationError` (400).
 
 ## Related pages
