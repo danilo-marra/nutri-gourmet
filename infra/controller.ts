@@ -6,6 +6,7 @@ import user from "models/user.js";
 import authorization from "models/authorization.js";
 import type { Feature } from "@/types/index";
 
+import loginAttempt from "models/loginAttempt.js";
 import {
   InternalServerError,
   MethodNotAllowedError,
@@ -13,6 +14,7 @@ import {
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
+  TooManyRequestsError,
 } from "infra/errors";
 
 function onNoMatchHandler(request: NextApiRequest, response: NextApiResponse) {
@@ -28,7 +30,8 @@ function onErrorHandler(
   if (
     error instanceof ValidationError ||
     error instanceof NotFoundError ||
-    error instanceof ForbiddenError
+    error instanceof ForbiddenError ||
+    error instanceof TooManyRequestsError
   ) {
     return response.status(error.statusCode).json(error);
   }
@@ -117,6 +120,29 @@ function injectAnonymousUser(request: NextApiRequest): void {
   };
 }
 
+function extractIp(request: NextApiRequest): string {
+  const forwarded = request.headers["x-forwarded-for"];
+  if (forwarded) {
+    const raw = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+    return raw.split(",")[0].trim();
+  }
+  return request.socket?.remoteAddress ?? "unknown";
+}
+
+async function rateLimitLogin(
+  request: NextApiRequest,
+  response: NextApiResponse,
+  next: NextHandler,
+): Promise<void> {
+  const ip = extractIp(request);
+  if (await loginAttempt.isLimitExceeded(ip)) {
+    response.setHeader("Retry-After", String(loginAttempt.WINDOW_MINUTES * 60));
+    throw new TooManyRequestsError({});
+  }
+  await loginAttempt.record(ip);
+  return next();
+}
+
 function canRequest(feature: Feature) {
   return function canRequestMiddleware(
     request: NextApiRequest,
@@ -145,6 +171,7 @@ const controller = {
   clearSessionCookie,
   injectAnonymousOrUser,
   canRequest,
+  rateLimitLogin,
 };
 
 export default controller;
