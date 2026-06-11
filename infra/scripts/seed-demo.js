@@ -446,16 +446,27 @@ async function run() {
     process.stdout.write("  Inserindo produtos...");
     const insertedProducts = [];
     for (const p of DEMO_PRODUCTS) {
-      const res = await client.query(
-        `INSERT INTO products (name, price, category, active)
-         VALUES ($1, $2, $3, true)
-         ON CONFLICT (name) DO UPDATE
-           SET price = EXCLUDED.price, category = EXCLUDED.category
-         RETURNING id, price`,
-        [p.name, p.price, p.category],
+      const existing = await client.query(
+        `SELECT id FROM products WHERE name = $1`,
+        [p.name],
       );
+      let productId;
+      if (existing.rows.length > 0) {
+        await client.query(
+          `UPDATE products SET price = $1, category = $2 WHERE id = $3`,
+          [p.price, p.category, existing.rows[0].id],
+        );
+        productId = existing.rows[0].id;
+      } else {
+        const res = await client.query(
+          `INSERT INTO products (name, price, category, active)
+           VALUES ($1, $2, $3, true) RETURNING id`,
+          [p.name, p.price, p.category],
+        );
+        productId = res.rows[0].id;
+      }
       insertedProducts.push({
-        id: res.rows[0].id,
+        id: productId,
         price: p.price,
         weight: p.weight,
       });
