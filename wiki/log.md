@@ -4,6 +4,19 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-11 — PR #78: páginas frontend de recuperação de senha (issue #22 tasks 3 & 4)
+
+**Branch**: feat/password-recovery-pages  
+**PR**: #78
+
+**What changed**: Adicionadas duas páginas frontend de recuperação de senha: `pages/recovery.tsx` (passo 1 — solicitar link via email) e `pages/recovery/[token_id].tsx` (passo 2 — definir nova senha com o token). O modelo `passwordReset.ts` recebeu template HTML para o email de redefinição (com botão verde e escaping XSS via `escapeHtml`) e o assunto foi atualizado de "Recuperação de senha" para "Redefinição de senha". A página de login exibe um banner `?recovered=1` após redefinição bem-sucedida.
+
+Wiki pages updated:
+
+- `domain/recuperacao-de-senha.md` — adicionada seção "Páginas frontend" (tabela de rotas), step 6 ao fluxo completo (redirect `?recovered=1`), seção "Email enviado" com assunto, formatos e detalhe de escaping XSS; Sources atualizado
+
+---
+
 ## 2026-06-11 — fix: garantia de concorrência do CTE de rate limit
 
 **Branch**: docs/fix-rate-limit-concurrency-claim

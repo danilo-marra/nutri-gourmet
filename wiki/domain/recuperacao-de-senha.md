@@ -2,21 +2,31 @@
 
 **Summary**: Fluxo self-service de redefinição de senha via email com token de uso único e expiração de 30 minutos.
 
-**Sources**: infra/migrations/, models/passwordReset.ts, pages/api/v1/password/recovery/
+**Sources**: infra/migrations/, models/passwordReset.ts, pages/api/v1/password/recovery/, pages/recovery.tsx, pages/recovery/[token_id].tsx
 
-**Last updated**: 2026-06-09
+**Last updated**: 2026-06-11
 
 ---
 
 O sistema oferece recuperação de senha sem intervenção de operador. O usuário solicita o link, recebe por email e define uma nova senha diretamente.
 
+## Páginas frontend
+
+| Rota                   | Arquivo                         | Função                                                        |
+| ---------------------- | ------------------------------- | ------------------------------------------------------------- |
+| `/recovery`            | `pages/recovery.tsx`            | Formulário de solicitação (passo 1 — usuário informa o email) |
+| `/recovery/[token_id]` | `pages/recovery/[token_id].tsx` | Formulário de nova senha (passo 2 — token recebido por email) |
+
+Ambas as páginas são anônimas (não exigem sessão) e usam o mesmo visual da tela de login (logo, card centralizado, design system do projeto).
+
 ## Fluxo completo
 
-1. Usuário informa o email em `POST /api/v1/password/recovery`
+1. Usuário acessa `/recovery`, informa o email e submete
 2. Se o email existir, um token é gerado em `password_reset_tokens` e enviado por email
 3. O email contém um link `<PRODUCTION_URL>/recovery/<token_id>`
-4. Usuário clica no link e envia a nova senha via `PATCH /api/v1/password/recovery/<token_id>`
+4. Usuário clica no link, acessa `/recovery/<token_id>` e define uma nova senha
 5. O token é marcado como usado atomicamente; a senha é atualizada
+6. Usuário é redirecionado para `/login?recovered=1`, que exibe um banner de confirmação
 
 ## Endpoints
 
@@ -37,6 +47,14 @@ Redefine a senha usando o token do link.
 - **Body**: `{ "password": "..." }`
 - **Resposta**: `204` em caso de sucesso; `404` se token inválido, já usado ou expirado
 - **Efeito**: consumo atômico do token (`WHERE used_at IS NULL AND expires_at > NOW()`) + atualização de senha
+
+## Email enviado
+
+- **Assunto**: `Redefinição de senha — {appName}`
+- **Formatos**: plaintext + HTML (template responsivo com botão verde "Redefinir senha")
+- **Segurança HTML**: `escapeHtml` aplicado ao `username` antes de interpolação no HTML (previne XSS em clientes de email)
+- **Link**: `{webserver.origin}/recovery/{token_id}` — válido por 30 minutos
+- Mensagem de "não fiz essa solicitação" em ambos os formatos (informacional)
 
 ## Segurança
 
