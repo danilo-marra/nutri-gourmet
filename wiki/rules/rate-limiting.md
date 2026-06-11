@@ -37,7 +37,7 @@ function extractIp(request: NextApiRequest): string {
 
 ## Operação atômica (check + insert)
 
-O modelo `loginAttempt` usa um único CTE PostgreSQL que faz INSERT e COUNT na mesma instrução, eliminando a race condition de um check-then-insert separado:
+O modelo `loginAttempt` usa um único CTE PostgreSQL que faz INSERT e COUNT na mesma instrução. Isso colapsa a race condition de um check-then-insert separado (application-level) para uma janela mínima no nível de snapshot do banco — mas **não elimina totalmente a race sob alta concorrência**:
 
 ```typescript
 // models/loginAttempt.ts
@@ -61,7 +61,9 @@ async function recordAndCheck(ip: string): Promise<boolean> {
 }
 ```
 
-**Por que +1?** O INSERT e o SELECT compartilham o mesmo snapshot MVCC no PostgreSQL, então a nova linha não é visível ao SELECT. O +1 manual contabiliza a tentativa recém-inserida. O resultado é: tentativas 1–10 passam; a 11ª retorna 429.
+**Por que +1?** O INSERT e o SELECT compartilham o mesmo snapshot MVCC no PostgreSQL, então a nova linha recém-inserida não é visível ao SELECT. O +1 manual contabiliza a tentativa recém-inserida. Isso resolve a race consigo mesmo (um processo não consegue fazer check-then-insert com gap).
+
+**Limite best-effort, não rígido.** Sob alta concorrência — duas requisições chegando simultaneamente quando já existem 9 tentativas na janela — ambas podem tirar um snapshot antes de qualquer INSERT confirmar, ambas contarão 9 + 1 = 10 e passarão, deixando 11 tentativas no banco. Na prática isso é irrelevante para brute-force (ataques sequenciais não exploram essa janela), mas o limite não é matematicamente rígido. Para um limite rígido seria necessário serialização explícita (advisory lock, counter table com `UPDATE … RETURNING`, ou isolamento `SERIALIZABLE`).
 
 ## Resposta HTTP
 
