@@ -1,5 +1,5 @@
 import database from "infra/database.js";
-import { ValidationError, NotFoundError } from "infra/errors.js";
+import { ValidationError, NotFoundError, ConflictError } from "infra/errors.js";
 import type { Student } from "@/types/index";
 
 interface StudentInputValues {
@@ -146,8 +146,23 @@ async function update(
 async function remove(id: string): Promise<Student> {
   await findOneById(id);
 
-  const removedStudent = await runDeleteQuery(id);
-  return removedStudent;
+  try {
+    const removedStudent = await runDeleteQuery(id);
+    return removedStudent;
+  } catch (err: unknown) {
+    // database.query() wraps pg errors in ServiceError({ cause: pgErr });
+    // check the underlying pg error code for FK violations (23503)
+    const pgCode = (err as { cause?: { code?: string } }).cause?.code;
+    if (pgCode === "23503") {
+      throw new ConflictError({
+        message:
+          "Este aluno possui vendas ou créditos registrados e não pode ser excluído.",
+        action:
+          "Remova todas as vendas e transações de crédito associadas antes de excluir o aluno.",
+      });
+    }
+    throw err;
+  }
 
   async function runDeleteQuery(id: string): Promise<Student> {
     const results = await database.query<Student>({

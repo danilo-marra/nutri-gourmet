@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import useSWR from "swr";
 import type { SyntheticEvent, ReactElement, ReactNode } from "react";
 import AppShell from "@/components/AppShell";
@@ -74,6 +74,7 @@ export default function AlunosPage() {
   // delete confirmation
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   function openCreate() {
     setName("");
@@ -129,19 +130,20 @@ export default function AlunosPage() {
 
   async function handleDelete(id: string) {
     setDeleting(true);
+    setDeleteError(null);
     try {
       const res = await fetch(`/api/v1/students/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json();
-        alert(data.message || "Erro ao excluir aluno.");
+        setDeleteError(data.message || "Erro ao excluir aluno.");
         return;
       }
       await mutate();
+      setConfirmDeleteId(null);
     } catch {
-      alert("Erro de comunicação. Tente novamente.");
+      setDeleteError("Erro de comunicação. Tente novamente.");
     } finally {
       setDeleting(false);
-      setConfirmDeleteId(null);
     }
   }
 
@@ -266,8 +268,8 @@ export default function AlunosPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {students.map((s) => (
-                  <>
-                    <tr key={s.id} className="hover:bg-bg-subtle/50">
+                  <Fragment key={s.id}>
+                    <tr className="hover:bg-bg-subtle/50">
                       <td className="py-2.5 pr-4 font-medium text-fg-1">
                         {s.name}
                       </td>
@@ -309,11 +311,12 @@ export default function AlunosPage() {
                             )}
                             {canDelete && (
                               <button
-                                onClick={() =>
+                                onClick={() => {
+                                  setDeleteError(null);
                                   setConfirmDeleteId(
                                     confirmDeleteId === s.id ? null : s.id,
-                                  )
-                                }
+                                  );
+                                }}
                                 title="Excluir"
                                 className="text-fg-3 hover:text-red-500 transition-colors"
                               >
@@ -336,34 +339,46 @@ export default function AlunosPage() {
                       )}
                     </tr>
                     {confirmDeleteId === s.id && (
-                      <tr key={`confirm-${s.id}`} className="bg-red-50">
+                      <tr className="bg-red-50">
                         <td
                           colSpan={canUpdate || canDelete ? 5 : 4}
                           className="px-2 py-2"
                         >
-                          <div className="flex items-center gap-3 text-sm">
-                            <span className="text-red-600 font-medium">
-                              Excluir &quot;{s.name}&quot;? Esta ação é
-                              irreversível.
-                            </span>
-                            <button
-                              onClick={() => handleDelete(s.id)}
-                              disabled={deleting}
-                              className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 disabled:opacity-50"
-                            >
-                              {deleting ? "Excluindo..." : "Confirmar"}
-                            </button>
-                            <button
-                              onClick={() => setConfirmDeleteId(null)}
-                              className="px-3 py-1 border border-border text-xs text-fg-2 rounded hover:bg-bg-subtle"
-                            >
-                              Cancelar
-                            </button>
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-3 text-sm">
+                              <span className="text-red-600 font-medium">
+                                Excluir &quot;{s.name}&quot;? Esta ação é
+                                irreversível.
+                              </span>
+                              {!deleteError && (
+                                <button
+                                  onClick={() => handleDelete(s.id)}
+                                  disabled={deleting}
+                                  className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded hover:bg-red-600 disabled:opacity-50"
+                                >
+                                  {deleting ? "Excluindo..." : "Confirmar"}
+                                </button>
+                              )}
+                              <button
+                                onClick={() => {
+                                  setDeleteError(null);
+                                  setConfirmDeleteId(null);
+                                }}
+                                className="px-3 py-1 border border-border text-xs text-fg-2 rounded hover:bg-bg-subtle"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                            {deleteError && (
+                              <p className="text-xs text-red-600">
+                                {deleteError}
+                              </p>
+                            )}
                           </div>
                         </td>
                       </tr>
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </tbody>
             </table>
