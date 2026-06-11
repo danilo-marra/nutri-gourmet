@@ -92,20 +92,20 @@ Hoje o fluxo é 100% manual (cliente emite NF-e e cobra manualmente). (source: r
 
 ## 12 relatórios desejados pelo cliente
 
-| #   | Relatório              | Status no projeto                               |
-| --- | ---------------------- | ----------------------------------------------- |
-| 1   | Vendas por escola      | ❌ requer multi-unidade                         |
-| 2   | Vendas por unidade     | ❌ requer multi-unidade                         |
-| 3   | Vendas por produto     | ✅ `GET /api/v1/reports/sales-by-product`       |
-| 4   | Consumo por aluno      | ✅ `GET /api/v1/reports/student-consumption`    |
-| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                |
-| 6   | Créditos consumidos    | ✅ `GET /api/v1/reports/credits-consumed`       |
-| 7   | Faturamento diário     | ✅ `revenueTrend` + `pages/app/relatorios.tsx`  |
-| 8   | Faturamento mensal     | ✅ `salesByPeriod` + `pages/app/relatorios.tsx` |
-| 9   | Recebimentos Stone     | ❌ requer integração Stone                      |
-| 10  | Eventos realizados     | ❌ requer módulo de eventos                     |
-| 11  | Estoque atual          | ❌ requer controle de estoque                   |
-| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products` |
+| #   | Relatório              | Status no projeto                                                                |
+| --- | ---------------------- | -------------------------------------------------------------------------------- |
+| 1   | Vendas por escola      | ❌ requer multi-unidade                                                          |
+| 2   | Vendas por unidade     | ❌ requer multi-unidade                                                          |
+| 3   | Vendas por produto     | ✅ `GET /api/v1/reports/sales-by-product`                                        |
+| 4   | Consumo por aluno      | ✅ `GET /api/v1/reports/student-consumption`                                     |
+| 5   | Créditos carregados    | ✅ `GET /api/v1/reports/credits`                                                 |
+| 6   | Créditos consumidos    | ✅ `GET /api/v1/reports/credits-consumed`                                        |
+| 7   | Faturamento diário     | ✅ `revenueTrend` + `pages/app/relatorios.tsx`                                   |
+| 8   | Faturamento mensal     | ✅ `salesByPeriod` + `pages/app/relatorios.tsx`                                  |
+| 9   | Recebimentos Stone     | ⚠️ parcial — dados em `pending_stone_payments` (PR #56); falta endpoint dedicado |
+| 10  | Eventos realizados     | ❌ requer módulo de eventos                                                      |
+| 11  | Estoque atual          | ❌ requer controle de estoque                                                    |
+| 12  | Produtos mais vendidos | ✅ `GET /api/v1/reports/dashboard/top-products`                                  |
 
 Ver também [[relatorios]] para os 8 endpoints de relatório disponíveis.
 

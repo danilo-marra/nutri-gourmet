@@ -4,6 +4,27 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-11 — PR #69: upgrade Next.js 16 + React 19 (etapa 2 da issue #59)
+
+**Branch**: chore/upgrade-next-16-react-19
+**PR**: #69
+
+**What changed**: Upgrade de tooling sem mudança de domínio: Next.js 14.2.35 → 16.2.9 (Turbopack default; `turbopack.resolveAlias` substitui o webpack `extensionAlias`), React 18.3.1 → 19.2.7, ESLint 8 → 9 com flat config (`eslint.config.mjs` substitui `.eslintrc.json`), swr 2.4.1, `type-check` agora roda `next typegen` antes do `tsc`. Nenhuma página da wiki descreve stack de build/lint, então não houve atualização decorrente do diff.
+
+Wiki pages updated: nenhuma decorrente do PR #69.
+
+Lint fixes (resíduos do PR #56 que sobreviveram aos lints anteriores + pergunta respondida):
+
+- `domain/fechamento-de-caixa.md` — resumo do fechamento e resposta do `GET /api/v1/cash_closes` omitiam `pix`/`total_pix` (existem desde o PR #56; verificado em `models/cash_close.ts` e migration `add-pix-to-cash-closes`)
+- `rules/escopo.md` — tabela de expectativas dizia que a integração Stone "aguarda decisão de priorização", contradizendo [[stone-webhook]]/[[gap-analysis]] (implementada no PR #56)
+- `rules/fiscal.md` — cobertura de canal marcava Link Stone como "❌ não registrado"; atualizado para ⚠️ registrado via webhook + reconciliação manual (NF-e segue pendente)
+- `rules/relatorios.md` e `domain/fluxo-operacional.md` — relatório "Recebimentos Stone" marcado "❌ requer integração Stone", contradizendo `gap-analysis.md` (⚠️ parcial — dados já em `pending_stone_payments`, falta endpoint dedicado)
+- `domain/administrador.md` — pergunta em aberto "como a conta de admin é criada?" respondida: seed script `npm run seed:admin` (`infra/scripts/seed-admin.js`, upsert por email); Sources atualizado
+
+**Não alterado (justificado):** `raw/` é imutável; entradas históricas deste log preservadas.
+
+---
+
 ## 2026-06-10 — PR #66: migração TypeScript do frontend (PR4, encerra issue #59)
 
 **Branch**: 59-ts-pr4-frontend
