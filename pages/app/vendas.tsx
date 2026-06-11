@@ -52,7 +52,7 @@ const PAYMENT_BADGE: Record<PaymentMethod, string> = {
   credit: "bg-brand-teal-subtle text-brand-teal",
   cash: "bg-brand-green-subtle text-brand-green",
   card: "bg-brand-orange-subtle text-brand-orange",
-  pix: "bg-purple-100 text-purple-700",
+  pix: "bg-brand-pix-subtle text-brand-pix",
 };
 
 const CANCEL_MS = 5 * 60 * 1000;
@@ -150,9 +150,9 @@ export default function VendasPage() {
   );
 
   const todaySales = useMemo(() => {
-    const today = new Date().toDateString();
+    const today = new Date(now).toDateString();
     return sales.filter((s) => new Date(s.created_at).toDateString() === today);
-  }, [sales]);
+  }, [sales, now]);
 
   const activeProducts = useMemo(
     () => products.filter((p) => p.active),
