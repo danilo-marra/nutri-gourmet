@@ -23,7 +23,8 @@
     "commit": "cz",
     "type-check": "next typegen && tsc --noEmit",
     "check-secrets": "secretlint \"**/*\"",
-    "seed:admin": "node infra/scripts/seed-admin.js"
+    "seed:admin": "node infra/scripts/seed-admin.js",
+    "seed:demo": "node infra/scripts/seed-demo.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
