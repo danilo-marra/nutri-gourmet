@@ -35,6 +35,8 @@
   /* Extended brand */
   --color-brand-teal-hover: #239e8c;
   --color-accent-yellow: #ffcb65;
+  --color-brand-pix: #7e22ce;
+  --color-brand-pix-subtle: #f3e8ff;
 
   /* Fonts */
   --font-brand: "Fredoka", system-ui, sans-serif;
