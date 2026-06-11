@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/supervisor.md
 
-**Last updated**: 2026-06-10
+**Last updated**: 2026-06-11
 
 ---
 
@@ -48,9 +48,10 @@ Auditoria OWASP Top 10 pontual sobre o repo. Detalhes em `.claude/skills/securit
 
 **Corrigido (🔴):** escalada de privilégio em `PATCH` e `POST /api/v1/users` — um não-admin (operador autenticado, ou usuário com `update:user:others`/`create:user` concedido por feature manual) conseguia se auto-promover ou criar uma conta **admin** via `role` no body. A regra foi centralizada em `authorization.canAssignRole()`: só admin atribui supervisor/admin; os demais ficam limitados a operador|pending. (PR #29)
 
+**Corrigido (🟡 → ✅):** rate limiting no `POST /api/v1/sessions` — sliding window 15 min / 10 tentativas por IP via tabela `login_attempts`; IP extraído de `x-real-ip` (Vercel edge, não forjável); check+insert atômico via CTE PostgreSQL; retorna 429 com `Retry-After: 900`. (PRs #73, #74 — issue #30). Ver [[rate-limiting]].
+
 **Dívidas conhecidas (🟡, adiadas conscientemente):**
 
-- **Sem rate limiting no login** (`POST /api/v1/sessions`) — sem proteção a brute-force. Aceitável no contexto single-tenant; reavaliar antes de exposição pública. Rastreado na issue #30.
 - **Resíduo de role inline** — os caps de atribuição de role foram centralizados em `authorization.canAssignRole()` (PR #29). Resta um único check inline em `pages/api/v1/users/index.ts:19` (`getHandler`), que decide quais roles o supervisor enxerga na listagem de usuários. É filtro de leitura, não de permissão de escrita; centralizar é opcional e de baixa prioridade.
 
 ## Related pages
@@ -60,3 +61,4 @@ Auditoria OWASP Top 10 pontual sobre o repo. Detalhes em `.claude/skills/securit
 - [[administrador]]
 - [[escopo]]
 - [[recuperacao-de-senha]]
+- [[rate-limiting]]
