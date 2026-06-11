@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import type { ReactElement, ReactNode } from "react";
 import {
   BarChart,
@@ -338,9 +338,11 @@ function OperadorDashboard({ user }: { user: SessionUser }) {
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   if (!user) return null;
 

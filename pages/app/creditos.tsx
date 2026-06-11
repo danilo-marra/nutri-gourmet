@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import type { FormEvent, ReactElement, ReactNode } from "react";
+import useSWR from "swr";
+import type { SyntheticEvent, ReactElement, ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import { useUser } from "@/hooks/useUser";
 import type { CreditType } from "@/types/index";
@@ -99,9 +100,7 @@ export default function CreditosPage() {
   const { user } = useUser();
   const [students, setStudents] = useState<StudentRow[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState("");
-  const [credits, setCredits] = useState<CreditRow[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(true);
-  const [loadingCredits, setLoadingCredits] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<CreditForm>(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
@@ -122,17 +121,14 @@ export default function CreditosPage() {
       .finally(() => setLoadingStudents(false));
   }, []);
 
-  useEffect(() => {
-    if (!selectedStudentId) {
-      setCredits([]);
-      return;
-    }
-    setLoadingCredits(true);
-    fetchJson<CreditRow[]>(`/api/v1/students/${selectedStudentId}/credits`)
-      .then(setCredits)
-      .catch(() => setCredits([]))
-      .finally(() => setLoadingCredits(false));
-  }, [selectedStudentId]);
+  const {
+    data: credits = [],
+    isLoading: loadingCredits,
+    mutate: mutateCredits,
+  } = useSWR<CreditRow[]>(
+    selectedStudentId ? `/api/v1/students/${selectedStudentId}/credits` : null,
+    fetchJson,
+  );
 
   async function refreshStudents() {
     try {
@@ -154,7 +150,7 @@ export default function CreditosPage() {
     setError(null);
   }
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!selectedStudentId) return;
 
@@ -188,7 +184,7 @@ export default function CreditosPage() {
         setError(data.message || "Erro ao registrar crédito.");
         return;
       }
-      setCredits((prev) => [data, ...prev]);
+      await mutateCredits();
       await refreshStudents();
       setForm(EMPTY_FORM);
       setShowForm(false);

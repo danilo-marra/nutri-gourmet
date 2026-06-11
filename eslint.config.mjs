@@ -2,7 +2,6 @@ import js from "@eslint/js";
 import jest from "eslint-plugin-jest";
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import prettier from "eslint-config-prettier";
-import reactHooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
 
 const eslintConfig = [
@@ -18,14 +17,6 @@ const eslintConfig = [
   jest.configs["flat/recommended"],
   ...nextCoreWebVitals,
   prettier,
-  {
-    plugins: { "react-hooks": reactHooks },
-    rules: {
-      // react-hooks v7 (via eslint-config-next 16) promove esta regra a error;
-      // os 4 casos existentes (hydration guard, fetch-em-effect) ficam para refactor próprio.
-      "react-hooks/set-state-in-effect": "warn",
-    },
-  },
   {
     files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
