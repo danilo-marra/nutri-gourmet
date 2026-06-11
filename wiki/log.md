@@ -4,6 +4,18 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-11 — fix: garantia de concorrência do CTE de rate limit
+
+**Branch**: docs/fix-rate-limit-concurrency-claim
+
+**What changed**: A wiki afirmava que o CTE "eliminava a race condition" e que "a 11ª tentativa retorna 429" — garantia mais forte do que a implementação oferece. Sob alta concorrência, duas requisições simultâneas no limite podem ambas passar (cada uma lê snapshot antes do commit da outra). A seção "Operação atômica" foi reescrita para descrever o comportamento como best-effort: o CTE elimina a race application-level (check-then-insert com gap de round-trip), mas não impõe um limite rígido sob concorrência. Para limite rígido seria necessário advisory lock, counter table com `UPDATE … RETURNING`, ou `SERIALIZABLE`.
+
+Wiki pages updated:
+
+- `rules/rate-limiting.md` — seção "Operação atômica" corrigida; adicionada nota "Limite best-effort, não rígido"
+
+---
+
 ## 2026-06-11 — PRs #73 + #74: rate limiting no login (issue #30)
 
 **Branch**: feat/rate-limit-login + fix/rate-limit-atomicity-and-ip
