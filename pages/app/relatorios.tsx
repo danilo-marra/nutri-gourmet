@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useSWR from "swr";
 import type { FormEvent, ReactElement, ReactNode } from "react";
 import { useRouter } from "next/router";
 import AppShell from "@/components/AppShell";
@@ -173,28 +174,15 @@ function errorMessage(e: unknown) {
 
 function FaturamentoDiario() {
   const [days, setDays] = useState("30");
-  const [data, setData] = useState<RevenueTrendRow[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function load() {
-    setLoading(true);
-    setError(null);
-    try {
-      const rows = await fetchJson<RevenueTrendRow[]>(
-        `/api/v1/reports/dashboard/revenue-trend?days=${days}`,
-      );
-      setData(rows);
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    load();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const {
+    data,
+    error,
+    isLoading: loading,
+    mutate,
+  } = useSWR<RevenueTrendRow[]>(
+    `/api/v1/reports/dashboard/revenue-trend?days=${days}`,
+    fetchJson,
+  );
 
   return (
     <SectionCard title="Faturamento Diário">
@@ -214,7 +202,7 @@ function FaturamentoDiario() {
           </select>
         </div>
         <button
-          onClick={load}
+          onClick={() => mutate()}
           disabled={loading}
           className="px-4 py-1.5 bg-brand-teal text-white text-sm font-medium rounded-md hover:bg-brand-teal/90 disabled:opacity-50"
         >
@@ -223,7 +211,7 @@ function FaturamentoDiario() {
       </div>
 
       {loading && <LoadingState />}
-      {error && <ErrorState message={error} />}
+      {error && <ErrorState message={errorMessage(error)} />}
       {!loading && !error && data && data.length === 0 && <EmptyState />}
       {!loading && !error && data && data.length > 0 && (
         <div className="-mx-4 -mb-4">
@@ -265,32 +253,21 @@ function FaturamentoMensal() {
   const now = new Date();
   const defaultMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   const [month, setMonth] = useState(defaultMonth);
-  const [data, setData] = useState<SalesReport | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  async function load() {
-    setLoading(true);
-    setError(null);
-    try {
-      const [year, m] = month.split("-");
-      const startDate = `${year}-${m}-01`;
-      const lastDay = new Date(parseInt(year), parseInt(m), 0).getDate();
-      const endDate = `${year}-${m}-${String(lastDay).padStart(2, "0")}`;
-      const result = await fetchJson<SalesReport>(
-        `/api/v1/reports/sales?start_date=${startDate}&end_date=${endDate}`,
-      );
-      setData(result);
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [year, m] = month.split("-");
+  const startDate = `${year}-${m}-01`;
+  const lastDay = new Date(parseInt(year), parseInt(m), 0).getDate();
+  const endDate = `${year}-${m}-${String(lastDay).padStart(2, "0")}`;
 
-  useEffect(() => {
-    load();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const {
+    data,
+    error,
+    isLoading: loading,
+    mutate,
+  } = useSWR<SalesReport>(
+    `/api/v1/reports/sales?start_date=${startDate}&end_date=${endDate}`,
+    fetchJson,
+  );
 
   return (
     <SectionCard title="Faturamento Mensal">
@@ -305,7 +282,7 @@ function FaturamentoMensal() {
           />
         </div>
         <button
-          onClick={load}
+          onClick={() => mutate()}
           disabled={loading}
           className="px-4 py-1.5 bg-brand-teal text-white text-sm font-medium rounded-md hover:bg-brand-teal/90 disabled:opacity-50"
         >
@@ -314,7 +291,7 @@ function FaturamentoMensal() {
       </div>
 
       {loading && <LoadingState />}
-      {error && <ErrorState message={error} />}
+      {error && <ErrorState message={errorMessage(error)} />}
       {!loading && !error && data && data.by_payment_method.length === 0 && (
         <EmptyState />
       )}
