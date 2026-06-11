@@ -448,7 +448,10 @@ async function run() {
     for (const p of DEMO_PRODUCTS) {
       const res = await client.query(
         `INSERT INTO products (name, price, category, active)
-         VALUES ($1, $2, $3, true) RETURNING id, price`,
+         VALUES ($1, $2, $3, true)
+         ON CONFLICT (name) DO UPDATE
+           SET price = EXCLUDED.price, category = EXCLUDED.category
+         RETURNING id, price`,
         [p.name, p.price, p.category],
       );
       insertedProducts.push({
