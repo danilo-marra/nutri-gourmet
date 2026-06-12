@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/produto.md
 
-**Last updated**: 2026-06-12
+**Last updated**: 2026-06-12 (PR #91)
 
 ---
 
@@ -31,7 +31,7 @@ Produto inativo não aparece na tela de venda, mas permanece vinculado a registr
 
 ### Nome único
 
-O campo `name` tem constraint `UNIQUE` no banco (migration `1781212125290_add-products-name-unique`). Tentativa de cadastrar um produto com nome duplicado resulta em erro 500 (`ServiceError`) — diferente de `models/student.ts` e `models/cash_close.ts`, o `models/product.ts` **não** intercepta o código PostgreSQL `23505` nem lança `ConflictError`. Dívida técnica: adicionar tratamento de `23505` para retornar 409.
+O campo `name` tem constraint `UNIQUE` no banco (migration `1781212125290_add-products-name-unique`). Tentativa de criar ou renomear um produto para um nome já existente retorna **409 `ConflictError`** com mensagem `"Já existe um produto com este nome."` — tratamento implementado em `models/product.ts` para as funções `create()` e `update()`, capturando o código PostgreSQL `23505` via `err.cause?.code`, seguindo o mesmo padrão de `models/student.ts`. (PR #91)
 
 ### Histórico de preço
 
