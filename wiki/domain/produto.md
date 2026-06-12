@@ -31,7 +31,7 @@ Produto inativo não aparece na tela de venda, mas permanece vinculado a registr
 
 ### Nome único
 
-O campo `name` tem constraint `UNIQUE` no banco (migration `1781212125290_add-products-name-unique`). Tentativa de cadastrar um produto com nome duplicado retorna `ConflictError` (409).
+O campo `name` tem constraint `UNIQUE` no banco (migration `1781212125290_add-products-name-unique`). Tentativa de cadastrar um produto com nome duplicado resulta em erro 500 (`ServiceError`) — diferente de `models/student.ts` e `models/cash_close.ts`, o `models/product.ts` **não** intercepta o código PostgreSQL `23505` nem lança `ConflictError`. Dívida técnica: adicionar tratamento de `23505` para retornar 409.
 
 ### Histórico de preço
 
