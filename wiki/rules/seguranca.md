@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/supervisor.md
 
-**Last updated**: 2026-06-12
+**Last updated**: 2026-06-12 (PRs #91, #92)
 
 ---
 
@@ -51,6 +51,8 @@ Auditoria OWASP Top 10 pontual sobre o repo. Detalhes em `.claude/skills/securit
 **Corrigido (🟡 → ✅):** rate limiting no `POST /api/v1/sessions` — sliding window 15 min / 10 tentativas por IP via tabela `login_attempts`; IP extraído de `x-real-ip` (Vercel edge, não forjável); check+insert atômico via CTE PostgreSQL; retorna 429 com `Retry-After: 900`. (PRs #73, #74 — issue #30). Ver [[rate-limiting]].
 
 **Corrigido (🟡 → ✅):** pré-acesso por role antes da ativação — `POST /api/v1/users` agora sempre cria a conta como `pending`, ignorando o `role` fornecido no body. Isso impede que uma conta convite herde features do role-alvo antes de clicar no link de ativação. Role é atribuído por `activation.activateUserByUserId` no momento da ativação. (PR #87)
+
+**Corrigido (🟡 → ✅):** validação de comprimento mínimo de senha — `POST /api/v1/users` (`user.create()`) e `PATCH /api/v1/password/recovery/:token_id` (handler + `resetPassword()`) agora rejeitam senhas com menos de 8 caracteres com `ValidationError` (400). A validação no handler de recuperação ocorre **antes** de marcar o token como usado, evitando que um erro de senha invalide o link de recuperação. Frontend exibe `PasswordStrengthHelper` com 5 critérios e gerador seguro. (PRs #88, #92)
 
 **Corrigido (🟡 → ✅):** session gate no endpoint de ativação — `PATCH /api/v1/activations/[token_id]` não bloqueia mais usuários logados. O token é o fator de autenticação; bloquear por sessão impedia supervisores/admins de ativar contas em nome de outros. Qualquer usuário (logado ou não) pode usar um token válido. (PR #87 — commit `54ea502`)
 

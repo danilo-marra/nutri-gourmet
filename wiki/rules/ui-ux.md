@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, design bundle Nutrigourmet (Tailwind v4 + tokens)
 
-**Last updated**: 2026-06-12
+**Last updated**: 2026-06-12 (PR #92)
 
 ---
 
@@ -57,6 +57,8 @@ Todas as rotas sob `/app` usam o componente `AppShell` via padrão `getLayout`:
 | `--color-bg-page`           | `#FEFCFB` | Fundo da página                   |
 | `--color-gray-bg-section`   | `#F6F7F6` | Fundo de seções alternadas        |
 | `--color-fg-1`              | `#272932` | Texto principal                   |
+| `--color-fg-2`              | `#52545B` | Texto secundário                  |
+| `--color-fg-3`              | `#8A8C90` | Texto desabilitado / placeholder  |
 | `--color-danger`            | `#FF434E` | Erros, estados negativos          |
 | `--color-brand-pix`         | `#7e22ce` | Badge/ícone de pagamento Pix      |
 | `--color-brand-pix-subtle`  | `#f3e8ff` | Fundo de badge Pix                |
@@ -79,6 +81,15 @@ Todas as rotas sob `/app` usam o componente `AppShell` via padrão `getLayout`:
 - **Inputs**: borda `#E1E1E2`, foco em teal, erro em `#FF434E`
 - **Botão primário**: verde `#5BBF4E`, hover `#4AA33E`, texto branco, disabled opacidade 60%
 - **Animações**: mínimas — apenas `transition-colors` 150ms em hover states
+
+## Componentes compartilhados
+
+| Componente               | Arquivo                                 | Usado em                                                  |
+| ------------------------ | --------------------------------------- | --------------------------------------------------------- |
+| `AppShell`               | `components/AppShell.tsx`               | Todas as rotas `/app/**`                                  |
+| `PasswordStrengthHelper` | `components/PasswordStrengthHelper.tsx` | `/recovery/[token_id]`, `/app/usuarios` (form de convite) |
+
+**PasswordStrengthHelper**: recebe `password: string` e `onGenerate: (pwd: string) => void`. Exibe 5 critérios em tempo real (≥ 8 chars, maiúscula, minúscula, número, símbolo) com ícones ✓/✗ coloridos (`text-brand-green` / `text-danger`). Botão "Gerar senha segura" usa `crypto.getRandomValues` para gerar 12 chars satisfazendo todos os critérios. Sem dependências externas. (PR #92)
 
 ## Intenção
 

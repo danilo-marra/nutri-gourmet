@@ -4,7 +4,7 @@
 
 **Sources**: infra/migrations/, models/passwordReset.ts, pages/api/v1/password/recovery/, pages/recovery.tsx, pages/recovery/[token_id].tsx
 
-**Last updated**: 2026-06-11
+**Last updated**: 2026-06-12 (PRs #91, #92)
 
 ---
 
@@ -45,8 +45,9 @@ Redefine a senha usando o token do link.
 
 - **Auth**: anônimo (o token é a credencial)
 - **Body**: `{ "password": "..." }`
-- **Resposta**: `204` em caso de sucesso; `404` se token inválido, já usado ou expirado
+- **Resposta**: `204` em caso de sucesso; `400` se senha < 8 caracteres; `404` se token inválido, já usado ou expirado
 - **Efeito**: consumo atômico do token (`WHERE used_at IS NULL AND expires_at > NOW()`) + atualização de senha
+- **Ordem de validação**: a senha é validada no handler (`pages/api/v1/password/recovery/[token_id]/index.ts`) **antes** de chamar `markTokenAsUsed` — garante que um erro de senha curta não consuma o token nem invalide o link. (PR #92)
 
 ## Email enviado
 
@@ -62,6 +63,11 @@ Redefine a senha usando o token do link.
 - **Consumo atômico**: UPDATE único que valida e marca em uma operação (TOCTOU-safe)
 - **Expiração**: tokens expiram em 30 minutos (`expires_at = NOW() + INTERVAL '30 minutes'`)
 - **Token único**: `used_at IS NULL` garante uso único por token
+- **Validação de senha**: mínimo 8 caracteres, validado no handler antes de consumir o token; `resetPassword()` também valida como defense in depth (PR #92)
+
+## Componente de apoio (frontend)
+
+O componente `PasswordStrengthHelper` (`components/PasswordStrengthHelper.tsx`) é renderizado na página `/recovery/[token_id]` abaixo do campo "Nova senha". Exibe 5 critérios visuais em tempo real (comprimento ≥ 8, maiúscula, minúscula, número, símbolo) e oferece botão "Gerar senha segura" via `crypto.getRandomValues` (12 chars, garantindo todos os critérios). Ao gerar, preenche também o campo de confirmação. Ver [[ui-ux]].
 
 ## Tabela
 

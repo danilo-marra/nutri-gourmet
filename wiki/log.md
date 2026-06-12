@@ -4,6 +4,20 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-12 — PRs #91 e #92: validação de senha mínima + ConflictError em produto duplicado
+
+**Branch**: fix/password-min-length-88, fix/product-conflict-error-90
+**PR**: #91, #92
+
+**What changed**: PR #91 corrigiu `models/product.ts` para capturar o código PostgreSQL `23505` em `create()` e `update()`, retornando 409 `ConflictError` (em vez de 500) ao tentar criar ou renomear produto com nome duplicado. PR #92 adicionou validação de comprimento mínimo de senha (≥ 8 chars) em `models/user.ts`, `models/passwordReset.ts` e no handler `PATCH /api/v1/password/recovery/[token_id]`; a validação no handler ocorre antes de `markTokenAsUsed`, evitando o bug onde uma senha curta consumia o token de recuperação; novo componente `PasswordStrengthHelper` integrado nas páginas de recovery e criação de usuário.
+
+Wiki pages updated:
+
+- `domain/produto.md` — seção "Nome único": dívida técnica quitada; agora retorna 409 ConflictError (PR #91)
+- `domain/recuperacao-de-senha.md` — endpoint PATCH documentado com 400 para senha curta; nota de ordenação (validação antes de consumir token); nova seção "Componente de apoio" descrevendo PasswordStrengthHelper
+- `rules/seguranca.md` — novo item "Corrigido (🟡 → ✅): validação de comprimento mínimo de senha" com detalhe do fix de ordem do token
+- `rules/ui-ux.md` — tokens `--color-fg-2` e `--color-fg-3` adicionados à paleta; nova seção "Componentes compartilhados" com tabela e descrição do PasswordStrengthHelper
+
 ## 2026-06-12 — PRs #83–#87: frontends operacionais + ativação de conta + correções de integridade
 
 **Branch**: feat/vendas, feat/fechamento-caixa, feat/alunos-crud, feat/produtos-crud, feat/usuarios-crud  
