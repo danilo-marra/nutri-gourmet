@@ -168,6 +168,27 @@ export class MethodNotAllowedError extends Error {
   }
 }
 
+export class ConflictError extends Error {
+  action: string;
+  statusCode: number;
+
+  constructor({ cause, message, action }: BaseErrorParams) {
+    super(message ?? "Conflito com o estado atual do recurso.", { cause });
+    this.name = "ConflictError";
+    this.action = action ?? "Resolva o conflito antes de tentar novamente.";
+    this.statusCode = 409;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}
+
 export class TooManyRequestsError extends Error {
   action: string;
   statusCode: number;

@@ -15,6 +15,7 @@ import {
   UnauthorizedError,
   ForbiddenError,
   TooManyRequestsError,
+  ConflictError,
 } from "infra/errors";
 
 function onNoMatchHandler(request: NextApiRequest, response: NextApiResponse) {
@@ -31,7 +32,8 @@ function onErrorHandler(
     error instanceof ValidationError ||
     error instanceof NotFoundError ||
     error instanceof ForbiddenError ||
-    error instanceof TooManyRequestsError
+    error instanceof TooManyRequestsError ||
+    error instanceof ConflictError
   ) {
     return response.status(error.statusCode).json(error);
   }
