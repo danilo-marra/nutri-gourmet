@@ -150,5 +150,35 @@ describe("POST /api/v1/products", () => {
         status_code: 400,
       });
     });
+
+    test("Duplicate name should return 409 ConflictError", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      await orchestrator.createProduct({ name: "Produto Duplicado" });
+
+      const response = await fetch("http://localhost:3000/api/v1/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${supervisorSession.token}`,
+        },
+        body: JSON.stringify({
+          name: "Produto Duplicado",
+          price: 3.5,
+          category: "lanche",
+        }),
+      });
+
+      expect(response.status).toBe(409);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ConflictError",
+        message: "Já existe um produto com este nome.",
+        action: "Escolha um nome diferente para o produto.",
+        status_code: 409,
+      });
+    });
   });
 });

@@ -1,5 +1,5 @@
 import database from "infra/database.js";
-import { ValidationError, NotFoundError } from "infra/errors.js";
+import { ValidationError, NotFoundError, ConflictError } from "infra/errors.js";
 import type { Product, ProductCategory } from "@/types/index";
 
 const VALID_CATEGORIES: readonly ProductCategory[] = [
@@ -50,8 +50,19 @@ async function create(values: ProductInputValues): Promise<Product> {
     });
   }
 
-  const newProduct = await runInsertQuery(values);
-  return newProduct;
+  try {
+    const newProduct = await runInsertQuery(values);
+    return newProduct;
+  } catch (err: unknown) {
+    const pgCode = (err as { cause?: { code?: string } }).cause?.code;
+    if (pgCode === "23505") {
+      throw new ConflictError({
+        message: "Já existe um produto com este nome.",
+        action: "Escolha um nome diferente para o produto.",
+      });
+    }
+    throw err;
+  }
 
   async function runInsertQuery(values: ProductInputValues): Promise<Product> {
     const active = values.active !== undefined ? values.active : true;
@@ -160,8 +171,19 @@ async function update(
     ...values,
   } as Product;
 
-  const updatedProduct = await runUpdateQuery(productWithNewValues);
-  return updatedProduct;
+  try {
+    const updatedProduct = await runUpdateQuery(productWithNewValues);
+    return updatedProduct;
+  } catch (err: unknown) {
+    const pgCode = (err as { cause?: { code?: string } }).cause?.code;
+    if (pgCode === "23505") {
+      throw new ConflictError({
+        message: "Já existe um produto com este nome.",
+        action: "Escolha um nome diferente para o produto.",
+      });
+    }
+    throw err;
+  }
 
   async function runUpdateQuery(productWithNewValues: Product) {
     const results = await database.query<Product>({

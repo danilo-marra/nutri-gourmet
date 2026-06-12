@@ -153,5 +153,37 @@ describe("PATCH /api/v1/products/[id]", () => {
         status_code: 404,
       });
     });
+
+    test("Renaming to an existing product name should return 409 ConflictError", async () => {
+      const supervisor = await orchestrator.createUser({ role: "supervisor" });
+      const supervisorSession = await orchestrator.createSession(supervisor.id);
+
+      await orchestrator.createProduct({ name: "Nome Existente" });
+      const secondProduct = await orchestrator.createProduct({
+        name: "Outro Produto",
+      });
+
+      const response = await fetch(
+        `http://localhost:3000/api/v1/products/${secondProduct.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `session_id=${supervisorSession.token}`,
+          },
+          body: JSON.stringify({ name: "Nome Existente" }),
+        },
+      );
+
+      expect(response.status).toBe(409);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ConflictError",
+        message: "Já existe um produto com este nome.",
+        action: "Escolha um nome diferente para o produto.",
+        status_code: 409,
+      });
+    });
   });
 });
