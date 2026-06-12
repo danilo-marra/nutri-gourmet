@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, design bundle Nutrigourmet (Tailwind v4 + tokens)
 
-**Last updated**: 2026-06-11
+**Last updated**: 2026-06-12
 
 ---
 
@@ -32,13 +32,13 @@ Todas as rotas sob `/app` usam o componente `AppShell` via padrão `getLayout`:
 | Rota              | Módulo           | Status                             |
 | ----------------- | ---------------- | ---------------------------------- |
 | `/app`            | Dashboard        | Implementado (dados reais via SWR) |
-| `/app/vendas`     | Vendas           | Placeholder                        |
+| `/app/vendas`     | Vendas           | Implementado (PR #83)              |
 | `/app/creditos`   | Créditos         | Implementado                       |
-| `/app/fechamento` | Fechamento Caixa | Placeholder                        |
+| `/app/fechamento` | Fechamento Caixa | Implementado (PR #84)              |
 | `/app/relatorios` | Relatórios       | Implementado                       |
-| `/app/alunos`     | Alunos           | Placeholder                        |
-| `/app/produtos`   | Produtos         | Placeholder                        |
-| `/app/usuarios`   | Usuários         | Placeholder                        |
+| `/app/alunos`     | Alunos           | Implementado (PR #85)              |
+| `/app/produtos`   | Produtos         | Implementado (PR #86)              |
+| `/app/usuarios`   | Usuários         | Implementado (PR #87)              |
 
 **AppShell** (`components/AppShell.tsx`): sidebar fixa (logo, nav filtrado por `user.features`, user card + logout) + topbar (título da página + badge de role). Usa `useUser` hook internamente — exibe spinner durante carregamento, retorna `null` se não autenticado (redirect gerenciado pelo hook).
 
@@ -58,6 +58,8 @@ Todas as rotas sob `/app` usam o componente `AppShell` via padrão `getLayout`:
 | `--color-gray-bg-section`   | `#F6F7F6` | Fundo de seções alternadas        |
 | `--color-fg-1`              | `#272932` | Texto principal                   |
 | `--color-danger`            | `#FF434E` | Erros, estados negativos          |
+| `--color-brand-pix`         | `#7e22ce` | Badge/ícone de pagamento Pix      |
+| `--color-brand-pix-subtle`  | `#f3e8ff` | Fundo de badge Pix                |
 
 ## Tipografia
 

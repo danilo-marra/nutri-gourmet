@@ -4,6 +4,28 @@ Append-only record of all wiki operations.
 
 ---
 
+## 2026-06-12 — PRs #83–#87: frontends operacionais + ativação de conta + correções de integridade
+
+**Branch**: feat/vendas, feat/fechamento-caixa, feat/alunos-crud, feat/produtos-crud, feat/usuarios-crud  
+**PR**: #83, #84, #85, #86, #87
+
+**What changed**: Cinco PRs de frontend implementaram as páginas operacionais (vendas, fechamento de caixa, alunos, produtos, usuários). No backend: `ConflictError` (409) adicionado a `infra/errors.ts`; deleção de aluno com vínculos FK retorna 409; constraint `UNIQUE (name)` adicionada à tabela `products` (migration `1781212125290`); `POST /api/v1/users` agora força `role = "pending"` (impede pré-acesso antes da ativação); `PATCH /api/v1/activations/[token_id]` removeu o session gate (token é o fator auth); email de ativação recebeu template HTML idêntico ao de recuperação de senha.
+
+Wiki pages updated:
+
+- `domain/aluno.md` — seção "Deleção bloqueada por vínculos": ConflictError (409) ao deletar aluno com vendas/créditos
+- `domain/produto.md` — seção "Nome único": constraint `UNIQUE (name)` via migration `1781212125290`
+- `domain/venda.md` — seção "Página frontend": vendas.tsx implementado (PR #83)
+- `domain/fechamento-de-caixa.md` — seção "Página frontend": fechamento.tsx implementado (PR #84)
+- `domain/gap-analysis.md` — todas as linhas de UI stub atualizadas para "implementado"; linhas de alunos/produtos/usuários separadas com detalhes de PR
+- `rules/seguranca.md` — dois novos itens corrigidos: "sempre pending no convite" e "session gate removido na ativação"
+
+Wiki pages created:
+
+- `domain/ativacao-de-conta.md` — fluxo de ativação de contas via convite: token 15 min, HTML email, sempre pending, sem restrição de sessão
+
+---
+
 ## 2026-06-11 — PR #80: dashboard com dados reais + seed de demonstração (issue #22 task 5)
 
 **Branch**: feat/seed-demo  

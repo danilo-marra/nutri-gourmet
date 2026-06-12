@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/produto.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-06-12
 
 ---
 
@@ -28,6 +28,10 @@ Produtos são cadastrados e gerenciados por [[supervisor]] ou [[administrador]],
 ### Flag ativo/inativo
 
 Produto inativo não aparece na tela de venda, mas permanece vinculado a registros históricos de [[venda|vendas]]. Não é deletado. (source: raw/decisions/produto.md)
+
+### Nome único
+
+O campo `name` tem constraint `UNIQUE` no banco (migration `1781212125290_add-products-name-unique`). Tentativa de cadastrar um produto com nome duplicado retorna `ConflictError` (409).
 
 ### Histórico de preço
 

@@ -30,7 +30,7 @@ Herda todas as permissões do [[operador]], mais:
 
 ## Criação da conta
 
-Admin cria via painel → convite por e-mail usando o fluxo de ativação existente (`models/activation.ts`). Mesmo fluxo do [[operador]]. (source: raw/decisions/supervisor.md)
+Admin cria via painel → convite por e-mail usando o [[ativacao-de-conta|fluxo de ativação]]. Mesmo fluxo do [[operador]]. (source: raw/decisions/supervisor.md)
 
 ## Implementação — Gestão de contas de Operador
 

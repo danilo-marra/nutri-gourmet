@@ -47,6 +47,7 @@
 - [Dashboard](domain/dashboard.md) — KPIs em tempo real (receita, alunos negativos, fechamentos pendentes); vistas diferenciadas por perfil; 6 endpoints de relatório
 - [Fechamento de Caixa](domain/fechamento-de-caixa.md) — não bloqueante; gera resumo básico; supervisor/admin pode fechar em nome do operador
 - [Recuperação de Senha](domain/recuperacao-de-senha.md) — fluxo self-service via email; token de uso único; expiração de 30 minutos; anti-enumeração
+- [Ativação de Conta](domain/ativacao-de-conta.md) — convite por supervisor/admin; token 15 min; sempre pending até ativação; qualquer sessão pode usar o token
 - [Eventos](domain/eventos.md) — módulo de eventos escolares; ciclo: solicitação → consumo → encerramento → NF-e → cobrança; ≥ 1–2/mês
 - [Integral](domain/integral.md) — faturamento recorrente para alunos `is_full_time`; 10 parcelas/ano; NF-e mensal
 
