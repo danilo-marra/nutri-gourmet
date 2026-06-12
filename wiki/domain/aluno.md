@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/aluno.md
 
-**Last updated**: 2026-05-27
+**Last updated**: 2026-06-12
 
 ---
 
@@ -28,6 +28,16 @@ Flag `is_full_time` no cadastro do aluno. Determina elegibilidade a [[pacote|pac
 ### Saldo negativo
 
 Nenhuma operação normal deixa o saldo negativo: vendas a crédito são bloqueadas quando `balance < total` (source: raw/decisions/venda.md), e adição de crédito sempre soma um valor positivo.
+
+### Deleção bloqueada por vínculos
+
+Se o aluno possuir [[venda|vendas]] ou transações de [[credito|crédito]] associadas, a tentativa de exclusão retorna `ConflictError` (409):
+
+```
+{ "name": "ConflictError", "message": "Este aluno possui vendas ou créditos registrados e não pode ser excluído.", "action": "Remova todas as vendas e transações de crédito associadas antes de excluir o aluno.", "status_code": 409 }
+```
+
+A violação é detectada pelo código PostgreSQL `23503` (foreign key violation) capturado em `models/student.ts`.
 
 ## Related pages
 

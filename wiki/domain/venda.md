@@ -4,7 +4,7 @@
 
 **Sources**: raw/prd.md, raw/decisions/venda.md
 
-**Last updated**: 2026-06-09
+**Last updated**: 2026-06-12
 
 ---
 
@@ -55,6 +55,14 @@ O estorno usa **soft delete**: preenche `reversed_at` e `reversed_by` na tabela 
 ## Venda avulsa
 
 Não definida nesta fase. `student_id` aceita `NULL` para cobrir o caso se surgir operacionalmente. (source: raw/decisions/venda.md)
+
+## Página frontend
+
+`pages/app/vendas.tsx` — implementada no PR #83. Inclui:
+
+- Listagem de vendas com status (ativa / cancelada / estornada)
+- Formulário de nova venda: seleção de aluno, adição de itens com produto+quantidade, escolha de forma de pagamento
+- Cancelamento (operador, janela de 5 min) e estorno (supervisor/admin, sem prazo) com confirmação inline
 
 ## Related pages
 

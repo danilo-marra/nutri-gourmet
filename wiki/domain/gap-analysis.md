@@ -4,7 +4,7 @@
 
 **Sources**: raw/fluxo-cantina.md, raw/mapeamento-sistemas-atuais.md, raw/possivel-integrar.md, raw/decisions/sistemas-externos.md, raw/decisions/eventos-integral.md
 
-**Last updated**: 2026-06-11
+**Last updated**: 2026-06-12
 
 ---
 
@@ -12,11 +12,13 @@
 
 | Funcionalidade                                                                 | Onde no sistema                                                                 |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| Venda direta no caixa (cash/card)                                              | `POST /api/v1/sales` (UI `pages/app/vendas.tsx` ainda stub)                     |
+| Venda direta no caixa (cash/card)                                              | `POST /api/v1/sales` + `pages/app/vendas.tsx` (PR #83)                          |
 | Crédito manual de aluno (operador)                                             | `POST /api/v1/students/[id]/credits`                                            |
 | Pacotes de crédito (supervisor/admin)                                          | `models/credit.ts` + rotas de pacotes                                           |
-| Fechamento de caixa por turno                                                  | `POST /api/v1/cash_closes`                                                      |
-| Gestão de alunos, produtos, usuários                                           | CRUD completo                                                                   |
+| Fechamento de caixa por turno                                                  | `POST /api/v1/cash_closes` + `pages/app/fechamento.tsx` (PR #84)                |
+| Gestão de alunos (CRUD + deleção bloqueada por FK)                             | API CRUD + `pages/app/alunos.tsx` (PR #85); deleção retorna 409 se há vínculos  |
+| Gestão de produtos (CRUD + nome único)                                         | API CRUD + `pages/app/produtos.tsx` (PR #86); `UNIQUE (name)` enforced          |
+| Gestão de usuários (listagem, convite, troca de role)                          | `pages/app/usuarios.tsx` (PR #87); convite sempre cria como `pending`           |
 | RBAC Operador / Supervisor / Admin                                             | `models/authorization.ts` com `can()` e `filterOutput()`                        |
 | Relatório de vendas por período                                                | `GET /api/v1/reports/sales`                                                     |
 | Relatório de créditos adicionados                                              | `GET /api/v1/reports/credits`                                                   |

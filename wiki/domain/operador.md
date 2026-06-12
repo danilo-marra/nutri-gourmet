@@ -25,7 +25,7 @@ O Operador é o usuário que executa as operações rotineiras da cantina. Sua v
 
 ## Criação da conta
 
-Admin ou Supervisor cria via painel → convite por e-mail usando o fluxo de ativação existente (`models/activation.ts`). Mesmo fluxo do [[supervisor]]. O Operador pode redefinir a própria senha via [[recuperacao-de-senha|recuperação de senha]] self-service. (source: raw/decisions/operacoes.md, raw/decisions/supervisor.md)
+Admin ou Supervisor cria via painel → convite por e-mail usando o [[ativacao-de-conta|fluxo de ativação]]. Mesmo fluxo do [[supervisor]]. O Operador pode redefinir a própria senha via [[recuperacao-de-senha|recuperação de senha]] self-service. (source: raw/decisions/operacoes.md, raw/decisions/supervisor.md)
 
 ## Cancelamento de vendas
 
