@@ -37,6 +37,11 @@ async function postHandler(request: NextApiRequest, response: NextApiResponse) {
     });
   }
 
+  // Always create invited users as pending; role is assigned via PATCH after activation.
+  // This prevents pre-activation access: if we respected the requested role, the new
+  // account would inherit that role's features immediately (before clicking the email link).
+  userInputValues.role = "pending";
+
   const newUser = await user.create(userInputValues);
 
   const activationToken = await activation.create(newUser.id);

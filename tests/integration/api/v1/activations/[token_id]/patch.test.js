@@ -175,7 +175,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
   });
 
   describe("Default user", () => {
-    test("With valid token, but already logged in user", async () => {
+    test("Logged-in user can still activate a valid token", async () => {
       const user1 = await orchestrator.createUser();
       await orchestrator.activateUser(user1);
       const user1SessionObject = await orchestrator.createSession(user1.id);
@@ -184,7 +184,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const user2ActivationToken = await activation.create(user2.id);
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/activations/${user2ActivationToken.token}`,
+        `http://localhost:3000/api/v1/activations/${user2ActivationToken.id}`,
         {
           method: "PATCH",
           headers: {
@@ -193,16 +193,25 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
         },
       );
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(200);
 
       const responseBody = await response.json();
 
       expect(responseBody).toEqual({
-        name: "ForbiddenError",
-        message: "Você não possui permissão para executar esta ação.",
-        action: `Verifique se o seu usuário possui a feature "read:activation_token".`,
-        status_code: 403,
+        id: user2ActivationToken.id,
+        used_at: responseBody.used_at,
+        user_id: user2ActivationToken.user_id,
+        expires_at: user2ActivationToken.expires_at.toISOString(),
+        created_at: user2ActivationToken.created_at.toISOString(),
+        updated_at: responseBody.updated_at,
       });
+
+      expect(Date.parse(responseBody.used_at)).not.toBeNaN();
+      expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      const activatedUser2 = await user.findOneById(user2.id);
+      expect(activatedUser2.role).toBe("operador");
+      expect(activatedUser2.features).toEqual([]);
     });
   });
 });

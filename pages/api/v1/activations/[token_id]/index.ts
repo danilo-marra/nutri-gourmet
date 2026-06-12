@@ -7,7 +7,7 @@ import authorization from "models/authorization.js";
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.use(controller.injectAnonymousOrUser);
-router.patch(controller.canRequest("read:activation_token"), patchHandler);
+router.patch(patchHandler);
 
 export default router.handler(controller.errorHandlers);
 
