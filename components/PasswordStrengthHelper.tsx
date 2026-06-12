@@ -43,7 +43,7 @@ export default function PasswordStrengthHelper({
   onGenerate,
 }: Props) {
   return (
-    <div className="mt-2 rounded-md border border-border bg-bg-subtle p-3 space-y-2">
+    <div className="mt-2 rounded-md border border-border bg-bg-card p-3 space-y-2">
       <ul className="space-y-1">
         {criteria.map(({ label, test }) => {
           const ok = password.length > 0 && test(password);
