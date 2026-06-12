@@ -1,7 +1,7 @@
 import email from "infra/email.js";
 import database from "infra/database.js";
 import webserver from "infra/webserver.js";
-import { NotFoundError } from "infra/errors.js";
+import { NotFoundError, ValidationError } from "infra/errors.js";
 import password from "models/password.js";
 import type { PasswordResetToken, User } from "@/types/index";
 
@@ -181,6 +181,13 @@ async function resetPassword(
   userId: string,
   newPassword: string,
 ): Promise<void> {
+  if (!newPassword || newPassword.length < 8) {
+    throw new ValidationError({
+      message: "A senha deve ter no mínimo 8 caracteres.",
+      action: "Informe uma senha com ao menos 8 caracteres.",
+    });
+  }
+
   const hashedPassword = await password.hash(newPassword);
 
   await database.query({

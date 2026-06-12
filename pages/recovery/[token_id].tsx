@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
+import PasswordStrengthHelper from "@/components/PasswordStrengthHelper";
 
 type PageState = "idle" | "loading" | "error";
 
@@ -111,11 +112,19 @@ export default function ResetPassword() {
                 id="password"
                 type="password"
                 required
+                minLength={8}
                 autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full border border-border rounded-[10px] px-3 py-2 text-sm text-fg-1 placeholder:text-fg-3 outline-none focus:border-brand-teal transition-colors"
+              />
+              <PasswordStrengthHelper
+                password={password}
+                onGenerate={(p) => {
+                  setPassword(p);
+                  setConfirm(p);
+                }}
               />
             </div>
 
@@ -130,6 +139,7 @@ export default function ResetPassword() {
                 id="confirm"
                 type="password"
                 required
+                minLength={8}
                 autoComplete="new-password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}

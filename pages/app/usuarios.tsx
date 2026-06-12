@@ -4,6 +4,7 @@ import type { SyntheticEvent, ReactElement, ReactNode } from "react";
 import AppShell from "@/components/AppShell";
 import { useUser } from "@/hooks/useUser";
 import type { UserRole } from "@/types/index";
+import PasswordStrengthHelper from "@/components/PasswordStrengthHelper";
 
 interface UserRow {
   id: string;
@@ -224,15 +225,20 @@ export default function UsuariosPage() {
                     className="border border-border rounded-md px-3 py-1.5 text-sm text-fg-1 bg-bg-card focus:outline-none focus:ring-2 focus:ring-brand-teal"
                   />
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 sm:col-span-2">
                   <label className="text-xs text-fg-3 font-medium">Senha</label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    minLength={8}
                     placeholder="Senha temporária"
                     className="border border-border rounded-md px-3 py-1.5 text-sm text-fg-1 bg-bg-card focus:outline-none focus:ring-2 focus:ring-brand-teal"
+                  />
+                  <PasswordStrengthHelper
+                    password={password}
+                    onGenerate={(p) => setPassword(p)}
                   />
                 </div>
               </div>

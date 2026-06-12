@@ -105,6 +105,13 @@ async function findOneById(id: string): Promise<User> {
 }
 
 async function create(userInputValues: UserInputValues): Promise<User> {
+  if (!userInputValues.password || userInputValues.password.length < 8) {
+    throw new ValidationError({
+      message: "A senha deve ter no mínimo 8 caracteres.",
+      action: "Informe uma senha com ao menos 8 caracteres.",
+    });
+  }
+
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
   await hashPasswordInObject(userInputValues);
