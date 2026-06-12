@@ -133,6 +133,26 @@ describe("POST /api/v1/users", () => {
         status_code: 400,
       });
     });
+
+    test("With password shorter than 8 characters", async () => {
+      const response = await fetch("http://localhost:3000/api/v1/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "senhacurta",
+          email: "senhacurta@cantina.dev",
+          password: "abc1234",
+        }),
+      });
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+      expect(responseBody.name).toBe("ValidationError");
+      expect(responseBody.status_code).toBe(400);
+    });
   });
   describe("Default user", () => {
     test("With unique and valid data", async () => {
